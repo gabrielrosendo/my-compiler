@@ -1,0 +1,9 @@
+int main () {
+    print("Hello, world!");
+    char ex = 'a';
+    int value = 0;
+    while (value < 5) {
+        value = value + 1
+    } 
+    print("Value is 4")
+}
