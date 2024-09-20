@@ -1,0 +1,385 @@
+Terminals which are not used
+
+   ELSE_KEYWORD
+   SYMBOL
+   PARENTHESIS
+   EQ
+
+
+State 28 conflicts: 1 shift/reduce
+
+
+Grammar
+
+    0 $accept: Program $end
+
+    1 Program: StmtList
+    2        | VarDeclList StmtList
+
+    3 StmtList: Stmt
+    4         | StmtList Stmt
+
+    5 Stmt: PRINT_KEYWORD expression SEMICOLON
+    6     | IF_KEYWORD expression LBRACE Program RBRACE
+    7     | WHILE_KEYWORD expression LBRACE Program RBRACE
+    8     | RETURN_KEYWORD expression SEMICOLON
+
+    9 VarDeclList: TYPE ID SEMICOLON
+   10            | VarDeclList TYPE ID SEMICOLON
+
+   11 expression: NUMBER
+   12           | ID
+   13           | expression OPERATOR expression
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+NUMBER (258) 11
+ID (259) 9 10 12
+TYPE (260) 9 10
+PRINT_KEYWORD (261) 5
+IF_KEYWORD (262) 6
+ELSE_KEYWORD (263)
+WHILE_KEYWORD (264) 7
+RETURN_KEYWORD (265) 8
+OPERATOR (266) 13
+SYMBOL (267)
+PARENTHESIS (268)
+SEMICOLON (269) 5 8 9 10
+EQ (270)
+LBRACE (271) 6 7
+RBRACE (272) 6 7
+
+
+Nonterminals, with rules where they appear
+
+$accept (18)
+    on left: 0
+Program (19)
+    on left: 1 2, on right: 0 6 7
+StmtList (20)
+    on left: 3 4, on right: 1 2 4
+Stmt (21)
+    on left: 5 6 7 8, on right: 3 4
+VarDeclList (22)
+    on left: 9 10, on right: 2 10
+expression (23)
+    on left: 11 12 13, on right: 5 6 7 8 13
+
+
+state 0
+
+    0 $accept: . Program $end
+
+    TYPE            shift, and go to state 1
+    PRINT_KEYWORD   shift, and go to state 2
+    IF_KEYWORD      shift, and go to state 3
+    WHILE_KEYWORD   shift, and go to state 4
+    RETURN_KEYWORD  shift, and go to state 5
+
+    Program      go to state 6
+    StmtList     go to state 7
+    Stmt         go to state 8
+    VarDeclList  go to state 9
+
+
+state 1
+
+    9 VarDeclList: TYPE . ID SEMICOLON
+
+    ID  shift, and go to state 10
+
+
+state 2
+
+    5 Stmt: PRINT_KEYWORD . expression SEMICOLON
+
+    NUMBER  shift, and go to state 11
+    ID      shift, and go to state 12
+
+    expression  go to state 13
+
+
+state 3
+
+    6 Stmt: IF_KEYWORD . expression LBRACE Program RBRACE
+
+    NUMBER  shift, and go to state 11
+    ID      shift, and go to state 12
+
+    expression  go to state 14
+
+
+state 4
+
+    7 Stmt: WHILE_KEYWORD . expression LBRACE Program RBRACE
+
+    NUMBER  shift, and go to state 11
+    ID      shift, and go to state 12
+
+    expression  go to state 15
+
+
+state 5
+
+    8 Stmt: RETURN_KEYWORD . expression SEMICOLON
+
+    NUMBER  shift, and go to state 11
+    ID      shift, and go to state 12
+
+    expression  go to state 16
+
+
+state 6
+
+    0 $accept: Program . $end
+
+    $end  shift, and go to state 17
+
+
+state 7
+
+    1 Program: StmtList .
+    4 StmtList: StmtList . Stmt
+
+    PRINT_KEYWORD   shift, and go to state 2
+    IF_KEYWORD      shift, and go to state 3
+    WHILE_KEYWORD   shift, and go to state 4
+    RETURN_KEYWORD  shift, and go to state 5
+
+    $default  reduce using rule 1 (Program)
+
+    Stmt  go to state 18
+
+
+state 8
+
+    3 StmtList: Stmt .
+
+    $default  reduce using rule 3 (StmtList)
+
+
+state 9
+
+    2 Program: VarDeclList . StmtList
+   10 VarDeclList: VarDeclList . TYPE ID SEMICOLON
+
+    TYPE            shift, and go to state 19
+    PRINT_KEYWORD   shift, and go to state 2
+    IF_KEYWORD      shift, and go to state 3
+    WHILE_KEYWORD   shift, and go to state 4
+    RETURN_KEYWORD  shift, and go to state 5
+
+    StmtList  go to state 20
+    Stmt      go to state 8
+
+
+state 10
+
+    9 VarDeclList: TYPE ID . SEMICOLON
+
+    SEMICOLON  shift, and go to state 21
+
+
+state 11
+
+   11 expression: NUMBER .
+
+    $default  reduce using rule 11 (expression)
+
+
+state 12
+
+   12 expression: ID .
+
+    $default  reduce using rule 12 (expression)
+
+
+state 13
+
+    5 Stmt: PRINT_KEYWORD expression . SEMICOLON
+   13 expression: expression . OPERATOR expression
+
+    OPERATOR   shift, and go to state 22
+    SEMICOLON  shift, and go to state 23
+
+
+state 14
+
+    6 Stmt: IF_KEYWORD expression . LBRACE Program RBRACE
+   13 expression: expression . OPERATOR expression
+
+    OPERATOR  shift, and go to state 22
+    LBRACE    shift, and go to state 24
+
+
+state 15
+
+    7 Stmt: WHILE_KEYWORD expression . LBRACE Program RBRACE
+   13 expression: expression . OPERATOR expression
+
+    OPERATOR  shift, and go to state 22
+    LBRACE    shift, and go to state 25
+
+
+state 16
+
+    8 Stmt: RETURN_KEYWORD expression . SEMICOLON
+   13 expression: expression . OPERATOR expression
+
+    OPERATOR   shift, and go to state 22
+    SEMICOLON  shift, and go to state 26
+
+
+state 17
+
+    0 $accept: Program $end .
+
+    $default  accept
+
+
+state 18
+
+    4 StmtList: StmtList Stmt .
+
+    $default  reduce using rule 4 (StmtList)
+
+
+state 19
+
+   10 VarDeclList: VarDeclList TYPE . ID SEMICOLON
+
+    ID  shift, and go to state 27
+
+
+state 20
+
+    2 Program: VarDeclList StmtList .
+    4 StmtList: StmtList . Stmt
+
+    PRINT_KEYWORD   shift, and go to state 2
+    IF_KEYWORD      shift, and go to state 3
+    WHILE_KEYWORD   shift, and go to state 4
+    RETURN_KEYWORD  shift, and go to state 5
+
+    $default  reduce using rule 2 (Program)
+
+    Stmt  go to state 18
+
+
+state 21
+
+    9 VarDeclList: TYPE ID SEMICOLON .
+
+    $default  reduce using rule 9 (VarDeclList)
+
+
+state 22
+
+   13 expression: expression OPERATOR . expression
+
+    NUMBER  shift, and go to state 11
+    ID      shift, and go to state 12
+
+    expression  go to state 28
+
+
+state 23
+
+    5 Stmt: PRINT_KEYWORD expression SEMICOLON .
+
+    $default  reduce using rule 5 (Stmt)
+
+
+state 24
+
+    6 Stmt: IF_KEYWORD expression LBRACE . Program RBRACE
+
+    TYPE            shift, and go to state 1
+    PRINT_KEYWORD   shift, and go to state 2
+    IF_KEYWORD      shift, and go to state 3
+    WHILE_KEYWORD   shift, and go to state 4
+    RETURN_KEYWORD  shift, and go to state 5
+
+    Program      go to state 29
+    StmtList     go to state 7
+    Stmt         go to state 8
+    VarDeclList  go to state 9
+
+
+state 25
+
+    7 Stmt: WHILE_KEYWORD expression LBRACE . Program RBRACE
+
+    TYPE            shift, and go to state 1
+    PRINT_KEYWORD   shift, and go to state 2
+    IF_KEYWORD      shift, and go to state 3
+    WHILE_KEYWORD   shift, and go to state 4
+    RETURN_KEYWORD  shift, and go to state 5
+
+    Program      go to state 30
+    StmtList     go to state 7
+    Stmt         go to state 8
+    VarDeclList  go to state 9
+
+
+state 26
+
+    8 Stmt: RETURN_KEYWORD expression SEMICOLON .
+
+    $default  reduce using rule 8 (Stmt)
+
+
+state 27
+
+   10 VarDeclList: VarDeclList TYPE ID . SEMICOLON
+
+    SEMICOLON  shift, and go to state 31
+
+
+state 28
+
+   13 expression: expression . OPERATOR expression
+   13           | expression OPERATOR expression .
+
+    OPERATOR  shift, and go to state 22
+
+    OPERATOR  [reduce using rule 13 (expression)]
+    $default  reduce using rule 13 (expression)
+
+
+state 29
+
+    6 Stmt: IF_KEYWORD expression LBRACE Program . RBRACE
+
+    RBRACE  shift, and go to state 32
+
+
+state 30
+
+    7 Stmt: WHILE_KEYWORD expression LBRACE Program . RBRACE
+
+    RBRACE  shift, and go to state 33
+
+
+state 31
+
+   10 VarDeclList: VarDeclList TYPE ID SEMICOLON .
+
+    $default  reduce using rule 10 (VarDeclList)
+
+
+state 32
+
+    6 Stmt: IF_KEYWORD expression LBRACE Program RBRACE .
+
+    $default  reduce using rule 6 (Stmt)
+
+
+state 33
+
+    7 Stmt: WHILE_KEYWORD expression LBRACE Program RBRACE .
+
+    $default  reduce using rule 7 (Stmt)
