@@ -110,17 +110,7 @@ expression: NUMBER { printf("Parsed number: %d\n", $1); }
 %%
 
 void yyerror(const char* s) {
-    fprintf(stderr, "Error: %s at line %d\n", s, yylineno);
+    extern char* yytext; // Declare yytext to get the current token text
+    fprintf(stderr, "Error: %s at line %d, near '%s'\n", s, yylineno, yytext);
 }
 
-int main(int argc, char **argv) {
-    if (argc > 1) {
-        yyin = fopen(argv[1], "r");
-        if (!yyin) {
-            perror(argv[1]);
-            return 1;
-        }
-    }
-    yyparse();
-    return 0;
-}
