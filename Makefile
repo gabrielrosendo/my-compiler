@@ -11,7 +11,7 @@ lex.yy.c: lexer.l parser.tab.h
 # Compile everything directly into the final executable
 parser: lex.yy.c parser.tab.c parser.tab.h symbolTable.c main.c
 	@gcc -o parser parser.tab.c lex.yy.c symbolTable.c main.c
-	@./parser testProg.cmm
+	@./parser input.txt
 
 # Clean up all generated files
 clean:
