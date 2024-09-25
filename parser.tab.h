@@ -44,25 +44,17 @@
      TYPE = 260,
      PRINT_KEYWORD = 261,
      PRINT = 262,
-     IF_KEYWORD = 263,
-     IF = 264,
-     ELSE_KEYWORD = 265,
-     ELSE = 266,
-     WHILE_KEYWORD = 267,
-     WHILE = 268,
-     RETURN_KEYWORD = 269,
-     RETURN = 270,
-     OPERATOR = 271,
-     ADD = 272,
-     SUB = 273,
-     MUL = 274,
-     DIV = 275,
-     SYMBOL = 276,
-     PARENTHESIS = 277,
-     SEMICOLON = 278,
-     EQ = 279,
-     LBRACE = 280,
-     RBRACE = 281
+     OPERATOR = 263,
+     ADD = 264,
+     SUB = 265,
+     MUL = 266,
+     DIV = 267,
+     SYMBOL = 268,
+     PARENTHESIS = 269,
+     SEMICOLON = 270,
+     EQ = 271,
+     LBRACE = 272,
+     RBRACE = 273
    };
 #endif
 /* Tokens.  */
@@ -71,25 +63,17 @@
 #define TYPE 260
 #define PRINT_KEYWORD 261
 #define PRINT 262
-#define IF_KEYWORD 263
-#define IF 264
-#define ELSE_KEYWORD 265
-#define ELSE 266
-#define WHILE_KEYWORD 267
-#define WHILE 268
-#define RETURN_KEYWORD 269
-#define RETURN 270
-#define OPERATOR 271
-#define ADD 272
-#define SUB 273
-#define MUL 274
-#define DIV 275
-#define SYMBOL 276
-#define PARENTHESIS 277
-#define SEMICOLON 278
-#define EQ 279
-#define LBRACE 280
-#define RBRACE 281
+#define OPERATOR 263
+#define ADD 264
+#define SUB 265
+#define MUL 266
+#define DIV 267
+#define SYMBOL 268
+#define PARENTHESIS 269
+#define SEMICOLON 270
+#define EQ 271
+#define LBRACE 272
+#define RBRACE 273
 
 
 
@@ -105,7 +89,7 @@ typedef union YYSTYPE
     char* operator;
 }
 /* Line 1529 of yacc.c.  */
-#line 109 "parser.tab.h"
+#line 93 "parser.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

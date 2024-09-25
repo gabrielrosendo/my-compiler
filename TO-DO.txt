@@ -1,9 +1,14 @@
-- Add AST.H
+- Implement AST.H
 - Implement symbol table
-- Semantic files?
-- Add ==
-- Add < and >
+- Semantic Analysis
+- COnverts to TAC and ouputs tac.ir file
+    - Three address code, e.g. t0 = a + 5
+- Code Optimization (Constant Folding)
+- Convert to MIPS (output.s)
 
 Bugs to fix
 - Parser gives error below, regardless of input:
 Error: syntax error at line 1, near ''
+
+Minimum Requirements:
+- 

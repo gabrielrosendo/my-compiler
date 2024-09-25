@@ -50,29 +50,6 @@ BAD_ID {NUMBER}{ID}
     return PRINT;
 }
 
-"if" { 
-    words++; chars += strlen(yytext);
-    printf("%-10s | %-10s\n", yytext, "IF_KEYWORD");
-    return IF;
-}
-
-"else" { 
-    words++; chars += strlen(yytext);
-    printf("%-10s | %-10s\n", yytext, "ELSE_KEYWORD");
-    return ELSE;
-}
-
-"while" { 
-    words++; chars += strlen(yytext);
-    printf("%-10s | %-10s\n", yytext, "WHILE_KEYWORD");
-    return WHILE;
-}
-
-"return" { 
-    words++; chars += strlen(yytext);
-    printf("%-10s | %-10s\n", yytext, "RETURN_KEYWORD");
-    return RETURN;
-}
 
 {ID} {
     words++; chars += strlen(yytext);

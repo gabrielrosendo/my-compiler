@@ -24,10 +24,6 @@ void yyerror(const char* s);
 %token <string> ID
 %token <string> TYPE
 %token <keyword> PRINT_KEYWORD PRINT
-%token <keyword> IF_KEYWORD IF
-%token <keyword> ELSE_KEYWORD ELSE
-%token <keyword> WHILE_KEYWORD WHILE
-%token <keyword> RETURN_KEYWORD RETURN
 %token <operator> OPERATOR ADD SUB MUL DIV
 %token <string> SYMBOL
 %token <string> PARENTHESIS
@@ -48,15 +44,7 @@ StmtList: Stmt
 Stmt: PRINT '(' expression ')' SEMICOLON { 
     printf("Parsed print statement\n");
 }
-    | IF '(' expression ')' LBRACE Program RBRACE { 
-        printf("Parsed if statement\n");
-}
-    | WHILE '(' expression ')' LBRACE Program RBRACE { 
-        printf("Parsed while statement\n");
-}
-    | RETURN expression SEMICOLON { 
-        printf("Parsed return statement\n");
-}
+
     | ID EQ expression SEMICOLON {
         printf("Parsed assignment statement\n");
 }
