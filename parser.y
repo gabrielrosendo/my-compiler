@@ -2,40 +2,33 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-// #include "AST.h"
-
-#define TABLE_SIZE 100
 
 extern int yylex();   // Declare yylex, the lexer function
 extern int yyparse(); // Declare yyparse, the parser function
 extern FILE* yyin;    // Declare yyin, the file pointer for the input file
 extern int yylineno;  // Declare yylineno, the line number counter
-// extern TAC* tacHead;  // Declare the head of the linked list of TAC entries
 
 void yyerror(const char* s);
 
-// ASTNode* root = NULL; 
-// SymbolTable* symTab = NULL;
-// Symbol* symbol = NULL;
 %}
 
 %union {
     int number;
     char character;
     char* string;
+    char* keyword;
     char* operator;
-    // struct ASTNode* ast;
 }
 
 %token <number> NUMBER
 %token <string> ID
 %token <string> TYPE
-%token <string> PRINT_KEYWORD
-%token <string> IF_KEYWORD
-%token <string> ELSE_KEYWORD
-%token <string> WHILE_KEYWORD
-%token <string> RETURN_KEYWORD
-%token <operator> OPERATOR
+%token <keyword> PRINT_KEYWORD PRINT
+%token <keyword> IF_KEYWORD IF
+%token <keyword> ELSE_KEYWORD ELSE
+%token <keyword> WHILE_KEYWORD WHILE
+%token <keyword> RETURN_KEYWORD RETURN
+%token <operator> OPERATOR ADD SUB MUL DIV
 %token <string> SYMBOL
 %token <string> PARENTHESIS
 %token <string> SEMICOLON
@@ -43,37 +36,72 @@ void yyerror(const char* s);
 %token <string> LBRACE
 %token <string> RBRACE
 
-%type <ast> Program StmtList Stmt VarDeclList expression
-
 %%
-Program: StmtList
-       | VarDeclList StmtList
+
+Program: Function
        ;
+
+Function: TYPE ID '(' ')' LBRACE StmtList RBRACE
+        {
+            printf("Parsed function: %s\n", $2);
+        }
+        ;
 
 StmtList: Stmt
         | StmtList Stmt
         ;
 
-Stmt: PRINT_KEYWORD expression SEMICOLON { 
+Stmt: PRINT '(' expression ')' SEMICOLON { 
     printf("Parsed print statement\n");
-    // TO-DO
 }
-    | IF_KEYWORD expression LBRACE Program RBRACE { 
+    | IF '(' expression ')' LBRACE Program RBRACE { 
         printf("Parsed if statement\n");
-        // TO-DO
 }
-    | WHILE_KEYWORD expression LBRACE Program RBRACE { 
+    | WHILE '(' expression ')' LBRACE Program RBRACE { 
         printf("Parsed while statement\n");
-        // TO-DO
 }
-    | RETURN_KEYWORD expression SEMICOLON { 
+    | RETURN expression SEMICOLON { 
         printf("Parsed return statement\n");
-        // TO-DO
+}
+    | ID EQ expression SEMICOLON {
+        printf("Parsed assignment statement\n");
 }
     ;
 
-VarDeclList: TYPE ID SEMICOLON { 
+VarDeclList: VarDecl
+           | VarDeclList VarDecl
+           ;
+
+VarDecl: TYPE ID SEMICOLON { 
     printf("Parsed variable declaration: %s\n", $2);
+}
+    | TYPE ID EQ expression SEMICOLON {
+        printf("Parsed variable declaration with initialization: %s\n", $2);
+    }
+    ;
+
+expression: NUMBER { printf("Parsed number: %d\n", $1); }
+          | ID { printf("Parsed identifier: %s\n", $1); }
+          | expression ADD expression { 
+              printf("Parsed addition expression\n");
+          }
+          | expression SUB expression { 
+              printf("Parsed subtraction expression\n");
+          }
+          | expression MUL expression { 
+              printf("Parsed multiplication expression\n");
+          }
+          | expression DIV expression { 
+              printf("Parsed division expression\n");
+          }
+          ;
+
+%%
+
+void yyerror(const char* s) {
+    extern char* yytext; // Declare yytext to get the current token text
+    fprintf(stderr, "Error: %s at line %d, near '%s'\n", s, yylineno, yytext);
+}
 
     /*
     symbol = lookupSymbol(symTab, $2);
@@ -93,24 +121,3 @@ VarDeclList: TYPE ID SEMICOLON {
         addSymbol(symTab, $2, $1);
     }
     */
-}
-    | VarDeclList TYPE ID SEMICOLON { 
-        printf("Parsed variable declaration\n");
-        // TO-DO
-}
-    ;
-
-expression: NUMBER { printf("Parsed number: %d\n", $1); }
-          | ID { printf("Parsed identifier: %s\n", $1); }
-          | expression OPERATOR expression { 
-              printf("Parsed operator expression\n");
-          }
-          ;
-
-%%
-
-void yyerror(const char* s) {
-    extern char* yytext; // Declare yytext to get the current token text
-    fprintf(stderr, "Error: %s at line %d, near '%s'\n", s, yylineno, yytext);
-}
-

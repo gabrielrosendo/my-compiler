@@ -1,0 +1,7 @@
+- Add AST.H
+- Implement symbol table
+- Semantic files?
+
+Bugs to fix
+- Parser gives error below, regardless of input:
+Error: syntax error at line 1, near ''
