@@ -3,6 +3,7 @@
 %{
 #include <stdio.h>
 #include <string.h>
+#include "parser.tab.h"
 
 #define YY_DECL int yylex()
 
@@ -25,16 +26,16 @@ BAD_ID		{NUMBER}{ID}
 
 %%
 "/*"    				{
-							int c;
-							while((c = input()) != 0) {
-								if(c == '*') {
-									if((c = input()) == '/')
-										break;
-									else
-										unput(c);
-								}
+						int c;
+						while((c = input()) != 0) {
+							if(c == '*') {
+								if((c = input()) == '/')
+									break;
+								else
+									unput(c);
 							}
 						}
+					}
 \"(\\\"|[^\"\n])*\" { words++; chars += strlen(yytext); printf("%-10s | %-10s\n", yytext, "STRING"); }
 
 					

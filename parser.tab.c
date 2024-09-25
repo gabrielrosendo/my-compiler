@@ -1680,11 +1680,7 @@ yyreturn:
 
 void yyerror(const char* s) {
     extern char* yytext; // Declare yytext to get the current token text
-    if (yytext && *yytext) {
-        fprintf(stderr, "Error: %s at line %d, near '%s'\n", s, yylineno, yytext);
-    } else {
-        fprintf(stderr, "Error: %s at line %d, near end of input\n", s, yylineno);
-    }
+    fprintf(stderr, "Error: %s at line %d, near '%s'\n", s, yylineno, yytext);
 }
 
 

@@ -498,6 +498,7 @@ char *yytext;
 #line 4 "lexer.l"
 #include <stdio.h>
 #include <string.h>
+#include "parser.tab.h"
 
 #define YY_DECL int yylex()
 
@@ -505,8 +506,8 @@ int words = 0;
 int chars = 0;
 int lines = 0;
 
-#line 508 "lex.yy.c"
 #line 509 "lex.yy.c"
+#line 510 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -723,9 +724,9 @@ YY_DECL
 		}
 
 	{
-#line 26 "lexer.l"
+#line 27 "lexer.l"
 
-#line 728 "lex.yy.c"
+#line 729 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -784,132 +785,132 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 27 "lexer.l"
+#line 28 "lexer.l"
 {
-							int c;
-							while((c = input()) != 0) {
-								if(c == '*') {
-									if((c = input()) == '/')
-										break;
-									else
-										unput(c);
-								}
+						int c;
+						while((c = input()) != 0) {
+							if(c == '*') {
+								if((c = input()) == '/')
+									break;
+								else
+									unput(c);
 							}
 						}
+					}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 38 "lexer.l"
+#line 39 "lexer.l"
 { words++; chars += strlen(yytext); printf("%-10s | %-10s\n", yytext, "STRING"); }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 41 "lexer.l"
+#line 42 "lexer.l"
 { words++; chars += strlen(yytext);
                         printf("%-10s | %-10s\n", yytext, "TYPE");
                       }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 45 "lexer.l"
+#line 46 "lexer.l"
 { words++; chars += strlen(yytext);
     printf("%-10s | %-10s\n", yytext, "PRINT_KEYWORD");
 }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 49 "lexer.l"
+#line 50 "lexer.l"
 { words++; chars += strlen(yytext);
     printf("%-10s | %-10s\n", yytext, "IF_KEYWORD");
 }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 53 "lexer.l"
+#line 54 "lexer.l"
 { words++; chars += strlen(yytext);
     printf("%-10s | %-10s\n", yytext, "ELSE_KEYWORD");
 }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 57 "lexer.l"
+#line 58 "lexer.l"
 { words++; chars += strlen(yytext);
     printf("%-10s | %-10s\n", yytext, "WHILE_KEYWORD");
 }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 61 "lexer.l"
+#line 62 "lexer.l"
 { words++; chars += strlen(yytext);
     printf("%-10s | %-10s\n", yytext, "RETURN_KEYWORD");
 }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 65 "lexer.l"
+#line 66 "lexer.l"
 {words++; chars += strlen(yytext);
          printf("%-10s | %-10s\n", yytext, "IDENTIFIER");
         }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 69 "lexer.l"
+#line 70 "lexer.l"
 {words++; chars += strlen(yytext);
               printf("%-10s | %-10s\n", yytext, "NUMBER");
             }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 73 "lexer.l"
+#line 74 "lexer.l"
 {words++; chars += strlen(yytext);
               printf("%-10s | %-10s\n", yytext, "OPERATOR");
             }	
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 76 "lexer.l"
+#line 77 "lexer.l"
 {words++; chars += strlen(yytext);
               printf("%-10s | %-10s\n", yytext, "SYMBOL");
             }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 80 "lexer.l"
+#line 81 "lexer.l"
 {words++; chars += strlen(yytext);
                printf("|ERROR| %s : Bad Identifier at line %d char %d\n", yytext,lines,chars);
             }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 84 "lexer.l"
+#line 85 "lexer.l"
 {words++; chars += strlen(yytext);
               printf("%-10s | %-10s\n", yytext, "PARENTHESIS");
             }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 88 "lexer.l"
+#line 89 "lexer.l"
 {chars++;
               printf("%-10s | %-10s\n", yytext, "SEMICOLON");
 		}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 92 "lexer.l"
+#line 93 "lexer.l"
 {chars++;
               printf("%-10s | %-10s\n", yytext, "EQ");
 		}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 95 "lexer.l"
+#line 96 "lexer.l"
 {chars++;
 			  printf("%-10s | %-10s\n", yytext, "LBRACE");
 		}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 98 "lexer.l"
+#line 99 "lexer.l"
 {chars++;
 			  printf("%-10s | %-10s\n", yytext, "RBRACE");
 		}
@@ -917,27 +918,27 @@ YY_RULE_SETUP
 case 19:
 /* rule 19 can match eol */
 YY_RULE_SETUP
-#line 103 "lexer.l"
+#line 104 "lexer.l"
 {lines++; chars=0;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 104 "lexer.l"
+#line 105 "lexer.l"
 {chars++;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 105 "lexer.l"
+#line 106 "lexer.l"
 {chars++;
          printf("|ERROR| %s : Unrecognized symbol at line %d char %d\n", yytext,lines,chars);
 		}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 111 "lexer.l"
+#line 112 "lexer.l"
 ECHO;
 	YY_BREAK
-#line 940 "lex.yy.c"
+#line 941 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1942,5 +1943,5 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 111 "lexer.l"
+#line 112 "lexer.l"
 
