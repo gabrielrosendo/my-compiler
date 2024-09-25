@@ -38,15 +38,9 @@ void yyerror(const char* s);
 
 %%
 
-Program: Function
+Program: StmtList
+       | VarDeclList StmtList
        ;
-
-Function: TYPE ID '(' ')' LBRACE StmtList RBRACE
-        {
-            printf("Parsed function: %s\n", $2);
-        }
-        ;
-
 StmtList: Stmt
         | StmtList Stmt
         ;

@@ -31,6 +31,11 @@ BAD_ID {NUMBER}{ID}
     }
 }
 
+\"(\\\"|[^\"\n])*\" { 
+    words++; chars += strlen(yytext);
+    printf("%-10s | %-10s\n", yytext, "STRING");
+    // You might want to add a STRING token if you need it in your grammar
+}
 
 "int"|"float"|"char" { 
     words++; chars += strlen(yytext);
@@ -99,16 +104,7 @@ BAD_ID {NUMBER}{ID}
     printf("%-10s | %-10s\n", yytext, "EQ");
     return EQ;
 }
-"(" { 
-    chars++;
-    printf("%-10s | %-10s\n", yytext, "LPAREN");
-    return '('; 
-}
-")" { 
-    chars++;
-    printf("%-10s | %-10s\n", yytext, "RPAREN");
-    return ')'; 
-}
+
 "{" { 
     chars++;
     printf("%-10s | %-10s\n", yytext, "LBRACE");
@@ -121,6 +117,16 @@ BAD_ID {NUMBER}{ID}
     return RBRACE;
 }
 
+"(" { 
+    chars++;
+    printf("%-10s | %-10s\n", yytext, "LPAREN");
+    return '('; 
+}
+")" { 
+    chars++;
+    printf("%-10s | %-10s\n", yytext, "RPAREN");
+    return ')'; 
+}
 {BAD_ID} {
     words++; chars += strlen(yytext);
     printf("|ERROR| %s : Bad Identifier at line %d char %d\n", yytext, lines, chars);

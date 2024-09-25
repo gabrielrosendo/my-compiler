@@ -1,6 +1,8 @@
 - Add AST.H
 - Implement symbol table
 - Semantic files?
+- Add ==
+- Add < and >
 
 Bugs to fix
 - Parser gives error below, regardless of input:
