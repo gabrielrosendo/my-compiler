@@ -11,4 +11,3 @@ Bugs to fix
 Error: syntax error at line 1, near ''
 
 Minimum Requirements:
-- 
