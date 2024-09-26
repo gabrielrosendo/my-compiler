@@ -47,14 +47,12 @@
      OPERATOR = 263,
      ADD = 264,
      SUB = 265,
-     MUL = 266,
-     DIV = 267,
-     SYMBOL = 268,
-     PARENTHESIS = 269,
-     SEMICOLON = 270,
-     EQ = 271,
-     LBRACE = 272,
-     RBRACE = 273
+     SYMBOL = 266,
+     PARENTHESIS = 267,
+     SEMICOLON = 268,
+     EQ = 269,
+     LBRACE = 270,
+     RBRACE = 271
    };
 #endif
 /* Tokens.  */
@@ -66,14 +64,12 @@
 #define OPERATOR 263
 #define ADD 264
 #define SUB 265
-#define MUL 266
-#define DIV 267
-#define SYMBOL 268
-#define PARENTHESIS 269
-#define SEMICOLON 270
-#define EQ 271
-#define LBRACE 272
-#define RBRACE 273
+#define SYMBOL 266
+#define PARENTHESIS 267
+#define SEMICOLON 268
+#define EQ 269
+#define LBRACE 270
+#define RBRACE 271
 
 
 
@@ -87,9 +83,10 @@ typedef union YYSTYPE
     char* string;
     char* keyword;
     char* operator;
+    struct ASTNode* ast;
 }
 /* Line 1529 of yacc.c.  */
-#line 93 "parser.tab.h"
+#line 90 "parser.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

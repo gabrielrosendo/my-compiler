@@ -34,7 +34,7 @@ void yyerror(const char* s);
 %token <string> RBRACE
 
 
-%type ast Program StmtList Stmt VarDeclList VarDecl expression
+%type <ast> Program StmtList Stmt VarDeclList VarDecl expression
 %%
 
 Program: StmtList
@@ -72,12 +72,6 @@ expression: NUMBER { printf("Parsed number: %d\n", $1); }
           }
           | expression SUB expression { 
               printf("Parsed subtraction expression\n");
-          }
-          | expression MUL expression { 
-              printf("Parsed multiplication expression\n");
-          }
-          | expression DIV expression { 
-              printf("Parsed division expression\n");
           }
           ;
 

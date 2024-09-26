@@ -8,10 +8,8 @@ Terminals which are not used
    RBRACE
 
 
-State 29 conflicts: 4 shift/reduce
-State 30 conflicts: 4 shift/reduce
-State 31 conflicts: 4 shift/reduce
-State 32 conflicts: 4 shift/reduce
+State 27 conflicts: 2 shift/reduce
+State 28 conflicts: 2 shift/reduce
 
 
 Grammar
@@ -37,8 +35,6 @@ Grammar
    12           | ID
    13           | expression ADD expression
    14           | expression SUB expression
-   15           | expression MUL expression
-   16           | expression DIV expression
 
 
 Terminals, with rules where they appear
@@ -55,32 +51,30 @@ PRINT (262) 5
 OPERATOR (263)
 ADD (264) 13
 SUB (265) 14
-MUL (266) 15
-DIV (267) 16
-SYMBOL (268)
-PARENTHESIS (269)
-SEMICOLON (270) 5 6 9 10
-EQ (271) 6 10
-LBRACE (272)
-RBRACE (273)
+SYMBOL (266)
+PARENTHESIS (267)
+SEMICOLON (268) 5 6 9 10
+EQ (269) 6 10
+LBRACE (270)
+RBRACE (271)
 
 
 Nonterminals, with rules where they appear
 
-$accept (21)
+$accept (19)
     on left: 0
-Program (22)
+Program (20)
     on left: 1 2, on right: 0
-StmtList (23)
+StmtList (21)
     on left: 3 4, on right: 1 2 4
-Stmt (24)
+Stmt (22)
     on left: 5 6, on right: 3 4
-VarDeclList (25)
+VarDeclList (23)
     on left: 7 8, on right: 2 8
-VarDecl (26)
+VarDecl (24)
     on left: 9 10, on right: 7 8
-expression (27)
-    on left: 11 12 13 14 15 16, on right: 5 6 10 13 14 15 16
+expression (25)
+    on left: 11 12 13 14, on right: 5 6 10 13 14
 
 
 state 0
@@ -250,14 +244,10 @@ state 18
     6 Stmt: ID EQ expression . SEMICOLON
    13 expression: expression . ADD expression
    14           | expression . SUB expression
-   15           | expression . MUL expression
-   16           | expression . DIV expression
 
     ADD        shift, and go to state 22
     SUB        shift, and go to state 23
-    MUL        shift, and go to state 24
-    DIV        shift, and go to state 25
-    SEMICOLON  shift, and go to state 26
+    SEMICOLON  shift, and go to state 24
 
 
 state 19
@@ -274,7 +264,7 @@ state 20
     NUMBER  shift, and go to state 16
     ID      shift, and go to state 17
 
-    expression  go to state 27
+    expression  go to state 25
 
 
 state 21
@@ -282,14 +272,10 @@ state 21
     5 Stmt: PRINT '(' expression . ')' SEMICOLON
    13 expression: expression . ADD expression
    14           | expression . SUB expression
-   15           | expression . MUL expression
-   16           | expression . DIV expression
 
     ADD  shift, and go to state 22
     SUB  shift, and go to state 23
-    MUL  shift, and go to state 24
-    DIV  shift, and go to state 25
-    ')'  shift, and go to state 28
+    ')'  shift, and go to state 26
 
 
 state 22
@@ -299,7 +285,7 @@ state 22
     NUMBER  shift, and go to state 16
     ID      shift, and go to state 17
 
-    expression  go to state 29
+    expression  go to state 27
 
 
 state 23
@@ -309,146 +295,70 @@ state 23
     NUMBER  shift, and go to state 16
     ID      shift, and go to state 17
 
-    expression  go to state 30
+    expression  go to state 28
 
 
 state 24
-
-   15 expression: expression MUL . expression
-
-    NUMBER  shift, and go to state 16
-    ID      shift, and go to state 17
-
-    expression  go to state 31
-
-
-state 25
-
-   16 expression: expression DIV . expression
-
-    NUMBER  shift, and go to state 16
-    ID      shift, and go to state 17
-
-    expression  go to state 32
-
-
-state 26
 
     6 Stmt: ID EQ expression SEMICOLON .
 
     $default  reduce using rule 6 (Stmt)
 
 
-state 27
+state 25
 
    10 VarDecl: TYPE ID EQ expression . SEMICOLON
    13 expression: expression . ADD expression
    14           | expression . SUB expression
-   15           | expression . MUL expression
-   16           | expression . DIV expression
 
     ADD        shift, and go to state 22
     SUB        shift, and go to state 23
-    MUL        shift, and go to state 24
-    DIV        shift, and go to state 25
-    SEMICOLON  shift, and go to state 33
+    SEMICOLON  shift, and go to state 29
 
 
-state 28
+state 26
 
     5 Stmt: PRINT '(' expression ')' . SEMICOLON
 
-    SEMICOLON  shift, and go to state 34
+    SEMICOLON  shift, and go to state 30
 
 
-state 29
+state 27
 
    13 expression: expression . ADD expression
    13           | expression ADD expression .
    14           | expression . SUB expression
-   15           | expression . MUL expression
-   16           | expression . DIV expression
 
     ADD  shift, and go to state 22
     SUB  shift, and go to state 23
-    MUL  shift, and go to state 24
-    DIV  shift, and go to state 25
 
     ADD       [reduce using rule 13 (expression)]
     SUB       [reduce using rule 13 (expression)]
-    MUL       [reduce using rule 13 (expression)]
-    DIV       [reduce using rule 13 (expression)]
     $default  reduce using rule 13 (expression)
 
 
-state 30
+state 28
 
    13 expression: expression . ADD expression
    14           | expression . SUB expression
    14           | expression SUB expression .
-   15           | expression . MUL expression
-   16           | expression . DIV expression
 
     ADD  shift, and go to state 22
     SUB  shift, and go to state 23
-    MUL  shift, and go to state 24
-    DIV  shift, and go to state 25
 
     ADD       [reduce using rule 14 (expression)]
     SUB       [reduce using rule 14 (expression)]
-    MUL       [reduce using rule 14 (expression)]
-    DIV       [reduce using rule 14 (expression)]
     $default  reduce using rule 14 (expression)
 
 
-state 31
-
-   13 expression: expression . ADD expression
-   14           | expression . SUB expression
-   15           | expression . MUL expression
-   15           | expression MUL expression .
-   16           | expression . DIV expression
-
-    ADD  shift, and go to state 22
-    SUB  shift, and go to state 23
-    MUL  shift, and go to state 24
-    DIV  shift, and go to state 25
-
-    ADD       [reduce using rule 15 (expression)]
-    SUB       [reduce using rule 15 (expression)]
-    MUL       [reduce using rule 15 (expression)]
-    DIV       [reduce using rule 15 (expression)]
-    $default  reduce using rule 15 (expression)
-
-
-state 32
-
-   13 expression: expression . ADD expression
-   14           | expression . SUB expression
-   15           | expression . MUL expression
-   16           | expression . DIV expression
-   16           | expression DIV expression .
-
-    ADD  shift, and go to state 22
-    SUB  shift, and go to state 23
-    MUL  shift, and go to state 24
-    DIV  shift, and go to state 25
-
-    ADD       [reduce using rule 16 (expression)]
-    SUB       [reduce using rule 16 (expression)]
-    MUL       [reduce using rule 16 (expression)]
-    DIV       [reduce using rule 16 (expression)]
-    $default  reduce using rule 16 (expression)
-
-
-state 33
+state 29
 
    10 VarDecl: TYPE ID EQ expression SEMICOLON .
 
     $default  reduce using rule 10 (VarDecl)
 
 
-state 34
+state 30
 
     5 Stmt: PRINT '(' expression ')' SEMICOLON .
 

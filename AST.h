@@ -8,7 +8,7 @@ typedef enum {
     NodeType_VarDeclList,
     NodeType_StmtList,
     NodeType_Stmt,
-    NodeType_VArDecl,
+    NodeType_VarDecl,
     NodeType_Expression,
     NodeType_Identifier,
     NodeType_BinaryOp,
@@ -22,7 +22,7 @@ typedef struct ASTNode {
     union {
         struct {
             struct ASTNode* varDeclList;
-            struct ASTNode* StmtList;
+            struct ASTNode* stmtList;
         } program;
 
         struct {
@@ -32,9 +32,9 @@ typedef struct ASTNode {
         struct {
             char* varType;
             char* varName;
-        }VarDecl;
-    };
-} ASTNode;
+        }varDecl;
+    } value;
+}ASTNode;
 
 
 #endif // AST_H
