@@ -18,13 +18,14 @@ void yyerror(const char* s);
     char* string;
     char* keyword;
     char* operator;
+    struct ASTNode* ast;
 }
 
 %token <number> NUMBER
 %token <string> ID
 %token <string> TYPE
 %token <keyword> PRINT_KEYWORD PRINT
-%token <operator> OPERATOR ADD SUB MUL DIV
+%token <operator> OPERATOR ADD SUB 
 %token <string> SYMBOL
 %token <string> PARENTHESIS
 %token <string> SEMICOLON
@@ -32,6 +33,8 @@ void yyerror(const char* s);
 %token <string> LBRACE
 %token <string> RBRACE
 
+
+%type ast Program StmtList Stmt VarDeclList VarDecl expression
 %%
 
 Program: StmtList

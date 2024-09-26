@@ -67,8 +67,6 @@ BAD_ID {NUMBER}{ID}
 
 "+" { return ADD; }
 "-" { return SUB; }
-"*" { return MUL; }
-"/" { return DIV; }
 
 ";" { 
     chars++;
