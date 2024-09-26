@@ -1,9 +1,7 @@
 Terminals which are not used
 
-   PRINT_KEYWORD
-   OPERATOR
-   SYMBOL
-   PARENTHESIS
+   LPAREN
+   RPAREN
    LBRACE
    RBRACE
 
@@ -46,34 +44,32 @@ error (256)
 NUMBER (258) 11
 ID (259) 6 9 10 12
 TYPE (260) 9 10
-PRINT_KEYWORD (261)
-PRINT (262) 5
-OPERATOR (263)
-ADD (264) 13
-SUB (265) 14
-SYMBOL (266)
-PARENTHESIS (267)
-SEMICOLON (268) 5 6 9 10
-EQ (269) 6 10
-LBRACE (270)
-RBRACE (271)
+PRINT (261) 5
+EQ (262) 6 10
+ADD (263) 13
+SUB (264) 14
+LPAREN (265)
+RPAREN (266)
+SEMICOLON (267) 5 6 9 10
+LBRACE (268)
+RBRACE (269)
 
 
 Nonterminals, with rules where they appear
 
-$accept (19)
+$accept (17)
     on left: 0
-Program (20)
+Program (18)
     on left: 1 2, on right: 0
-StmtList (21)
+StmtList (19)
     on left: 3 4, on right: 1 2 4
-Stmt (22)
+Stmt (20)
     on left: 5 6, on right: 3 4
-VarDeclList (23)
+VarDeclList (21)
     on left: 7 8, on right: 2 8
-VarDecl (24)
+VarDecl (22)
     on left: 9 10, on right: 7 8
-expression (25)
+expression (23)
     on left: 11 12 13 14, on right: 5 6 10 13 14
 
 
@@ -177,8 +173,8 @@ state 10
     9 VarDecl: TYPE ID . SEMICOLON
    10        | TYPE ID . EQ expression SEMICOLON
 
-    SEMICOLON  shift, and go to state 19
-    EQ         shift, and go to state 20
+    EQ         shift, and go to state 19
+    SEMICOLON  shift, and go to state 20
 
 
 state 11
@@ -252,19 +248,19 @@ state 18
 
 state 19
 
-    9 VarDecl: TYPE ID SEMICOLON .
-
-    $default  reduce using rule 9 (VarDecl)
-
-
-state 20
-
    10 VarDecl: TYPE ID EQ . expression SEMICOLON
 
     NUMBER  shift, and go to state 16
     ID      shift, and go to state 17
 
     expression  go to state 25
+
+
+state 20
+
+    9 VarDecl: TYPE ID SEMICOLON .
+
+    $default  reduce using rule 9 (VarDecl)
 
 
 state 21

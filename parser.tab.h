@@ -42,51 +42,47 @@
      NUMBER = 258,
      ID = 259,
      TYPE = 260,
-     PRINT_KEYWORD = 261,
-     PRINT = 262,
-     OPERATOR = 263,
-     ADD = 264,
-     SUB = 265,
-     SYMBOL = 266,
-     PARENTHESIS = 267,
-     SEMICOLON = 268,
-     EQ = 269,
-     LBRACE = 270,
-     RBRACE = 271
+     PRINT = 261,
+     EQ = 262,
+     ADD = 263,
+     SUB = 264,
+     LPAREN = 265,
+     RPAREN = 266,
+     SEMICOLON = 267,
+     LBRACE = 268,
+     RBRACE = 269
    };
 #endif
 /* Tokens.  */
 #define NUMBER 258
 #define ID 259
 #define TYPE 260
-#define PRINT_KEYWORD 261
-#define PRINT 262
-#define OPERATOR 263
-#define ADD 264
-#define SUB 265
-#define SYMBOL 266
-#define PARENTHESIS 267
-#define SEMICOLON 268
-#define EQ 269
-#define LBRACE 270
-#define RBRACE 271
+#define PRINT 261
+#define EQ 262
+#define ADD 263
+#define SUB 264
+#define LPAREN 265
+#define RPAREN 266
+#define SEMICOLON 267
+#define LBRACE 268
+#define RBRACE 269
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 15 "parser.y"
+#line 18 "parser.y"
 {
     int number;
     char character;
     char* string;
     char* keyword;
-    char* operator;
+    char* op;
     struct ASTNode* ast;
 }
 /* Line 1529 of yacc.c.  */
-#line 90 "parser.tab.h"
+#line 86 "parser.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

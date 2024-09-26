@@ -29,12 +29,40 @@ typedef struct ASTNode {
             struct ASTNode* VarDecl;
             struct ASTNode* nextVarDecl;
         }VarDeclList;
+        
+        struct {
+            struct ASTNode* stmt;
+            struct ASTNode* nextStmt;
+        } stmtList;
+
         struct {
             char* varType;
             char* varName;
         }varDecl;
-    } value;
+
+        struct {
+            struct ASTNode* left;
+            struct ASTNode* right;
+            char op;
+        } binaryOp;
+        struct {
+            char* name;
+        } identifier;
+        struct {
+            char* op; 
+            char* varName;
+            struct ASTNode* expr;
+        }assignment;
+        struct{
+            struct ASTNode* expr;
+        }print;
+
+    } ;
 }ASTNode;
+
+// Function prototypes for AST handling
+ASTNode* createNode(NodeType type);
+void traverseAST(ASTNode* node, int level);
 
 
 #endif // AST_H

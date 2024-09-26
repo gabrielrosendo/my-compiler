@@ -1,6 +1,7 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include "AST.h"
 #include <string.h>
 
 extern int yylex();   // Declare yylex, the lexer function
@@ -10,6 +11,8 @@ extern int yylineno;  // Declare yylineno, the line number counter
 
 void yyerror(const char* s);
 
+ASTNode* root = NULL; 
+
 %}
 
 %union {
@@ -17,19 +20,20 @@ void yyerror(const char* s);
     char character;
     char* string;
     char* keyword;
-    char* operator;
+    char* op;
     struct ASTNode* ast;
 }
 
 %token <number> NUMBER
 %token <string> ID
 %token <string> TYPE
-%token <keyword> PRINT_KEYWORD PRINT
-%token <operator> OPERATOR ADD SUB 
-%token <string> SYMBOL
-%token <string> PARENTHESIS
+%token <string> PRINT
+%token <op> EQ
+%token <op> ADD
+%token <op> SUB
+%token <string> LPAREN
+%token <string> RPAREN
 %token <string> SEMICOLON
-%token <string> EQ
 %token <string> LBRACE
 %token <string> RBRACE
 
@@ -37,8 +41,14 @@ void yyerror(const char* s);
 %type <ast> Program StmtList Stmt VarDeclList VarDecl expression
 %%
 
-Program: StmtList
-       | VarDeclList StmtList
+Program: StmtList { 
+            printf("The parser has started\n"); 
+            
+        }
+       | VarDeclList StmtList { 
+            printf("The parser has started\n"); 
+            
+        }
        ;
 StmtList: Stmt
         | StmtList Stmt
