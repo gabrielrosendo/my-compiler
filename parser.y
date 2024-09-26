@@ -43,11 +43,17 @@ ASTNode* root = NULL;
 
 Program: StmtList { 
             printf("The parser has started\n"); 
-            
+            root = malloc(sizeof(ASTNode)); // Allocate memory for the root node
+            root->type = NodeType_Program; // Set the type of the root node
+            root->program.varDeclList = NULL; // No variable declarations in this case
+            root->program.stmtList = $1; // $1 refers to the StmtList
         }
        | VarDeclList StmtList { 
             printf("The parser has started\n"); 
-            
+            root = malloc(sizeof(ASTNode)); // Allocate memory for the root node
+            root->type = NodeType_Program; // Set the type of the root node
+            root->program.varDeclList = $1; // Set the variable declaration list
+            root->program.stmtList = $2; // Set the statement list
         }
        ;
 StmtList: Stmt
