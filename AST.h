@@ -21,8 +21,8 @@ typedef struct ASTNode {
     NodeType type;
     union {
         struct {
-            struct ASTNode* varDeclList;
-            struct ASTNode* stmtList;
+            struct ASTNode* VarDeclList;
+            struct ASTNode* StmtList;
         } program;
 
         struct {
@@ -57,7 +57,7 @@ typedef struct ASTNode {
             struct ASTNode* expr;
         }print;
 
-    } ;
+    } value;
 }ASTNode;
 
 // Function prototypes for AST handling

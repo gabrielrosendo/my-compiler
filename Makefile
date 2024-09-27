@@ -9,8 +9,8 @@ lex.yy.c: lexer.l parser.tab.h
 	@flex lexer.l
 
 # Compile everything directly into the final executable
-parser: lex.yy.c parser.tab.c parser.tab.h symbolBST.c main.c
-	@gcc -o parser parser.tab.c lex.yy.c symbolBST.c symbolBST_Test.c main.c
+parser: lex.yy.c parser.tab.c AST.c parser.tab.h symbolTable.c main.c
+	@gcc -o parser parser.tab.c AST.c lex.yy.c symbolTable.c main.c
 	@./parser input.txt
 
 # Clean up all generated files
@@ -19,7 +19,7 @@ clean:
 	@ls -l
 
 windowclean:
-	@del /Q parser parser.tab.c lex.yy.c parser.tab.h parser.output output.s
+	@del /Q parser parser.tab.c lex.yy.c parser.tab.h AST.o parser.output output.s
 	@dir
 
 # Make custom build command for specific tests?

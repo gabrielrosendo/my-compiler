@@ -43,24 +43,43 @@ ASTNode* root = NULL;
 
 Program: StmtList { 
             printf("The parser has started\n"); 
-            root = malloc(sizeof(ASTNode)); // Allocate memory for the root node
-            root->type = NodeType_Program; // Set the type of the root node
-            root->program.varDeclList = NULL; // No variable declarations in this case
-            root->program.stmtList = $1; // $1 refers to the StmtList
+            root = createNode(NodeType_Program); // Create the program node
+            root->value.program.StmtList = $1; // Set the statement list
         }
        | VarDeclList StmtList { 
             printf("The parser has started\n"); 
-            root = malloc(sizeof(ASTNode)); // Allocate memory for the root node
-            root->type = NodeType_Program; // Set the type of the root node
-            root->program.varDeclList = $1; // Set the variable declaration list
-            root->program.stmtList = $2; // Set the statement list
+            root = createNode(NodeType_Program); // Create the program node
+            root->value.program.VarDeclList = $1; // Set the variable declaration list
+            root->value.program.StmtList = $2; // Set the statement list
         }
        ;
-StmtList: Stmt // A program can have a single print statement and nothing else
-        | StmtList Stmt
+VarDeclList: VarDecl {
+                printf("Parsed variable declaration\n");
+                $$ = createNode(NodeType_VarDeclList); 
+                $$->value.VarDeclList.VarDecl = $1;
+            }
+           | VarDeclList VarDecl {
+                printf("Parsed variable declaration\n");
+                $$ = createNode(NodeType_VarDeclList); 
+                $$->value.VarDeclList.VarDecl = $1;
+                $$->value.VarDeclList.nextVarDecl = $2;
+           }
+           ;
+
+StmtList: Stmt {
+            printf("Parsed statement\n");
+            $$ = createNode(NodeType_StmtList);
+            $$->value.StmtList.stmt = $1;
+        }  // A program can have a single print statement and nothing else
+        | StmtList Stmt {
+            printf("Parsed statement list\n");
+            $$ = createNode(NodeType_StmtList);
+            $$->value.StmtList.stmt = $1;
+            $$->value.StmtList.nextStmt = $2;
+        }
         ;
 
-Stmt: PRINT '(' expression ')' SEMICOLON { 
+Stmt: PRINT LPAREN expression RPAREN SEMICOLON { 
     printf("Parsed print statement\n");
 }
 
@@ -68,10 +87,6 @@ Stmt: PRINT '(' expression ')' SEMICOLON {
         printf("Parsed assignment statement\n");
 }
     ;
-
-VarDeclList: VarDecl
-           | VarDeclList VarDecl
-           ;
 
 VarDecl: TYPE ID SEMICOLON { 
     printf("Parsed variable declaration: %s\n", $2);
@@ -110,8 +125,8 @@ void yyerror(const char* s) {
             exit(EXIT_FAILURE);
         }
         $$->type = NodeType_VarDecl;
-        $$->varDecl.varType = strdup($1);
-        $$->varDecl.varName = strdup($2);
+        $$->VarDecl.varType = strdup($1);
+        $$->VarDecl.varName = strdup($2);
 
         addSymbol(symTab, $2, $1);
     }
