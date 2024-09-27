@@ -17,3 +17,7 @@ parser: lex.yy.c parser.tab.c parser.tab.h symbolTable.c main.c
 clean:
 	@rm -f parser parser.tab.c lex.yy.c parser.tab.h parser.output output.s
 	@ls -l
+
+windowclean:
+	@del /Q parser parser.tab.c lex.yy.c parser.tab.h parser.output output.s
+	@dir
