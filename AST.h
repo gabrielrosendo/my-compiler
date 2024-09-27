@@ -33,12 +33,12 @@ typedef struct ASTNode {
         struct {
             struct ASTNode* stmt;
             struct ASTNode* nextStmt;
-        } stmtList;
+        } StmtList;
 
         struct {
             char* varType;
             char* varName;
-        }varDecl;
+        }VarDecl;
 
         struct {
             struct ASTNode* left;
