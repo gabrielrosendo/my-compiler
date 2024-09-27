@@ -447,8 +447,8 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    44,    44,    49,    57,    58,    61,    65,    70,    71,
-      74,    77,    82,    83,    84,    87
+       0,    44,    44,    51,    59,    60,    63,    67,    72,    73,
+      76,    79,    84,    85,    86,    89
 };
 #endif
 
@@ -1369,68 +1369,70 @@ yyreduce:
     { 
             printf("The parser has started\n"); 
             root = malloc(sizeof(ASTNode)); // Allocate memory for the root node
-
+            root->type = NodeType_Program; // Set the type of the root node
+            root->program.varDeclList = NULL; // No variable declarations in this case
+            root->program.stmtList = (yyvsp[(1) - (1)].ast); // $1 refers to the StmtList
         ;}
     break;
 
   case 3:
-#line 49 "parser.y"
+#line 51 "parser.y"
     { 
             printf("The parser has started\n"); 
             root = malloc(sizeof(ASTNode)); // Allocate memory for the root node
             root->type = NodeType_Program; // Set the type of the root node
-            root->program.varDeclList = (yyvsp[(1) - (2)].ast); //
-            root->program.stmtList = (yyvsp[(2) - (2)].ast);
+            root->program.varDeclList = (yyvsp[(1) - (2)].ast); // Set the variable declaration list
+            root->program.stmtList = (yyvsp[(2) - (2)].ast); // Set the statement list
         ;}
     break;
 
   case 6:
-#line 61 "parser.y"
+#line 63 "parser.y"
     { 
     printf("Parsed print statement\n");
 ;}
     break;
 
   case 7:
-#line 65 "parser.y"
+#line 67 "parser.y"
     {
         printf("Parsed assignment statement\n");
 ;}
     break;
 
   case 10:
-#line 74 "parser.y"
+#line 76 "parser.y"
     { 
     printf("Parsed variable declaration: %s\n", (yyvsp[(2) - (3)].string));
 ;}
     break;
 
   case 11:
-#line 77 "parser.y"
+#line 79 "parser.y"
     {
         printf("Parsed variable declaration with initialization: %s\n", (yyvsp[(2) - (5)].string));
     ;}
     break;
 
   case 12:
-#line 82 "parser.y"
+#line 84 "parser.y"
     { printf("Parsed number: %d\n", (yyvsp[(1) - (1)].number)); ;}
     break;
 
   case 13:
-#line 83 "parser.y"
+#line 85 "parser.y"
     { printf("Parsed identifier: %s\n", (yyvsp[(1) - (1)].string)); ;}
     break;
 
   case 14:
-#line 84 "parser.y"
+#line 86 "parser.y"
     { 
               printf("Parsed addition expression\n");
           ;}
     break;
 
   case 15:
-#line 87 "parser.y"
+#line 89 "parser.y"
     { 
               printf("Parsed subtraction expression\n");
           ;}
@@ -1438,7 +1440,7 @@ yyreduce:
 
 
 /* Line 1267 of yacc.c.  */
-#line 1442 "parser.tab.c"
+#line 1444 "parser.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1652,7 +1654,7 @@ yyreturn:
 }
 
 
-#line 92 "parser.y"
+#line 94 "parser.y"
 
 
 void yyerror(const char* s) {
