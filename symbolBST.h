@@ -29,5 +29,7 @@ void addSymbol(SymbolBST* head, char* name, char* type);
 Symbol* lookupSymbol(SymbolBST* head, char* name);
 void freeSymbolTable(SymbolBST* head);
 void printSymbolTable(SymbolBST* head);  // For debugging
+void printSymbolTablePrivateLeft(SymbolBST* curNode, int indent);
+
 
 #endif // SYMBOL_BST1_H

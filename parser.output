@@ -1,4 +1,4 @@
-Terminals unused in grammar
+Terminals which are not used
 
    LBRACE
    RBRACE
@@ -18,14 +18,14 @@ Grammar
     3 VarDeclList: VarDecl
     4            | VarDeclList VarDecl
 
-    5 StmtList: Stmt
-    6         | StmtList Stmt
+    5 VarDecl: TYPE ID SEMICOLON
+    6        | TYPE ID EQ expression SEMICOLON
 
-    7 Stmt: PRINT LPAREN expression RPAREN SEMICOLON
-    8     | ID EQ expression SEMICOLON
+    7 StmtList: Stmt
+    8         | StmtList Stmt
 
-    9 VarDecl: TYPE ID SEMICOLON
-   10        | TYPE ID EQ expression SEMICOLON
+    9 Stmt: PRINT LPAREN expression RPAREN SEMICOLON
+   10     | ID EQ expression SEMICOLON
 
    11 expression: NUMBER
    12           | ID
@@ -38,15 +38,15 @@ Terminals, with rules where they appear
 $end (0) 0
 error (256)
 NUMBER (258) 11
-ID (259) 8 9 10 12
-TYPE (260) 9 10
-PRINT (261) 7
-EQ (262) 8 10
+ID (259) 5 6 10 12
+TYPE (260) 5 6
+PRINT (261) 9
+EQ (262) 6 10
 ADD (263) 13
 SUB (264) 14
-LPAREN (265) 7
-RPAREN (266) 7
-SEMICOLON (267) 7 8 9 10
+LPAREN (265) 9
+RPAREN (266) 9
+SEMICOLON (267) 5 6 9 10
 LBRACE (268)
 RBRACE (269)
 
@@ -59,14 +59,14 @@ Program (16)
     on left: 1 2, on right: 0
 VarDeclList (17)
     on left: 3 4, on right: 2 4
-StmtList (18)
-    on left: 5 6, on right: 1 2 6
-Stmt (19)
-    on left: 7 8, on right: 5 6
-VarDecl (20)
-    on left: 9 10, on right: 3 4
+VarDecl (18)
+    on left: 5 6, on right: 3 4
+StmtList (19)
+    on left: 7 8, on right: 1 2 8
+Stmt (20)
+    on left: 9 10, on right: 7 8
 expression (21)
-    on left: 11 12 13 14, on right: 7 8 10 13 14
+    on left: 11 12 13 14, on right: 6 9 10 13 14
 
 
 state 0
@@ -79,29 +79,29 @@ state 0
 
     Program      go to state 4
     VarDeclList  go to state 5
-    StmtList     go to state 6
-    Stmt         go to state 7
-    VarDecl      go to state 8
+    VarDecl      go to state 6
+    StmtList     go to state 7
+    Stmt         go to state 8
 
 
 state 1
 
-    8 Stmt: ID . EQ expression SEMICOLON
+   10 Stmt: ID . EQ expression SEMICOLON
 
     EQ  shift, and go to state 9
 
 
 state 2
 
-    9 VarDecl: TYPE . ID SEMICOLON
-   10        | TYPE . ID EQ expression SEMICOLON
+    5 VarDecl: TYPE . ID SEMICOLON
+    6        | TYPE . ID EQ expression SEMICOLON
 
     ID  shift, and go to state 10
 
 
 state 3
 
-    7 Stmt: PRINT . LPAREN expression RPAREN SEMICOLON
+    9 Stmt: PRINT . LPAREN expression RPAREN SEMICOLON
 
     LPAREN  shift, and go to state 11
 
@@ -122,15 +122,22 @@ state 5
     TYPE   shift, and go to state 2
     PRINT  shift, and go to state 3
 
-    StmtList  go to state 13
-    Stmt      go to state 7
-    VarDecl   go to state 14
+    VarDecl   go to state 13
+    StmtList  go to state 14
+    Stmt      go to state 8
 
 
 state 6
 
+    3 VarDeclList: VarDecl .
+
+    $default  reduce using rule 3 (VarDeclList)
+
+
+state 7
+
     1 Program: StmtList .
-    6 StmtList: StmtList . Stmt
+    8 StmtList: StmtList . Stmt
 
     ID     shift, and go to state 1
     PRINT  shift, and go to state 3
@@ -140,23 +147,16 @@ state 6
     Stmt  go to state 15
 
 
-state 7
-
-    5 StmtList: Stmt .
-
-    $default  reduce using rule 5 (StmtList)
-
-
 state 8
 
-    3 VarDeclList: VarDecl .
+    7 StmtList: Stmt .
 
-    $default  reduce using rule 3 (VarDeclList)
+    $default  reduce using rule 7 (StmtList)
 
 
 state 9
 
-    8 Stmt: ID EQ . expression SEMICOLON
+   10 Stmt: ID EQ . expression SEMICOLON
 
     NUMBER  shift, and go to state 16
     ID      shift, and go to state 17
@@ -166,8 +166,8 @@ state 9
 
 state 10
 
-    9 VarDecl: TYPE ID . SEMICOLON
-   10        | TYPE ID . EQ expression SEMICOLON
+    5 VarDecl: TYPE ID . SEMICOLON
+    6        | TYPE ID . EQ expression SEMICOLON
 
     EQ         shift, and go to state 19
     SEMICOLON  shift, and go to state 20
@@ -175,7 +175,7 @@ state 10
 
 state 11
 
-    7 Stmt: PRINT LPAREN . expression RPAREN SEMICOLON
+    9 Stmt: PRINT LPAREN . expression RPAREN SEMICOLON
 
     NUMBER  shift, and go to state 16
     ID      shift, and go to state 17
@@ -192,8 +192,15 @@ state 12
 
 state 13
 
+    4 VarDeclList: VarDeclList VarDecl .
+
+    $default  reduce using rule 4 (VarDeclList)
+
+
+state 14
+
     2 Program: VarDeclList StmtList .
-    6 StmtList: StmtList . Stmt
+    8 StmtList: StmtList . Stmt
 
     ID     shift, and go to state 1
     PRINT  shift, and go to state 3
@@ -203,18 +210,11 @@ state 13
     Stmt  go to state 15
 
 
-state 14
-
-    4 VarDeclList: VarDeclList VarDecl .
-
-    $default  reduce using rule 4 (VarDeclList)
-
-
 state 15
 
-    6 StmtList: StmtList Stmt .
+    8 StmtList: StmtList Stmt .
 
-    $default  reduce using rule 6 (StmtList)
+    $default  reduce using rule 8 (StmtList)
 
 
 state 16
@@ -233,7 +233,7 @@ state 17
 
 state 18
 
-    8 Stmt: ID EQ expression . SEMICOLON
+   10 Stmt: ID EQ expression . SEMICOLON
    13 expression: expression . ADD expression
    14           | expression . SUB expression
 
@@ -244,7 +244,7 @@ state 18
 
 state 19
 
-   10 VarDecl: TYPE ID EQ . expression SEMICOLON
+    6 VarDecl: TYPE ID EQ . expression SEMICOLON
 
     NUMBER  shift, and go to state 16
     ID      shift, and go to state 17
@@ -254,14 +254,14 @@ state 19
 
 state 20
 
-    9 VarDecl: TYPE ID SEMICOLON .
+    5 VarDecl: TYPE ID SEMICOLON .
 
-    $default  reduce using rule 9 (VarDecl)
+    $default  reduce using rule 5 (VarDecl)
 
 
 state 21
 
-    7 Stmt: PRINT LPAREN expression . RPAREN SEMICOLON
+    9 Stmt: PRINT LPAREN expression . RPAREN SEMICOLON
    13 expression: expression . ADD expression
    14           | expression . SUB expression
 
@@ -292,14 +292,14 @@ state 23
 
 state 24
 
-    8 Stmt: ID EQ expression SEMICOLON .
+   10 Stmt: ID EQ expression SEMICOLON .
 
-    $default  reduce using rule 8 (Stmt)
+    $default  reduce using rule 10 (Stmt)
 
 
 state 25
 
-   10 VarDecl: TYPE ID EQ expression . SEMICOLON
+    6 VarDecl: TYPE ID EQ expression . SEMICOLON
    13 expression: expression . ADD expression
    14           | expression . SUB expression
 
@@ -310,7 +310,7 @@ state 25
 
 state 26
 
-    7 Stmt: PRINT LPAREN expression RPAREN . SEMICOLON
+    9 Stmt: PRINT LPAREN expression RPAREN . SEMICOLON
 
     SEMICOLON  shift, and go to state 30
 
@@ -345,13 +345,13 @@ state 28
 
 state 29
 
-   10 VarDecl: TYPE ID EQ expression SEMICOLON .
+    6 VarDecl: TYPE ID EQ expression SEMICOLON .
 
-    $default  reduce using rule 10 (VarDecl)
+    $default  reduce using rule 6 (VarDecl)
 
 
 state 30
 
-    7 Stmt: PRINT LPAREN expression RPAREN SEMICOLON .
+    9 Stmt: PRINT LPAREN expression RPAREN SEMICOLON .
 
-    $default  reduce using rule 7 (Stmt)
+    $default  reduce using rule 9 (Stmt)

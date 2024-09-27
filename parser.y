@@ -65,6 +65,19 @@ VarDeclList: VarDecl {
                 $$->value.VarDeclList.nextVarDecl = $2;
            }
            ;
+VarDecl: TYPE ID SEMICOLON { 
+            $$ = createNode(NodeType_VarDecl); 
+            $$->value.VarDecl.varType = $1; 
+            $$->value.VarDecl.varName = $2; 
+            printf("Parsed variable declaration: %s\n", $2);
+        }    
+        | TYPE ID EQ expression SEMICOLON {
+            $$->value.VarDecl.varType = $1; 
+            $$->value.VarDecl.varName = $2;
+            $$->value.VarDecl.initExpr = $3; 
+            printf("Parsed variable declaration with initialization: %s\n", $2);
+    }
+    ;
 
 StmtList: Stmt {
             printf("Parsed statement\n");
@@ -88,13 +101,6 @@ Stmt: PRINT LPAREN expression RPAREN SEMICOLON {
 }
     ;
 
-VarDecl: TYPE ID SEMICOLON { 
-    printf("Parsed variable declaration: %s\n", $2);
-}
-    | TYPE ID EQ expression SEMICOLON {
-        printf("Parsed variable declaration with initialization: %s\n", $2);
-    }
-    ;
 
 expression: NUMBER { printf("Parsed number: %d\n", $1); }
           | ID { printf("Parsed identifier: %s\n", $1); }

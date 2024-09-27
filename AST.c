@@ -23,6 +23,7 @@ struct ASTNode* createNode(NodeType type) {
         case NodeType_VarDecl:
             newNode->value.VarDecl.varType = NULL;
             newNode->value.VarDecl.varName = NULL;
+            newNode->value.VarDecl.initExpr = NULL;
             break;
         case NodeType_BinaryOp:
             newNode->value.binaryOp.left = NULL;

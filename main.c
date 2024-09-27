@@ -32,6 +32,7 @@ int main(int argc, char **argv) {
     // yylex();  // Directly call the lexer if needed
 
     printf("\n\nTESTING\n\n");
+// Commenting out as its giving me errors
 
     // Testing the symbolBST
     printf("symbolBST testing: \n");
@@ -40,6 +41,7 @@ int main(int argc, char **argv) {
     symbolBST_Test_AddSymbol_MultipleIntegerInputs();
     symbolBST_Test_GetSymbol_EmptySymbolBST();
     symbolBST_Test_GetSymbol_FoundAll();
+
 
     return 0;
 }

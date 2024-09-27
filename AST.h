@@ -38,6 +38,8 @@ typedef struct ASTNode {
         struct {
             char* varType;
             char* varName;
+            // initial value if provided numerical
+            struct ASTNode* initExpr;
         }VarDecl;
 
         struct {
