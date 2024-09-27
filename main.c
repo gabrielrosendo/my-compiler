@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "symbolBST_Test.h"
 
 // Declare external functions from the generated files
 extern int yyparse();   // Bison's parser function
@@ -29,6 +30,14 @@ int main(int argc, char **argv) {
 
     // Optionally, if you want to use yylex directly:
     // yylex();  // Directly call the lexer if needed
+
+    printf("\n\nTESTING\n\n");
+
+    // Testing the symbolBST
+    printf("symbolBST testing: \n");
+    symbolBST_TestCreation();
+    symbolBST_Test_AddSymbol_SingleIntegerInput();
+    symbolBST_Test_AddSymbol_MultipleIntegerInputs();
 
     return 0;
 }

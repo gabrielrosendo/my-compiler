@@ -7,6 +7,7 @@
 int words = 0;
 int chars = 0;
 int lines = 0;
+int yylineno;
 %}
 
 letter [a-zA-Z]

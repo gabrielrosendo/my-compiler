@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "symbolbst.h": "c",
+        "symboltable.h": "c",
+        "stdlib.h": "c"
+    }
+}
