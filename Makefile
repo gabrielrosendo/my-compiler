@@ -21,3 +21,5 @@ clean:
 windowclean:
 	@del /Q parser parser.tab.c lex.yy.c parser.tab.h parser.output output.s
 	@dir
+
+# Make custom build command for specific tests?
