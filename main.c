@@ -38,6 +38,8 @@ int main(int argc, char **argv) {
     symbolBST_TestCreation();
     symbolBST_Test_AddSymbol_SingleIntegerInput();
     symbolBST_Test_AddSymbol_MultipleIntegerInputs();
+    symbolBST_Test_GetSymbol_EmptySymbolBST();
+    symbolBST_Test_GetSymbol_FoundAll();
 
     return 0;
 }

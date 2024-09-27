@@ -1376,6 +1376,8 @@ yyreduce:
     break;
 
   case 3:
+
+/* Line 1455 of yacc.c  */
 #line 51 "parser.y"
     { 
             printf("The parser has started\n"); 
@@ -1387,6 +1389,8 @@ yyreduce:
     break;
 
   case 6:
+
+/* Line 1455 of yacc.c  */
 #line 63 "parser.y"
     { 
     printf("Parsed print statement\n");
@@ -1394,6 +1398,8 @@ yyreduce:
     break;
 
   case 7:
+
+/* Line 1455 of yacc.c  */
 #line 67 "parser.y"
     {
         printf("Parsed assignment statement\n");
@@ -1401,6 +1407,8 @@ yyreduce:
     break;
 
   case 10:
+
+/* Line 1455 of yacc.c  */
 #line 76 "parser.y"
     { 
     printf("Parsed variable declaration: %s\n", (yyvsp[(2) - (3)].string));
@@ -1408,6 +1416,8 @@ yyreduce:
     break;
 
   case 11:
+
+/* Line 1455 of yacc.c  */
 #line 79 "parser.y"
     {
         printf("Parsed variable declaration with initialization: %s\n", (yyvsp[(2) - (5)].string));
@@ -1415,16 +1425,22 @@ yyreduce:
     break;
 
   case 12:
+
+/* Line 1455 of yacc.c  */
 #line 84 "parser.y"
     { printf("Parsed number: %d\n", (yyvsp[(1) - (1)].number)); ;}
     break;
 
   case 13:
+
+/* Line 1455 of yacc.c  */
 #line 85 "parser.y"
     { printf("Parsed identifier: %s\n", (yyvsp[(1) - (1)].string)); ;}
     break;
 
   case 14:
+
+/* Line 1455 of yacc.c  */
 #line 86 "parser.y"
     { 
               printf("Parsed addition expression\n");
@@ -1432,6 +1448,8 @@ yyreduce:
     break;
 
   case 15:
+
+/* Line 1455 of yacc.c  */
 #line 89 "parser.y"
     { 
               printf("Parsed subtraction expression\n");
@@ -1439,8 +1457,9 @@ yyreduce:
     break;
 
 
-/* Line 1267 of yacc.c.  */
-#line 1444 "parser.tab.c"
+
+/* Line 1455 of yacc.c  */
+#line 1463 "parser.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1650,6 +1669,8 @@ yyreturn:
 }
 
 
+
+/* Line 1675 of yacc.c  */
 #line 94 "parser.y"
 
 

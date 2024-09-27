@@ -63,8 +63,30 @@ void addSymbol(SymbolBST* head, char* name, char* type) {
     }
 }
 
+Symbol* lookupSymbol(SymbolBST* head, char* name)   {
+    if (head == NULL) {
+        fprintf(stderr,"SymbolBST Error in lookupSymbol(): input node not initialized \n");
+        return NULL;
+    }
 
-Symbol* lookupSymbol(SymbolBST* head, char* name)   {}
+    if (head->symbol == NULL) {
+        fprintf(stderr,"SymbolBST Error in lookupSymbol(): symbol could not be found in SymbolBST \n");
+        return NULL;
+    }
+
+    unsigned int curHash = hash(name);
+
+    if (head->hash == curHash) {
+        return head->symbol;
+    }
+    
+    if (head->hash < curHash) {
+        return lookupSymbol(head->right, name);
+    }
+
+    // else (head->hash > curHash)    
+    return lookupSymbol(head->left, name);
+}
 
 void freeSymbolTable(SymbolBST* head)   {}
 
