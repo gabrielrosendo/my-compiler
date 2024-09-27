@@ -56,7 +56,7 @@ Program: StmtList {
             root->program.stmtList = $2; // Set the statement list
         }
        ;
-StmtList: Stmt
+StmtList: Stmt // A program can have a single print statement and nothing else
         | StmtList Stmt
         ;
 
