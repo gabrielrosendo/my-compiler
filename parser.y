@@ -62,12 +62,10 @@ Program: StmtList {
         }
        ;
 VarDeclList: VarDecl {
-                printf("Parsed variable declaration\n");
                 $$ = createNode(NodeType_VarDeclList); 
                 $$->value.VarDeclList.VarDecl = $1;
             }
            | VarDeclList VarDecl {
-                printf("Parsed variable declaration\n");
                 $$ = createNode(NodeType_VarDeclList); 
                 $$->value.VarDeclList.VarDecl = $1;
                 $$->value.VarDeclList.nextVarDecl = $2;

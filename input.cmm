@@ -8,5 +8,5 @@ a = 12;
 b = 23 + 10;
 x = a + a + 1;
 y = x + a + b + c + a + 5;
-write x;
-write y;
+print(x);
+print(y);
