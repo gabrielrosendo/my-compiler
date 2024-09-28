@@ -47,3 +47,45 @@ struct ASTNode* createNode(NodeType type) {
     return newNode;
 }
 
+void freeAST(struct ASTNode* node) {
+    if (!node) return;
+
+    switch (node->type) {
+        case NodeType_Program:
+            freeAST(node->value.program.VarDeclList);
+            freeAST(node->value.program.StmtList);
+            break;
+        case NodeType_VarDeclList:
+            freeAST(node->value.VarDeclList.VarDecl);
+            freeAST(node->value.VarDeclList.nextVarDecl);
+            break;
+        case NodeType_StmtList:
+            freeAST(node->value.StmtList.stmt);
+            freeAST(node->value.StmtList.nextStmt);
+            break;
+        case NodeType_VarDecl:
+            free(node->value.VarDecl.varType);
+            free(node->value.VarDecl.varName);
+            freeAST(node->value.VarDecl.initExpr);
+            break;
+        case NodeType_BinaryOp:
+            freeAST(node->value.binaryOp.left);
+            freeAST(node->value.binaryOp.right);
+            break;
+        case NodeType_Identifier:
+            free(node->value.identifier.name);
+            break;
+        case NodeType_Print:
+            freeAST(node->value.print.expr);
+            break;
+        case NodeType_Assignment:
+            free(node->value.assignment.op);
+            free(node->value.assignment.varName);
+            freeAST(node->value.assignment.expr);
+            break;
+        default:
+            break;
+    }
+
+    free(node);
+}
