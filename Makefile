@@ -9,11 +9,9 @@ lex.yy.c: lexer.l parser.tab.h
 	@flex lexer.l
 
 # Compile everything directly into the final executable
-# Commenting out symbolBST as its giving me errors
-parser: lex.yy.c parser.tab.c AST.c parser.tab.h symbolBST.c main.c
-	@gcc -o parser parser.tab.c AST.c lex.yy.c symbolBST.c symbolBST_Test.c main.c
+parser: lex.yy.c parser.tab.c AST.c parser.tab.h symbolBST.c
+	@gcc -o parser parser.tab.c AST.c lex.yy.c symbolBST.c symbolBST_Test.c
 	@./parser input.txt
-
 
 # Clean up all generated files
 clean:

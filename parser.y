@@ -1,10 +1,12 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "AST.h"
 #include "symbolBST.h"
-#include <string.h>
+#include "symbolBST_Test.h"
 
+extern int yydebug;     // Debug mode for Bison
 extern int yylex();   // Declare yylex, the lexer function
 extern int yyparse(); // Declare yyparse, the parser function
 extern FILE* yyin;    // Declare yyin, the file pointer for the input file
@@ -124,6 +126,46 @@ expression: NUMBER { printf("Parsed number: %d\n", $1); }
           ;
 
 %%
+
+int main(int argc, char **argv) {
+    #ifdef YYDEBUG
+        yydebug = 1;  // Enable Bison debug if compiled with YYDEBUG
+    #endif
+
+    printf("Compiler started. \n\n");
+
+    // Check if an input file is provided
+    if (argc > 1) {
+        yyin = fopen(argv[1], "r");
+        if (!yyin) {
+            perror(argv[1]);  // Report error if file cannot be opened
+            return 1;
+        }
+    }
+
+    // Choose whether to run the parser (yyparse) or lexer (yylex)
+    // For this example, we’ll use yyparse() as the primary function.
+    yyparse();  // Call parser (which may call yylex() internally)
+
+    // Optionally, if you want to use yylex directly:
+    // yylex();  // Directly call the lexer if needed
+
+    printf("\n\n---------------------------------------------------------");
+    printf("\n\nTESTING\n\n");
+    printf("---------------------------------------------------------\n\n");
+
+    // Testing the symbolBST
+    symbolBST_TestCreation();
+    symbolBST_Test_AddSymbol_SingleIntegerInput();
+    symbolBST_Test_AddSymbol_MultipleIntegerInputs();
+    symbolBST_Test_GetSymbol_EmptySymbolBST();
+    symbolBST_Test_GetSymbol_FoundAll();
+    symbolBST_Test_AddSymbol_DoublicateSymboleError1();
+    symbolBST_Test_AddSymbol_DoublicateSymboleError2();
+    symbolBST_Test_freeSymbolTable_freesSymbolTable();
+
+    return 0;
+}
 
 void yyerror(const char* s) {
     extern char* yytext; // Declare yytext to get the current token text
