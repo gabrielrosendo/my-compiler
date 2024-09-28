@@ -7,7 +7,6 @@
 int words = 0;
 int chars = 0;
 int lines = 0;
-int yylineno;
 %}
 
 letter [a-zA-Z]
@@ -18,6 +17,7 @@ NUMBER {digit}+(\.{digit}+)?(E[+\-]?(digit)+)?
 ws {delim}+
 BAD_ID {NUMBER}{ID}
 
+%option yylineno
 %%
 
 "/*" {
@@ -109,7 +109,7 @@ BAD_ID {NUMBER}{ID}
     // You might want to return an ERROR token or handle this differently
 }
 
-\n { lines++; chars = 0; }
+\n { lines++; chars = 0;yylineno++;}
 [ \t] { chars++; }
 
 . {

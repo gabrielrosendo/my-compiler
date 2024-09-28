@@ -54,6 +54,7 @@ void addSymbol(SymbolBST* head, char* name, char* type) {
         free(newSymbol->name);
         free(newSymbol->type);
         free(newSymbol);
+        exit(0);
         return;
     }
 

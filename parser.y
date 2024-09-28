@@ -1,6 +1,7 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 #include "AST.h"
 #include "symbolBST.h"
@@ -13,6 +14,8 @@ extern FILE* yyin;    // Declare yyin, the file pointer for the input file
 extern int yylineno;  // Declare yylineno, the line number counter
 
 void yyerror(const char* s);
+
+bool enableTesting = false;
 
 ASTNode* root = NULL; 
 
@@ -74,19 +77,15 @@ VarDecl: TYPE ID SEMICOLON {
             $$ = createNode(NodeType_VarDecl); 
             $$->value.VarDecl.varType = $1; 
             $$->value.VarDecl.varName = $2;
-            if(symbolBST == NULL) {
-                symbolBST = createSymbolBST();
-            }
             addSymbol(symbolBST, $2, $1);
+            printSymbolTable(symbolBST);
             printf("Parsed variable declaration: %s\n", $2);
         }    
         | TYPE ID EQ expression SEMICOLON {
             $$->value.VarDecl.varType = $1; 
             $$->value.VarDecl.varName = $2;
-            if(symbolBST == NULL) {
-                symbolBST = createSymbolBST();
-            }
             addSymbol(symbolBST, $2, $1);
+            printSymbolTable(symbolBST);
             $$->value.VarDecl.initExpr = $3; 
             printf("Parsed variable declaration with initialization: %s\n", $2);
     }
@@ -132,6 +131,8 @@ int main(int argc, char **argv) {
         yydebug = 1;  // Enable Bison debug if compiled with YYDEBUG
     #endif
 
+    symbolBST = createSymbolBST();
+
     printf("Compiler started. \n\n");
 
     // Check if an input file is provided
@@ -150,19 +151,23 @@ int main(int argc, char **argv) {
     // Optionally, if you want to use yylex directly:
     // yylex();  // Directly call the lexer if needed
 
-    printf("\n\n---------------------------------------------------------");
-    printf("\n\nTESTING\n\n");
-    printf("---------------------------------------------------------\n\n");
+    if(enableTesting) {
+        printf("\n\n---------------------------------------------------------");
+        printf("\n\nTESTING\n\n");
+        printf("---------------------------------------------------------\n\n");
 
-    // Testing the symbolBST
-    symbolBST_TestCreation();
-    symbolBST_Test_AddSymbol_SingleIntegerInput();
-    symbolBST_Test_AddSymbol_MultipleIntegerInputs();
-    symbolBST_Test_GetSymbol_EmptySymbolBST();
-    symbolBST_Test_GetSymbol_FoundAll();
-    symbolBST_Test_AddSymbol_DoublicateSymboleError1();
-    symbolBST_Test_AddSymbol_DoublicateSymboleError2();
-    symbolBST_Test_freeSymbolTable_freesSymbolTable();
+        // Testing the symbolBST
+        symbolBST_TestCreation();
+        symbolBST_Test_AddSymbol_SingleIntegerInput();
+        symbolBST_Test_AddSymbol_MultipleIntegerInputs();
+        symbolBST_Test_GetSymbol_EmptySymbolBST();
+        symbolBST_Test_GetSymbol_FoundAll();
+        symbolBST_Test_AddSymbol_DoublicateSymboleError1();
+        symbolBST_Test_AddSymbol_DoublicateSymboleError2();
+        symbolBST_Test_freeSymbolTable_freesSymbolTable();
+    }
+
+    freeSymbolTable(symbolBST);
 
     return 0;
 }
