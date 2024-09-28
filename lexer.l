@@ -96,12 +96,12 @@ BAD_ID {NUMBER}{ID}
 "(" { 
     chars++;
     printf("%-10s | %-10s\n", yytext, "LPAREN");
-    return '('; 
+    return LPAREN; 
 }
 ")" { 
     chars++;
     printf("%-10s | %-10s\n", yytext, "RPAREN");
-    return ')'; 
+    return RPAREN; 
 }
 {BAD_ID} {
     words++; chars += strlen(yytext);

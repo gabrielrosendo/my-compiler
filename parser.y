@@ -6,6 +6,7 @@
 #include "AST.h"
 #include "symbolBST.h"
 #include "symbolBST_Test.h"
+#include "semantic.h"
 
 extern int yydebug;     // Debug mode for Bison
 extern int yylex();   // Declare yylex, the lexer function
@@ -149,6 +150,10 @@ int main(int argc, char **argv) {
     // Optionally, if you want to use yylex directly:
     // yylex();  // Directly call the lexer if needed
 
+    semanticAnalysis(root, symbolBST);
+
+    freeSymbolTable(symbolBST);
+
     if(enableTesting) {
         printf("\n\n---------------------------------------------------------");
         printf("\n\nTESTING\n\n");
@@ -164,8 +169,6 @@ int main(int argc, char **argv) {
         symbolBST_Test_AddSymbol_DoublicateSymboleError2();
         symbolBST_Test_freeSymbolTable_freesSymbolTable();
     }
-
-    freeSymbolTable(symbolBST);
 
     return 0;
 }

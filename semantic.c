@@ -7,18 +7,13 @@ TAC* tacHead = NULL;
 // Initialize the temporary variables   
 int tempVars[MAX_TEMP_VARS];
 
-void initializeTempVars() {
-    for (int i = 0; i < MAX_TEMP_VARS; i++) {
-        tempVars[i] = 0;
-    }
-}
-
 void semanticAnalysis(ASTNode* node, SymbolBST* symTab) {
     if (node == NULL) return;
 
     switch (node->type) {
         case NodeType_Program:
             printf("Starting semantic analysis\n");
+            printf("S\n");
             semanticAnalysis(node->value.program.VarDeclList, symTab);
             semanticAnalysis(node->value.program.StmtList, symTab);
             break;
@@ -69,6 +64,8 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab) {
     }
 }
 
+// Implement all functions in AST.h
+
 void printTAC(TAC* tac) {
     if (!tac) return;
 
@@ -80,6 +77,12 @@ TAC* generateTACForExpr(ASTNode* expr) {
 
 }
 
-// Implement all functions in AST.h
+void initializeTempVars() {
+    for (int i = 0; i < MAX_TEMP_VARS; i++) {
+        tempVars[i] = 0;
+    }
+}
+
+
 
 

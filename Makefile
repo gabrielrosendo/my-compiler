@@ -9,8 +9,8 @@ lex.yy.c: lexer.l parser.tab.h
 	@flex lexer.l
 
 # Compile everything directly into the final executable
-parser: lex.yy.c parser.tab.c AST.c parser.tab.h symbolBST.c
-	@gcc -o parser parser.tab.c AST.c lex.yy.c symbolBST.c symbolBST_Test.c
+parser: lex.yy.c parser.tab.c AST.c parser.tab.h symbolBST.c semantic.c
+	@gcc -o parser parser.tab.c AST.c lex.yy.c symbolBST.c semantic.c symbolBST_Test.c
 	@./parser input.txt
 
 # Clean up all generated files
