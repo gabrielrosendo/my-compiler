@@ -1,7 +1,7 @@
 - Implement AST -> DONE
 - Implement symbol table - > DONE
 - Semantic Analysis - In progress
-- COnverts to TAC and ouputs tac.ir file
+- Converts to TAC and ouputs tac.ir file
     - Three address code, e.g. t0 = a + 5
 - Code Optimization (Constant Folding) 
 - Convert to MIPS (output.s)
