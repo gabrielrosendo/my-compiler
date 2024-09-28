@@ -8,5 +8,6 @@
 
 Bugs to fix
 - Handle missing semicolon;
+- Error: syntax error at line 21, near '('
 
 Minimum Requirements:
