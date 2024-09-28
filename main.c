@@ -31,11 +31,11 @@ int main(int argc, char **argv) {
     // Optionally, if you want to use yylex directly:
     // yylex();  // Directly call the lexer if needed
 
+    printf("\n\n---------------------------------------------------------");
     printf("\n\nTESTING\n\n");
-// Commenting out as its giving me errors
+    printf("---------------------------------------------------------\n\n");
 
     // Testing the symbolBST
-    printf("symbolBST testing: \n");
     symbolBST_TestCreation();
     symbolBST_Test_AddSymbol_SingleIntegerInput();
     symbolBST_Test_AddSymbol_MultipleIntegerInputs();

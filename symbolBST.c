@@ -32,6 +32,7 @@ SymbolBST* addSymbolPrivate(SymbolBST* curNode, Symbol* newSymbol, unsigned int 
         free(newSymbol->name);
         free(newSymbol->type);
         free(newSymbol);
+        exit(0);
     } else if (curNode->hash < curHash) {
         curNode->right = addSymbolPrivate(curNode->right, newSymbol, curHash, curNode);
     } else {

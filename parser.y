@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "AST.h"
+#include "symbolBST.h"
 #include <string.h>
 
 extern int yylex();   // Declare yylex, the lexer function
@@ -12,6 +13,8 @@ extern int yylineno;  // Declare yylineno, the line number counter
 void yyerror(const char* s);
 
 ASTNode* root = NULL; 
+
+SymbolBST* symbolBST = NULL;
 
 %}
 
@@ -68,12 +71,20 @@ VarDeclList: VarDecl {
 VarDecl: TYPE ID SEMICOLON { 
             $$ = createNode(NodeType_VarDecl); 
             $$->value.VarDecl.varType = $1; 
-            $$->value.VarDecl.varName = $2; 
+            $$->value.VarDecl.varName = $2;
+            if(symbolBST == NULL) {
+                symbolBST = createSymbolBST();
+            }
+            addSymbol(symbolBST, $2, $1);
             printf("Parsed variable declaration: %s\n", $2);
         }    
         | TYPE ID EQ expression SEMICOLON {
             $$->value.VarDecl.varType = $1; 
             $$->value.VarDecl.varName = $2;
+            if(symbolBST == NULL) {
+                symbolBST = createSymbolBST();
+            }
+            addSymbol(symbolBST, $2, $1);
             $$->value.VarDecl.initExpr = $3; 
             printf("Parsed variable declaration with initialization: %s\n", $2);
     }
