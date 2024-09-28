@@ -11,7 +11,6 @@ SymbolBST* createSymbolBST() {
     if (!symbolBST) return NULL;
     symbolBST->right = NULL;
     symbolBST->left = NULL;
-    symbolBST->previous = NULL;
     symbolBST->hash = 0;
     symbolBST->symbol = NULL;
     return symbolBST;
@@ -26,15 +25,17 @@ unsigned int hash(char* name) {
 SymbolBST* addSymbolPrivate(SymbolBST* curNode, Symbol* newSymbol, unsigned int curHash, SymbolBST* prevNode) {
     if(curNode == NULL) {
         curNode = createSymbolBST();
-        curNode->previous=prevNode;
         curNode->hash = curHash;
         curNode->symbol = newSymbol;
+    } else if (curNode->hash == curHash) {
+        fprintf(stderr,"SymbolBST Error in addSymbolPrivate(): added symbol already esists \n");
+        free(newSymbol->name);
+        free(newSymbol->type);
+        free(newSymbol);
     } else if (curNode->hash < curHash) {
         curNode->right = addSymbolPrivate(curNode->right, newSymbol, curHash, curNode);
-        curNode->previous = prevNode;
     } else {
         curNode->left = addSymbolPrivate(curNode->left, newSymbol, curHash, curNode);
-        curNode->previous = prevNode;
     }
     return curNode;
 }
@@ -49,6 +50,14 @@ void addSymbol(SymbolBST* head, char* name, char* type) {
 
     if (head == NULL) {
         fprintf(stderr,"SymbolBST Error in addSymbol(): input node not initialized \n");
+        free(newSymbol->name);
+        free(newSymbol->type);
+        free(newSymbol);
+        return;
+    }
+
+    if (head->hash == curHash) {
+        fprintf(stderr,"SymbolBST Error in addSymbolPrivate(): added symbol already esists \n");
         return;
     }
 
@@ -88,7 +97,21 @@ Symbol* lookupSymbol(SymbolBST* head, char* name)   {
     return lookupSymbol(head->left, name);
 }
 
-void freeSymbolTable(SymbolBST* head)   {}
+void freeSymbolTable(SymbolBST* node) {
+    if (node == NULL) {
+        return;
+    }
+    printf("LOG: freeing symbolBST\n");
+    freeSymbolTable(node->right);
+    freeSymbolTable(node->left);
+    free(node->right);
+    free(node->left);
+    free(node->symbol->name);
+    free(node->symbol->type);
+    free(node->symbol);
+    free(node);
+}
+
 
 void printSymbolTablePrivateRight(SymbolBST* curNode, int indent)  {
 

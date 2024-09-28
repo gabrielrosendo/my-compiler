@@ -6,6 +6,7 @@
 
 void symbolBST_TestCreation() {
 
+    printf("\n---------------------------------------------------------\n");
     printf("\nTesting: symbolBST_TestCreation()\n");
 
     SymbolBST* symbolBST = createSymbolBST();
@@ -15,6 +16,7 @@ void symbolBST_TestCreation() {
 
 void symbolBST_Test_AddSymbol_SingleIntegerInput() {
 
+    printf("\n---------------------------------------------------------\n");
     printf("\nTesting: symbolBST_Test_AddSymbol_SingleIntegerInput()\n");
 
     SymbolBST* symbolBST = createSymbolBST();
@@ -27,6 +29,7 @@ void symbolBST_Test_AddSymbol_SingleIntegerInput() {
 
 void symbolBST_Test_AddSymbol_MultipleIntegerInputs() {
 
+    printf("\n---------------------------------------------------------\n");
     printf("\nTesting: symbolBST_Test_AddSymbol_MultipleIntegerInputs()\n");
 
     SymbolBST* symbolBST = createSymbolBST();
@@ -58,6 +61,7 @@ void symbolBST_Test_AddSymbol_MultipleIntegerInputs() {
 }
 
 void symbolBST_Test_GetSymbol_EmptySymbolBST() {
+    printf("\n---------------------------------------------------------\n");
     printf("\nTesting: symbolBST_Test_GetSymbol_EmptySymbolBST()\n");
 
     SymbolBST* symbolBST = createSymbolBST();
@@ -75,6 +79,7 @@ void printSymbol(Symbol* symbol) {
 
 void symbolBST_Test_GetSymbol_FoundAll() {
     
+    printf("\n---------------------------------------------------------\n");
     printf("\nTesting:symbolBST_Test_GetSymbol_FoundAll()\n");
 
     SymbolBST* symbolBST = createSymbolBST();
@@ -129,4 +134,73 @@ void symbolBST_Test_GetSymbol_FoundAll() {
     printSymbol(temp);
 }
 
-//TODO: test creating the same symbol?!?!
+void symbolBST_Test_AddSymbol_DoublicateSymboleError1() {
+    
+    printf("\n---------------------------------------------------------\n");
+    printf("\nTesting:symbolBST_Test_AddSymbol_DoublicateSymboleError1()\n");
+
+    SymbolBST* symbolBST = createSymbolBST();
+    printf("Test Log: created SymbolBST\n");
+
+    addSymbol(symbolBST, "Test1", "INT");
+    printf("Test Log: added integer variable into SymbolBST\n");
+    printSymbolTable(symbolBST);
+
+     addSymbol(symbolBST, "Test1", "INT");
+    printf("Test Log: added same integer variable into SymbolBST\n");
+    printSymbolTable(symbolBST);
+}
+
+
+void symbolBST_Test_AddSymbol_DoublicateSymboleError2() {
+    
+    printf("\n---------------------------------------------------------\n");
+    printf("\nTesting:symbolBST_Test_AddSymbol_DoublicateSymboleError2()\n");
+
+    SymbolBST* symbolBST = createSymbolBST();
+    printf("Test Log: created SymbolBST\n");
+
+    addSymbol(symbolBST, "Test1", "INT");
+    printf("Test Log: added integer variable into SymbolBST\n");
+    printSymbolTable(symbolBST);
+
+    addSymbol(symbolBST, "Test2", "INT");
+    printf("Test Log: added integer variable into SymbolBST\n");
+    printSymbolTable(symbolBST);
+
+    addSymbol(symbolBST, "Test2", "INT");
+    printf("Test Log: added same integer variable into SymbolBST\n");
+    printSymbolTable(symbolBST);
+}
+
+void symbolBST_Test_freeSymbolTable_freesSymbolTable() {
+    
+    printf("\n---------------------------------------------------------\n");
+    printf("Testing:symbolBST_Test_freeSymbolTable_freesSymbolTable()\n");
+
+    SymbolBST* symbolBST = createSymbolBST();
+    printf("Test Log: created SymbolBST\n");
+
+    addSymbol(symbolBST, "Test1", "INT");
+    printf("Test Log: added integer variable into SymbolBST\n");
+    printSymbolTable(symbolBST);
+
+    freeSymbolTable(symbolBST);
+    printf("Test Log: Freeing symbol bst\n");
+    printSymbolTable(symbolBST);
+
+    symbolBST = createSymbolBST();
+    printf("Test Log: created SymbolBST\n");
+
+    addSymbol(symbolBST, "Test1", "INT");
+    printf("Test Log: added integer variable into SymbolBST\n");
+    printSymbolTable(symbolBST);
+
+    addSymbol(symbolBST, "Test2", "INT");
+    printf("Test Log: added integer variable into SymbolBST\n");
+    printSymbolTable(symbolBST);
+
+    freeSymbolTable(symbolBST);
+    printf("Test Log: Freeing symbol bst\n");
+    printSymbolTable(symbolBST);
+}

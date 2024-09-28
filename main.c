@@ -41,7 +41,9 @@ int main(int argc, char **argv) {
     symbolBST_Test_AddSymbol_MultipleIntegerInputs();
     symbolBST_Test_GetSymbol_EmptySymbolBST();
     symbolBST_Test_GetSymbol_FoundAll();
-
+    symbolBST_Test_AddSymbol_DoublicateSymboleError1();
+    symbolBST_Test_AddSymbol_DoublicateSymboleError2();
+    symbolBST_Test_freeSymbolTable_freesSymbolTable();
 
     return 0;
 }
