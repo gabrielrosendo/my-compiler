@@ -128,7 +128,7 @@ expression: NUMBER { printf("Parsed number: %d\n", $1); }
 
 int main(int argc, char **argv) {
     #ifdef YYDEBUG
-        yydebug = 1;  // Enable Bison debug if compiled with YYDEBUG
+        yydebug = 0;  // Enable Bison debug if compiled with YYDEBUG
     #endif
 
     symbolBST = createSymbolBST();
