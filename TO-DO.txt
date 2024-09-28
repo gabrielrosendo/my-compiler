@@ -1,6 +1,6 @@
-- Implement AST -> In progress (Gabe)
-- Implement symbol table - >In Progress (Grant)
-- Semantic Analysis -
+- Implement AST -> DONE
+- Implement symbol table - > DONE
+- Semantic Analysis - In progress
 - COnverts to TAC and ouputs tac.ir file
     - Three address code, e.g. t0 = a + 5
 - Code Optimization (Constant Folding) 
