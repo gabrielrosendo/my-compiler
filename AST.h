@@ -50,7 +50,7 @@ typedef struct ASTNode {
 
         struct{
             struct ASTNode* expr;
-        }print;
+        } print;
 
         struct {
             struct ASTNode* left;

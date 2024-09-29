@@ -35,31 +35,30 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab) {
             break;
         case NodeType_Assignment:
             printf("Semantic Analysis running on node of type: NodeType_Assignment\n");
-            // TO DO: Implement
+            semanticAnalysis(node->value.assignment.expr, symTab);
             break;
         case NodeType_Print:
             printf("Semantic Analysis running on node of type: NodeType_Print\n");
-            // TO DO: Implement
+            semanticAnalysis(node->value.print.expr, symTab);
             break;
         case NodeType_Expression:
             printf("Semantic Analysis running on node of type: NodeType_Expression\n");
-            // TO DO: Implement
+            semanticAnalysis(node->value.Expression.left, symTab);
+            semanticAnalysis(node->value.Expression.right, symTab);
             break;
         case NodeType_Number:
             printf("Semantic Analysis running on node of type: NodeType_Number\n");
-            // TO DO: Implement
             break;
         case NodeType_Identifier:
             printf("Semantic Analysis running on node of type: NodeType_Identifier\n");
-            // TO DO: Implement
             break;
         case NodeType_BinaryOp:
             printf("Semantic Analysis running on node of type: NodeType_BinaryOp\n");
-            // TO DO: Implement
             break;
         default:
             fprintf(stderr, "Unknown Node Type\n");
             printf("%s\n", node->type);
+            break;
     }
     // Generate TAC for relevant node types
     if (node->type == NodeType_Expression || 
