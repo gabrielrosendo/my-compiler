@@ -47,8 +47,8 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab) {
             break;
         case NodeType_Expression:
             printf("Semantic Analysis running on node of type: NodeType_Expression\n");
-            semanticAnalysis(node->value.Expression.left, symTab);
             semanticAnalysis(node->value.Expression.right, symTab);
+            semanticAnalysis(node->value.Expression.left, symTab);
             break;
         case NodeType_Number:
             printf("Semantic Analysis running on node of type: NodeType_Number\n");
@@ -69,6 +69,7 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab) {
         node->type == NodeType_Assignment || 
         node->type == NodeType_Expression || 
         node->type == NodeType_Number || 
+        node->type == NodeType_Print || 
         node->type == NodeType_Identifier) {
         TAC* tac = generateTACForExpr(node);
     }
@@ -95,19 +96,28 @@ TAC* generateTACForExpr(ASTNode* expr) {
         case NodeType_Assignment: {
              printf("Generating TAC for Assignment\n");
             instruction->arg1 = strdup(expr->value.assignment.varName);
-            instruction->arg2 = strdup("t1");
+            instruction->arg2 = strdup("$t1");
             instruction->op = strdup("=");
             instruction->result = getVariableReference(expr->value.assignment.varName);
             isRight = true;
             break;
         }
 
+        case NodeType_Print: {
+            printf("Generating TAC for print\n");
+            instruction->arg1 = strdup(expr->value.print.);
+            instruction->arg2 = getVariableReference(expr->value.identifier.name);
+            instruction->op = strdup("ID");
+
+            break;
+        }
+
         case NodeType_Expression: {
             printf("Generating TAC for expression\n");
-            instruction->arg1 = strdup("t0");
-            instruction->arg2 = strdup("t1");
+            instruction->arg1 = strdup("$t0");
+            instruction->arg2 = strdup("$t1");
             instruction->op = strdup("+");
-            instruction->result = strdup("t1");
+            instruction->result = strdup("$t1");
             break;
         }
 
@@ -119,10 +129,10 @@ TAC* generateTACForExpr(ASTNode* expr) {
             instruction->arg2 = NULL;
             instruction->op = strdup("Num");
             if (isRight) {
-                instruction->result = strdup("t1");
+                instruction->result = strdup("$t1");
                 isRight = false;
             } else {
-                instruction->result = strdup("t0");
+                instruction->result = strdup("$t0");
             }
             break;
         }
@@ -133,10 +143,10 @@ TAC* generateTACForExpr(ASTNode* expr) {
             instruction->arg2 = getVariableReference(expr->value.identifier.name);
             instruction->op = strdup("ID");
             if (isRight) {
-                instruction->result = strdup("t1");
+                instruction->result = strdup("$t1");
                 isRight = false;
             } else {
-                instruction->result = strdup("t0");
+                instruction->result = strdup("$t0");
             }
             break;
         }
@@ -172,7 +182,7 @@ char* getVariableReference(char* variable) {
 // TODO: make algo for if the number of temperary registers is exceeded
 char* createTempVar() {
     char* tempVar = malloc(10); // Enough space for "t" + number
-    sprintf(tempVar, "t%d", count++);
+    sprintf(tempVar, "$t%d", count++);
     return tempVar;
 }
 

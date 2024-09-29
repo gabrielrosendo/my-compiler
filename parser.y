@@ -7,6 +7,7 @@
 #include "symbolBST.h"
 #include "symbolBST_Test.h"
 #include "semantic.h"
+#include "codeGenerator.h"
 
 extern int yydebug;     // Debug mode for Bison
 extern int yylex();   // Declare yylex, the lexer function
@@ -171,12 +172,17 @@ int main(int argc, char **argv) {
 
     semanticAnalysis(root, symbolBST);
 
+    printf("-----TAC CODE-----\n");
     TAC* tempTac = tacHead;
     while (tempTac != NULL) {
         printTAC(tempTac);
         tempTac = tempTac->next;
     }
 
+    initCodeGenerator("output.s");
+    generateMIPS(tacHead);
+    finalizeCodeGenerator("output.s");
+    
     freeSymbolTable(symbolBST);
     printf("Freeing AST...\n");
     freeAST(root);

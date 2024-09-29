@@ -3,6 +3,7 @@
         "symbolbst.h": "c",
         "symboltable.h": "c",
         "stdlib.h": "c",
-        "symbolbst_test.h": "c"
+        "symbolbst_test.h": "c",
+        "stdio.h": "c"
     }
 }
