@@ -47,8 +47,8 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab) {
             break;
         case NodeType_Expression:
             printf("Semantic Analysis running on node of type: NodeType_Expression\n");
-            semanticAnalysis(node->value.Expression.right, symTab);
             semanticAnalysis(node->value.Expression.left, symTab);
+            semanticAnalysis(node->value.Expression.right, symTab);
             break;
         case NodeType_Number:
             printf("Semantic Analysis running on node of type: NodeType_Number\n");
@@ -95,7 +95,7 @@ TAC* generateTACForExpr(ASTNode* expr) {
         case NodeType_Assignment: {
              printf("Generating TAC for Assignment\n");
             instruction->arg1 = strdup(expr->value.assignment.varName);
-            instruction->arg2 = NULL;
+            instruction->arg2 = strdup("t1");
             instruction->op = strdup("=");
             instruction->result = getVariableReference(expr->value.assignment.varName);
             isRight = true;
@@ -177,18 +177,17 @@ char* createTempVar() {
 }
 
 void printTAC(TAC* tac) {
-    if (!tac) return;
-
-    // Print the TAC instruction with non-null fields
-    if(tac->result != NULL)
-        printf("%s = ", tac->result);
-    if(tac->arg1 != NULL)
-        printf("%s ", tac->arg1);
-    if(tac->op != NULL)
-        printf("%s ", tac->op);
-    if(tac->arg2 != NULL)
-        printf("%s ", tac->arg2);
-    printf("\n");
+    if (strcmp(tac->op, "VarDecl") == 0) {
+        printf("%s %s ==> %s\n", tac->arg1, tac->arg2, tac->result);
+    } else if (strcmp(tac->op, "=") == 0) {
+        printf("%s (%s) = %s\n", tac->result, tac->arg1, tac->arg2);
+    } else if (strcmp(tac->op, "+") == 0) {
+        printf("%s = %s + %s\n", tac->result, tac->arg1, tac->arg2);
+    } else if (strcmp(tac->op, "Num") == 0) {
+        printf("%s = %s\n", tac->result, tac->arg1);
+    } else if (strcmp(tac->op, "ID") == 0) {
+        printf("%s = %s (%s)\n", tac->result, tac->arg2, tac->arg1);
+    }
 }
 
 void appendTAC(TAC** head, TAC* newInstruction) {
