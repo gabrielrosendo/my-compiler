@@ -47,10 +47,15 @@ BAD_ID {NUMBER}{ID}
 
 "print" { 
     words++; chars += strlen(yytext);
-    printf("%-10s | %-10s\n", yytext, "PRINT_KEYWORD");
+    printf("%-10s | %-10s\n", yytext, "PRINT");
     return PRINT;
 }
 
+"write" { 
+    words++; chars += strlen(yytext);
+    printf("%-10s | %-10s\n", yytext, "PRINT");
+    return PRINT;
+}
 
 {ID} {
     words++; chars += strlen(yytext);
@@ -66,8 +71,17 @@ BAD_ID {NUMBER}{ID}
     return NUMBER;
 }
 
-"+" { return ADD; }
-"-" { return SUB; }
+"+" {
+    words++; chars += strlen(yytext);
+    printf("%-10s | %-10s\n", yytext, "ADD");
+    yylval.string = strdup(yytext); 
+    return ADD; }
+
+"-" { 
+    words++; chars += strlen(yytext);
+    printf("%-10s | %-10s\n", yytext, "SUB");
+    yylval.string = strdup(yytext); 
+    return SUB; }
 
 ";" { 
     chars++;
@@ -78,6 +92,7 @@ BAD_ID {NUMBER}{ID}
 "=" { 
     chars++;
     printf("%-10s | %-10s\n", yytext, "EQ");
+    yylval.string = strdup(yytext);
     return EQ;
 }
 
@@ -103,6 +118,7 @@ BAD_ID {NUMBER}{ID}
     printf("%-10s | %-10s\n", yytext, "RPAREN");
     return RPAREN; 
 }
+
 {BAD_ID} {
     words++; chars += strlen(yytext);
     printf("|ERROR| %s : Bad Identifier at line %d char %d\n", yytext, lines, chars);

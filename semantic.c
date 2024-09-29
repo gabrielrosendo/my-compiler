@@ -16,13 +16,11 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab) {
             printf("Starting semantic analysis\n");
             printf("Semantic Analysis running on node of type: NodeType_Program\n");
             semanticAnalysis(node->value.program.VarDeclList, symTab);
-            printf("WHAT1\n");
             semanticAnalysis(node->value.program.StmtList, symTab);
             break;
         case NodeType_VarDeclList:
             printf("Semantic Analysis running on node of type: NodeType_VarDeclList\n");
             semanticAnalysis(node->value.VarDeclList.VarDecl, symTab);
-            printf("WHAT2\n");
             semanticAnalysis(node->value.VarDeclList.nextVarDecl, symTab);
             break;
         case NodeType_VarDecl:
@@ -36,7 +34,6 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab) {
         case NodeType_StmtList:
             printf("Semantic Analysis running on node of type: NodeType_StmtList\n");
             semanticAnalysis(node->value.StmtList.stmt, symTab);
-            printf("WHAT3: %s\n", node->value.StmtList.nextStmt);
             semanticAnalysis(node->value.StmtList.nextStmt, symTab);
             break;
         case NodeType_Assignment:
@@ -50,7 +47,6 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab) {
         case NodeType_Expression:
             printf("Semantic Analysis running on node of type: NodeType_Expression\n");
             semanticAnalysis(node->value.Expression.right, symTab);
-            printf("WHAT4\n");
             semanticAnalysis(node->value.Expression.left, symTab);
             break;
         case NodeType_Number:
@@ -64,7 +60,7 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab) {
             break;
         default:
             fprintf(stderr, "Unknown Node Type\n");
-            printf("%s\n", node->type);
+            printf("%u\n", node->type);
             break;
     }
 

@@ -162,8 +162,8 @@ void printAST(struct ASTNode* node, int indent) {
             printf("AST Print: NodeType_Expression\n");
             spaceOut(indent);
             printf("AST Print: op = %s\n", node->value.Expression.op);
-            printAST(node->value.Expression.right, indent);
             printAST(node->value.Expression.left, indent);
+            printAST(node->value.Expression.right, indent);
             break;
         case NodeType_Number :
             spaceOut(indent);
@@ -173,7 +173,7 @@ void printAST(struct ASTNode* node, int indent) {
             break;
         case NodeType_Identifier:
             spaceOut(indent);
-            printf("AST Print: NodeType_Identifier");
+            printf("AST Print: NodeType_Identifier\n");
             spaceOut(indent);
             printf("AST Print: name = %s\n", node->value.identifier.name);
             break;

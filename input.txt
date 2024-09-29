@@ -9,4 +9,4 @@ b = 23 + 10;
 x = a + a + 1;
 y = x + a + b + c + a + 5;
 print(x);
-print(y);
+write(y);

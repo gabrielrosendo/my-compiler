@@ -97,12 +97,17 @@ StmtList: {}
 
 Stmt: ID EQ Expr SEMICOLON { 
 								printf("PARSER: Recognized assignment statement\n");
+                                printf("ID: %s, EQ: %s, Expr: %p\n", $1, $2, $3);
                                 $$ = createNode(NodeType_Assignment);
 								$$->value.assignment.varName = $1;
 								$$->value.assignment.op = $2;
 								$$->value.assignment.expr = $3;
  }
-	| PRINT LPAREN Expr RPAREN SEMICOLON { printf("PARSER: Recognized print statement\n"); }
+	| PRINT LPAREN Expr RPAREN SEMICOLON { 
+                                            printf("PARSER: Recognized print statement\n"); 
+                                            $$ = createNode(NodeType_Print);
+                                            $$->value.print.expr = $3;
+                                         }
 ;
 
 Expr: Expr BinOp Expr { printf("PARSER: Recognized expression\n");
@@ -116,7 +121,7 @@ Expr: Expr BinOp Expr { printf("PARSER: Recognized expression\n");
 				$$ = createNode(NodeType_Number);
 				$$->value.Number.number = $1;
 			 }		
-	| ID { printf("ASSIGNMENT statement \n"); 
+	| ID {
 			$$ = createNode(NodeType_Identifier);
 			$$->value.identifier.name = $1;
 		}
@@ -161,9 +166,8 @@ int main(int argc, char **argv) {
 
     semanticAnalysis(root, symbolBST);
 
-    printf("Temp test1\n");
-
     freeSymbolTable(symbolBST);
+    printf("Freeing AST...\n");
     freeAST(root);
 
     if(enableTesting) {
