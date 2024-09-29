@@ -63,10 +63,7 @@ Program: StmtList {
         }
 ;
 
-VarDeclList: VarDecl {
-                $$ = createNode(NodeType_VarDeclList); 
-                $$->value.VarDeclList.VarDecl = $1;
-            }
+VarDeclList: {}
            | VarDeclList VarDecl {
                 $$ = createNode(NodeType_VarDeclList); 
                 $$->value.VarDeclList.VarDecl = $1;
@@ -89,11 +86,7 @@ VarDecl: TYPE ID SEMICOLON {
     }
 ;
 
-StmtList: Stmt {
-            printf("Parsed statement\n");
-            $$ = createNode(NodeType_StmtList);
-            $$->value.StmtList.stmt = $1;
-        }  // A program can have a single print statement and nothing else
+StmtList: {}
         | StmtList Stmt {
             printf("Parsed statement list\n");
             $$ = createNode(NodeType_StmtList);
@@ -163,7 +156,12 @@ int main(int argc, char **argv) {
     // Optionally, if you want to use yylex directly:
     // yylex();  // Directly call the lexer if needed
 
+    printf("-----printAST-----\n");
+    printAST(root, 0);
+
     semanticAnalysis(root, symbolBST);
+
+    printf("Temp test1\n");
 
     freeSymbolTable(symbolBST);
     freeAST(root);

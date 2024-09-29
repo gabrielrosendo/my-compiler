@@ -76,6 +76,8 @@ typedef struct ASTNode {
 // Function prototypes for AST handling
 ASTNode* createNode(NodeType type);
 void traverseAST(ASTNode* node, int level);
+void freeAST(struct ASTNode* node);
+void printAST(struct ASTNode* node, int indent);
 
 
 #endif // AST_H
