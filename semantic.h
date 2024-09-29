@@ -25,6 +25,7 @@ void deallocateTempVar(int index);
 // Semantic analysis functions
 void semanticAnalysis(ASTNode* node, SymbolBST* symTab);
 TAC* generateTACForExpr(ASTNode* expr);
+char* getVariableReference(char* variable);
 char* createTempVar();
 char* createOperand(ASTNode* node);
 void appendTAC(TAC** head, TAC* newInstruction);

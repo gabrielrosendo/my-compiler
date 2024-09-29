@@ -1,12 +1,13 @@
+#include <stdio.h>
+#include <stdbool.h>
 #include "semantic.h"
 #include "symbolBST.h"
-#include <stdio.h>
 
 // Initialize the global TAC list
 TAC* tacHead = NULL;
 
-// Initialize the temporary variables   
-int tempVars[MAX_TEMP_VARS];
+int count = 2;
+bool isRight = true;
 
 void semanticAnalysis(ASTNode* node, SymbolBST* symTab) {
     if (node == NULL) return;
@@ -64,28 +65,140 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab) {
             break;
     }
 
-    printf("semanticAnalysis() - made it outside of switch\n");
+    if (node->type == NodeType_VarDecl || 
+        node->type == NodeType_Assignment || 
+        node->type == NodeType_Expression || 
+        node->type == NodeType_Number || 
+        node->type == NodeType_Identifier) {
+        TAC* tac = generateTACForExpr(node);
+    }
 
     return;
+}
+
+TAC* generateTACForExpr(ASTNode* expr) {
+    if (!expr) return NULL;
+
+    TAC* instruction = (TAC*)malloc(sizeof(TAC));
+    if (!instruction) return NULL;
+
+    switch (expr->type) {
+        case NodeType_VarDecl: {
+            printf("Generating TAC for variable declaration\n");
+            instruction->arg1 = strdup(expr->value.VarDecl.varType);
+            instruction->arg2 = strdup(expr->value.VarDecl.varName);
+            instruction->op = strdup("VarDecl");
+            instruction->result = createTempVar();
+            break;
+        }
+
+        case NodeType_Assignment: {
+             printf("Generating TAC for Assignment\n");
+            instruction->arg1 = strdup(expr->value.assignment.varName);
+            instruction->arg2 = NULL;
+            instruction->op = strdup("=");
+            instruction->result = getVariableReference(expr->value.assignment.varName);
+            isRight = true;
+            break;
+        }
+
+        case NodeType_Expression: {
+            printf("Generating TAC for expression\n");
+            instruction->arg1 = strdup("t0");
+            instruction->arg2 = strdup("t1");
+            instruction->op = strdup("+");
+            instruction->result = strdup("t1");
+            break;
+        }
+
+        case NodeType_Number: {
+            printf("Generating TAC for number\n");
+            char buffer[20];
+            snprintf(buffer, 20, "%d", expr->value.Number.number);
+            instruction->arg1 = strdup(buffer);
+            instruction->arg2 = NULL;
+            instruction->op = strdup("Num");
+            if (isRight) {
+                instruction->result = strdup("t1");
+                isRight = false;
+            } else {
+                instruction->result = strdup("t0");
+            }
+            break;
+        }
+
+        case NodeType_Identifier: {
+            printf("Generating TAC for identifier\n");
+            instruction->arg1 = strdup(expr->value.identifier.name);
+            instruction->arg2 = getVariableReference(expr->value.identifier.name);
+            instruction->op = strdup("ID");
+            if (isRight) {
+                instruction->result = strdup("t1");
+                isRight = false;
+            } else {
+                instruction->result = strdup("t0");
+            }
+            break;
+        }
+
+        // Add cases for other expression types...
+
+        default:
+            free(instruction);
+            return NULL;
+    }
+
+    instruction->next = NULL; // Make sure to null-terminate the new instruction
+
+    // Append to the global TAC list
+    appendTAC(&tacHead, instruction);
+
+    return instruction;
+}
+
+char* getVariableReference(char* variable) {
+    TAC* current = tacHead;
+    while(current != NULL) {
+        if (strcmp(current->arg2, variable) == 0) {
+            return current->result;
+            break;
+        }
+        current = current->next;
+    }
+    printf("ERROR: Could not find variable %s in TAC, exiting program.", variable);
+    exit(0);
+}
+
+// TODO: make algo for if the number of temperary registers is exceeded
+char* createTempVar() {
+    char* tempVar = malloc(10); // Enough space for "t" + number
+    sprintf(tempVar, "t%d", count++);
+    return tempVar;
 }
 
 void printTAC(TAC* tac) {
     if (!tac) return;
 
-    // Print TAC instruction
-
+    // Print the TAC instruction with non-null fields
+    if(tac->result != NULL)
+        printf("%s = ", tac->result);
+    if(tac->arg1 != NULL)
+        printf("%s ", tac->arg1);
+    if(tac->op != NULL)
+        printf("%s ", tac->op);
+    if(tac->arg2 != NULL)
+        printf("%s ", tac->arg2);
+    printf("\n");
 }
 
-TAC* generateTACForExpr(ASTNode* expr) {
-
-}
-
-void initializeTempVars() {
-    for (int i = 0; i < MAX_TEMP_VARS; i++) {
-        tempVars[i] = 0;
+void appendTAC(TAC** head, TAC* newInstruction) {
+    if (!*head) {
+        *head = newInstruction;
+    } else {
+        TAC* current = *head;
+        while (current->next) {
+            current = current->next;
+        }
+        current->next = newInstruction;
     }
 }
-
-
-
-

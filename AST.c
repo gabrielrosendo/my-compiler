@@ -187,6 +187,4 @@ void printAST(struct ASTNode* node, int indent) {
         default:
             break;
     }
-
-    free(node);
 }

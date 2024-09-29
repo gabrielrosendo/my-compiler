@@ -13,6 +13,7 @@ extern int yylex();   // Declare yylex, the lexer function
 extern int yyparse(); // Declare yyparse, the parser function
 extern FILE* yyin;    // Declare yyin, the file pointer for the input file
 extern int yylineno;  // Declare yylineno, the line number counter
+extern TAC* tacHead;
 
 void yyerror(const char* s);
 
@@ -64,7 +65,7 @@ Program: StmtList {
 ;
 
 VarDeclList: {}
-           | VarDeclList VarDecl {
+           | VarDecl VarDeclList {
                 $$ = createNode(NodeType_VarDeclList); 
                 $$->value.VarDeclList.VarDecl = $1;
                 $$->value.VarDeclList.nextVarDecl = $2;
@@ -72,12 +73,16 @@ VarDeclList: {}
 ;
 
 VarDecl: TYPE ID SEMICOLON { 
+            printf("PARSER: Recognized variable declaration\n");
+            printf("Type: %s, ID: %s\n", $1, $2);
             $$ = createNode(NodeType_VarDecl); 
             $$->value.VarDecl.varType = $1; 
             $$->value.VarDecl.varName = $2;
             printf("Parsed variable declaration: %s\n", $2);
         }    
         | TYPE ID EQ Expr SEMICOLON {
+            printf("PARSER: Recognized variable declaration\n");
+            printf("Type: %s, ID: %s\n", $1, $2);
             $$ = createNode(NodeType_VarDecl); 
             $$->value.VarDecl.varType = $1; 
             $$->value.VarDecl.varName = $2;
@@ -87,7 +92,7 @@ VarDecl: TYPE ID SEMICOLON {
 ;
 
 StmtList: {}
-        | StmtList Stmt {
+        | Stmt StmtList {
             printf("Parsed statement list\n");
             $$ = createNode(NodeType_StmtList);
             $$->value.StmtList.stmt = $1;
@@ -165,6 +170,12 @@ int main(int argc, char **argv) {
     printAST(root, 0);
 
     semanticAnalysis(root, symbolBST);
+
+    TAC* tempTac = tacHead;
+    while (tempTac != NULL) {
+        printTAC(tempTac);
+        tempTac = tempTac->next;
+    }
 
     freeSymbolTable(symbolBST);
     printf("Freeing AST...\n");
