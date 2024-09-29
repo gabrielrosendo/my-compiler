@@ -47,7 +47,7 @@ SymbolBST* symbolBST = NULL;
 %token <string> RBRACE
 
 
-%type <ast> Program StmtList Stmt VarDeclList VarDecl expression
+%type <ast> Program VarDeclList VarDecl StmtList Stmt Expr BinOp
 %%
 
 Program: StmtList { 
@@ -61,7 +61,8 @@ Program: StmtList {
             root->value.program.VarDeclList = $1; // Set the variable declaration list
             root->value.program.StmtList = $2; // Set the statement list
         }
-       ;
+;
+
 VarDeclList: VarDecl {
                 $$ = createNode(NodeType_VarDeclList); 
                 $$->value.VarDeclList.VarDecl = $1;
@@ -71,24 +72,22 @@ VarDeclList: VarDecl {
                 $$->value.VarDeclList.VarDecl = $1;
                 $$->value.VarDeclList.nextVarDecl = $2;
            }
-           ;
+;
+
 VarDecl: TYPE ID SEMICOLON { 
             $$ = createNode(NodeType_VarDecl); 
             $$->value.VarDecl.varType = $1; 
             $$->value.VarDecl.varName = $2;
-            addSymbol(symbolBST, $2, $1);
-            printSymbolTable(symbolBST);
             printf("Parsed variable declaration: %s\n", $2);
         }    
-        | TYPE ID EQ expression SEMICOLON {
+        | TYPE ID EQ Expr SEMICOLON {
+            $$ = createNode(NodeType_VarDecl); 
             $$->value.VarDecl.varType = $1; 
             $$->value.VarDecl.varName = $2;
-            addSymbol(symbolBST, $2, $1);
-            printSymbolTable(symbolBST);
-            $$->value.VarDecl.initExpr = $3; 
+            $$->value.VarDecl.initExpr = $4; 
             printf("Parsed variable declaration with initialization: %s\n", $2);
     }
-    ;
+;
 
 StmtList: Stmt {
             printf("Parsed statement\n");
@@ -101,27 +100,41 @@ StmtList: Stmt {
             $$->value.StmtList.stmt = $1;
             $$->value.StmtList.nextStmt = $2;
         }
-        ;
+;
 
-Stmt: PRINT LPAREN expression RPAREN SEMICOLON { 
-    printf("Parsed print statement\n");
-}
+Stmt: ID EQ Expr SEMICOLON { 
+								printf("PARSER: Recognized assignment statement\n");
+                                $$ = createNode(NodeType_Assignment);
+								$$->value.assignment.varName = $1;
+								$$->value.assignment.op = $2;
+								$$->value.assignment.expr = $3;
+ }
+	| PRINT LPAREN Expr RPAREN SEMICOLON { printf("PARSER: Recognized print statement\n"); }
+;
 
-    | ID EQ expression SEMICOLON {
-        printf("Parsed assignment statement\n");
-}
-    ;
+Expr: Expr BinOp Expr { printf("PARSER: Recognized expression\n");
+						$$ = createNode(NodeType_Expression);
+						$$->value.Expression.left = $1;
+						$$->value.Expression.right = $3;
+						$$->value.Expression.op = $2->value.binaryOp.op;
+					  }
+	| NUMBER { 
+				printf("PARSER: Recognized number\n");
+				$$ = createNode(NodeType_Number);
+				$$->value.Number.number = $1;
+			 }		
+	| ID { printf("ASSIGNMENT statement \n"); 
+			$$ = createNode(NodeType_Identifier);
+			$$->value.identifier.name = $1;
+		}
+;
 
-
-expression: NUMBER { printf("Parsed number: %d\n", $1); }
-          | ID { printf("Parsed identifier: %s\n", $1); }
-          | expression ADD expression { 
-              printf("Parsed addition expression\n");
-          }
-          | expression SUB expression { 
-              printf("Parsed subtraction expression\n");
-          }
-          ;
+BinOp: ADD {
+				printf("PARSER: Recognized binary operator\n");
+				$$ = createNode(NodeType_BinaryOp);
+				$$->value.binaryOp.op = $1;
+            }
+;
 
 %%
 
@@ -153,6 +166,7 @@ int main(int argc, char **argv) {
     semanticAnalysis(root, symbolBST);
 
     freeSymbolTable(symbolBST);
+    freeAST(root);
 
     if(enableTesting) {
         printf("\n\n---------------------------------------------------------");
@@ -165,9 +179,9 @@ int main(int argc, char **argv) {
         symbolBST_Test_AddSymbol_MultipleIntegerInputs();
         symbolBST_Test_GetSymbol_EmptySymbolBST();
         symbolBST_Test_GetSymbol_FoundAll();
+        symbolBST_Test_freeSymbolTable_freesSymbolTable();
         symbolBST_Test_AddSymbol_DoublicateSymboleError1();
         symbolBST_Test_AddSymbol_DoublicateSymboleError2();
-        symbolBST_Test_freeSymbolTable_freesSymbolTable();
     }
 
     return 0;
@@ -177,22 +191,3 @@ void yyerror(const char* s) {
     extern char* yytext; // Declare yytext to get the current token text
     fprintf(stderr, "Error: %s at line %d, near '%s'\n", s, yylineno, yytext);
 }
-
-    /*
-    symbol = lookupSymbol(symTab, $2);
-    if (symbol != NULL) {
-        fprintf(stderr, "Error: Variable %s already declared\n", $2);
-        exit(EXIT_FAILURE);
-    } else {
-        $$ = malloc(sizeof(ASTNode));
-        if (!$$) {
-            fprintf(stderr, "Memory allocation failed for VarDecl\n");
-            exit(EXIT_FAILURE);
-        }
-        $$->type = NodeType_VarDecl;
-        $$->VarDecl.varType = strdup($1);
-        $$->VarDecl.varName = strdup($2);
-
-        addSymbol(symTab, $2, $1);
-    }
-    */

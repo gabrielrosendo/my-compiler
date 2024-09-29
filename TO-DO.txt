@@ -5,9 +5,10 @@
     - Three address code, e.g. t0 = a + 5
 - Code Optimization (Constant Folding) 
 - Convert to MIPS (output.s)
+- ADD missing pieces into the free AST function
 
 Bugs to fix
 - Handle missing semicolon;
-- Error: syntax error at line 21, near '('
+- Unknown Node Type output
 
 Minimum Requirements:

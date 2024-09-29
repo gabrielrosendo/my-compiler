@@ -6,14 +6,14 @@
 typedef enum {
     NodeType_Program,
     NodeType_VarDeclList,
-    NodeType_StmtList,
-    NodeType_Stmt,
     NodeType_VarDecl,
-    NodeType_Expression,
-    NodeType_Identifier,
-    NodeType_BinaryOp,
+    NodeType_StmtList,
+    NodeType_Assignment,
     NodeType_Print,
-    NodeType_Assignment    
+    NodeType_Expression,
+    NodeType_Number,
+    NodeType_Identifier,
+    NodeType_BinaryOp
 } NodeType;
 
 // Define AST Structure
@@ -29,11 +29,6 @@ typedef struct ASTNode {
             struct ASTNode* VarDecl;
             struct ASTNode* nextVarDecl;
         }VarDeclList;
-        
-        struct {
-            struct ASTNode* stmt;
-            struct ASTNode* nextStmt;
-        } StmtList;
 
         struct {
             char* varType;
@@ -41,23 +36,39 @@ typedef struct ASTNode {
             // initial value if provided numerical
             struct ASTNode* initExpr;
         }VarDecl;
+        
+        struct {
+            struct ASTNode* stmt;
+            struct ASTNode* nextStmt;
+        } StmtList;
+
+        struct {
+            char* varName;
+            char* op;
+            struct ASTNode* expr;
+        } assignment;
+
+        struct{
+            struct ASTNode* expr;
+        }print;
 
         struct {
             struct ASTNode* left;
             struct ASTNode* right;
-            char op;
-        } binaryOp;
+            char* op;
+        } Expression;
+
+        struct {
+           int number;
+       } Number;
+
         struct {
             char* name;
         } identifier;
+
         struct {
-            char* op; 
-            char* varName;
-            struct ASTNode* expr;
-        }assignment;
-        struct{
-            struct ASTNode* expr;
-        }print;
+            char* op;
+        } binaryOp;
 
     } value;
 }ASTNode;
