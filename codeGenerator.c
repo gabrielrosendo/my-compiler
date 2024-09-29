@@ -35,6 +35,12 @@ void generateMIPS(TAC* tacInstructions) {
             printf("%s (%s) = %s\n", tac->result, tac->arg1, tac->arg2);
             printf("\tmove %s, %s\n", tac->result, tac->arg2);
             fprintf(outputFile, "\tmove %s, %s\n", tac->result, tac->arg2);
+        } else if (strcmp(tac->op, "Print") == 0) {
+            printf("Generating MIPS for Print operation\n");
+            printf("Print(%s (%s))\n", tac->result, tac->arg1);
+            printf("\tli $v0, 4\n\tmove $a0, %s\n\tsyscall\n", tac->result);
+            fprintf(outputFile, "\tli $v0, 1\n\tmove $a0, %s\n\tsyscall\n", tac->result);
+            fprintf(outputFile, "\tli $v0, 11\n\tli $a0, 10\n\tsyscall\n");
         } else if (strcmp(tac->op, "+") == 0) {
             printf("Generating MIPS for Addition\n");
             printf("%s = %s + %s\n", tac->result, tac->arg1, tac->arg2);

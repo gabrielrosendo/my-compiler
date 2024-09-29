@@ -28,7 +28,17 @@ main:
 	move $t0, $t2
 	add $t1, $t0, $t1
 	move $t3, $t1
-	move $t1, $t2
-	move $t0, $t3
+	li $v0, 1
+	move $a0, $t2
+	syscall
+	li $v0, 11
+	li $a0, 10
+	syscall
+	li $v0, 1
+	move $a0, $t3
+	syscall
+	li $v0, 11
+	li $a0, 10
+	syscall
 	li $v0, 10
 	syscall

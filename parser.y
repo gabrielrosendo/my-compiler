@@ -109,10 +109,10 @@ Stmt: ID EQ Expr SEMICOLON {
 								$$->value.assignment.op = $2;
 								$$->value.assignment.expr = $3;
  }
-	| PRINT LPAREN Expr RPAREN SEMICOLON { 
+	| PRINT LPAREN ID RPAREN SEMICOLON { 
                                             printf("PARSER: Recognized print statement\n"); 
                                             $$ = createNode(NodeType_Print);
-                                            $$->value.print.expr = $3;
+                                            $$->value.print.name = $3;
                                          }
 ;
 

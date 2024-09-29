@@ -30,7 +30,7 @@ struct ASTNode* createNode(NodeType type) {
             newNode->value.assignment.varName = NULL;
             break;
         case NodeType_Print:
-            newNode->value.print.expr = NULL;
+            newNode->value.print.name = NULL;
             break;
         case NodeType_Expression:
             newNode->value.Expression.left = NULL;
@@ -82,7 +82,7 @@ void freeAST(struct ASTNode* node) {
             freeAST(node->value.assignment.expr);
             break;
         case NodeType_Print:
-            freeAST(node->value.print.expr);
+            free(node->value.print.name);
             break;
         case NodeType_Expression :
             freeAST(node->value.Expression.right);
@@ -155,7 +155,7 @@ void printAST(struct ASTNode* node, int indent) {
         case NodeType_Print:
             spaceOut(indent);
             printf("AST Print: NodeType_Print\n");
-            printAST(node->value.print.expr, indent);
+            printf(node->value.print.name, indent);
             break;
         case NodeType_Expression :
             spaceOut(indent);

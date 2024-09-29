@@ -43,7 +43,6 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab) {
             break;
         case NodeType_Print:
             printf("Semantic Analysis running on node of type: NodeType_Print\n");
-            semanticAnalysis(node->value.print.expr, symTab);
             break;
         case NodeType_Expression:
             printf("Semantic Analysis running on node of type: NodeType_Expression\n");
@@ -105,10 +104,10 @@ TAC* generateTACForExpr(ASTNode* expr) {
 
         case NodeType_Print: {
             printf("Generating TAC for print\n");
-            instruction->arg1 = strdup(expr->value.print.);
-            instruction->arg2 = getVariableReference(expr->value.identifier.name);
-            instruction->op = strdup("ID");
-
+            instruction->arg1 = strdup(expr->value.print.name);
+            instruction->arg2 = NULL;
+            instruction->op = strdup("Print");
+            instruction->result = getVariableReference(expr->value.print.name);
             break;
         }
 
@@ -191,6 +190,8 @@ void printTAC(TAC* tac) {
         printf("%s %s ==> %s\n", tac->arg1, tac->arg2, tac->result);
     } else if (strcmp(tac->op, "=") == 0) {
         printf("%s (%s) = %s\n", tac->result, tac->arg1, tac->arg2);
+    } else if (strcmp(tac->op, "Print") == 0) {
+        printf("Print(%s (%s))\n", tac->result, tac->arg1);
     } else if (strcmp(tac->op, "+") == 0) {
         printf("%s = %s + %s\n", tac->result, tac->arg1, tac->arg2);
     } else if (strcmp(tac->op, "Num") == 0) {

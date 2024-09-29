@@ -49,7 +49,7 @@ typedef struct ASTNode {
         } assignment;
 
         struct{
-            struct ASTNode* expr;
+            char* name;
         } print;
 
         struct {
