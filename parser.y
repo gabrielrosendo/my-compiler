@@ -212,6 +212,14 @@ int main(int argc, char **argv) {
     optimizeTAC(&tacHead);
     // Output optimized TAC to file
     FILE* optimizedTacFile = fopen("optimizedTAC.ir", "w");
+
+    printf("-----TAC CODE AFTER OPTIMIZATION-----\n");
+    tempTac = tacHead;
+    while (tempTac != NULL) {
+        printTAC(tempTac);
+        tempTac = tempTac->next;
+    }
+
     if (optimizedTacFile) {
         printf("Writing optimized TAC to file...\n");
         printTACToFile("optimizedTAC.ir", tacHead);
