@@ -35,10 +35,27 @@ bool isConstant(const char* str) {
 
 void constantFolding(TAC** head) {
     TAC* current = *head;
+    char* t0 = '\0';
+    char* t1 = '\0';
     while (current != NULL) {
+        if (current->op != NULL && strcmp(current->op, "Num") == 0 || strcmp(current->op, "ID") == 0){
+            printf("INSIDE\n");
+            if(strcmp(current->result, "$t0") == 0) {
+                t0 = current->arg1;
+                printf("$t0: %s\n", t0);
+            } else {
+                t1 = current->arg1;
+                printf("$t1: %s\n", t1);
+            }
+        }
         if (current->op != NULL && strcmp(current->op, "+") == 0 || strcmp(current->op, "-") == 0) {
+        
+            
             printf(current->arg2);
             printf("\n");
+            printf("$t0: %s\n", t0);
+            printf("$t1: %s\n", t1);
+            t1 = t0;
         }
         current = current->next;
     }
