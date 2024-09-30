@@ -77,8 +77,8 @@ void addSymbol(SymbolBST* head, char* name, char* type) {
 
 Symbol* lookupSymbol(SymbolBST* head, char* name)   {
     if (head == NULL) {
-        fprintf(stderr,"SymbolBST Error in lookupSymbol(): input node not initialized \n");
-        return NULL;
+        fprintf(stderr,"Use of undeclared symbol: %s\n", name);
+        exit(0);
     }
 
     if (head->symbol == NULL) {
@@ -97,6 +97,10 @@ Symbol* lookupSymbol(SymbolBST* head, char* name)   {
     }
 
     // else (head->hash > curHash)    
+    if (head->left == NULL) {
+        fprintf(stderr,"SymbolBST Error in lookupSymbol(): symbol could not be found in SymbolBST \n");
+        exit(0);
+    }
     return lookupSymbol(head->left, name);
 }
 

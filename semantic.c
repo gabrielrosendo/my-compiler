@@ -54,6 +54,8 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab) {
             break;
         case NodeType_Identifier:
             printf("Semantic Analysis running on node of type: NodeType_Identifier\n");
+            printf("Identifier Name: %s\n", node->value.identifier.name);
+            lookupSymbol(symTab, node->value.identifier.name);
             break;
         case NodeType_BinaryOp:
             printf("Semantic Analysis running on node of type: NodeType_BinaryOp\n");

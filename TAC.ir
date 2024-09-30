@@ -3,7 +3,6 @@ int y ==> $t3
 int a ==> $t4
 int b ==> $t5
 int c ==> $t6
-int x ==> $t7
 $t1 = 1
 $t2 (x) = $t1
 $t1 = 12

@@ -6,7 +6,7 @@ main:
 	move $t2, $t1
 	li $t1, 12
 	move $t4, $t1
-	li $t1, 
+	li $t1, 33
 	move $t5, $t1
 	li $t1, 1
 	move $t0, $t4

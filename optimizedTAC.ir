@@ -3,12 +3,11 @@ int y ==> $t3
 int a ==> $t4
 int b ==> $t5
 int c ==> $t6
-int x ==> $t7
 $t1 = 1
 $t2 (x) = $t1
 $t1 = 12
 $t4 (a) = $t1
-$t1 = 
+$t1 = 33
 $t5 (b) = $t1
 $t1 = 1
 $t0 = $t4 (a)
