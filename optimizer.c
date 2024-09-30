@@ -37,6 +37,7 @@ void constantFolding(TAC** head) {
     TAC* current = *head;
     TAC* prev = NULL;
     TAC* prev_prev = NULL;
+    TAC* prev_prev_prev = NULL;
     char* t0 = '\0';
     char* t1 = '\0';
     while (current != NULL) {
@@ -71,10 +72,12 @@ void constantFolding(TAC** head) {
             free(t0);
             free(t1);
             // Remove unnecessary instructions
-            if (prev_prev != NULL) {
-                prev_prev->next = current->next;
+            if (prev_prev_prev != NULL) {
+                free(prev);
+                free(prev_prev);
+                prev_prev_prev->next = current;
             } else {
-                *head = current->next;
+                *head = current;
             }
             current->arg1 = strdup(resultStr);
             current->arg2 = NULL;
@@ -85,6 +88,7 @@ void constantFolding(TAC** head) {
         }
         t1 = t0;
         }
+        prev_prev_prev = prev_prev;
         prev_prev = prev;
         prev = current;
         current = current->next;
