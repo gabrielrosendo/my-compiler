@@ -38,7 +38,6 @@ void constantFolding(TAC** head) {
     TAC* prev = NULL;
     TAC* prev_prev = NULL;
     TAC* prev_prev_prev = NULL;
-    TAC* prev_prev_prev_prev = NULL;
     char* t0 = '\0';
     char* t1 = '\0';
     while (current != NULL) {
@@ -70,15 +69,14 @@ void constantFolding(TAC** head) {
             char resultStr[20];
             sprintf(resultStr, "%d", result);
             printf("Printing result = %s\n", resultStr);
-            t1 = resultStr;
             // Remove unnecessary instructions
             if (prev_prev_prev != NULL) {
                 free(prev);
                 free(prev_prev);
-                prev = prev_prev_prev;
+                prev = NULL;
                 prev_prev = NULL;
+
                 prev_prev_prev->next = current;
-                prev_prev_prev = prev_prev_prev_prev;
             } else {
                 if(prev != NULL) {
                     free(prev);
@@ -91,18 +89,36 @@ void constantFolding(TAC** head) {
             current->arg1 = strdup(resultStr);
             current->arg2 = NULL;
             current->op = "Num";
-            current->result = strdup("$t1"); // Ensure the result is updated correctly
+            if(strcmp(prev_prev_prev->op, "+") == 0 || strcmp(prev_prev_prev->op, "+") == 0) {
+                current->result = strdup("$t0");
+                    t1 = resultStr;
+                    t0 = '\0';
+            } else {
+                current->result = strdup("$t1");
+                t1 = resultStr;
+                t0 = '\0';
+            }
             printf("Constant folding applied\n");
             printCurrentOptimizedTAC(current);
         }
-        t1 = t0;
+
+        if (t0 != '\0') {
+            t1 = t0;
         }
-        prev_prev_prev_prev = prev_prev_prev;
-        prev_prev_prev = prev_prev;
+
+        }
+        if(prev_prev != NULL) {
+            prev_prev_prev = prev_prev;
+        }
         prev_prev = prev;
         prev = current;
         current = current->next;
     }
+    free(prev);
+    free(prev_prev);
+    free(prev_prev_prev);
+    free(t1);
+    free(t1);
 }
 
 void printCurrentOptimizedTAC(TAC* tac) {

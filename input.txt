@@ -6,7 +6,6 @@ int c;
 x = 1;
 a = 12;
 b = 23 + 10;
-print(b);
 x = a + a + 1;
 y = x + a + b + c + a + 5;
 print(x);
