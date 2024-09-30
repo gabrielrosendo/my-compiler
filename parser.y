@@ -194,6 +194,13 @@ int main(int argc, char **argv) {
     // Traverse the linked list of TAC entries and optimize
     // But - you MIGHT need to traverse the AST again to optimize
     optimizeTAC(&tacHead);
+    // Output optimized TAC to file
+    FILE* optimizedTacFile = fopen("optimizedTAC.ir", "w");
+    if (optimizedTacFile) {
+        printf("Writing optimized TAC to file...\n");
+        printTACToFile("optimizedTAC.ir", tacHead);
+        fclose(optimizedTacFile);
+    }
 
     initCodeGenerator("output.s");
     generateMIPS(tacHead);
