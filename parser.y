@@ -8,6 +8,7 @@
 #include "symbolBST_Test.h"
 #include "semantic.h"
 #include "codeGenerator.h"
+#include "optimizer.h"
 
 extern int yydebug;     // Debug mode for Bison
 extern int yylex();   // Declare yylex, the lexer function
@@ -114,6 +115,7 @@ Stmt: ID EQ Expr SEMICOLON {
                                             $$ = createNode(NodeType_Print);
                                             $$->value.print.name = $3;
                                          }
+    // Handle missng semicolon  
 ;
 
 Expr: Expr BinOp Expr { printf("PARSER: Recognized expression\n");
@@ -178,6 +180,20 @@ int main(int argc, char **argv) {
         printTAC(tempTac);
         tempTac = tempTac->next;
     }
+    // Output TAC to file
+    FILE* tacFile = fopen("TAC.ir", "w");
+    if (tacFile) {
+        printf("Writing TAC to file...\n");
+        printTACToFile("TAC.ir", tacHead);
+        fclose(tacFile);
+    } else {
+        fprintf(stderr, "Error: Could not open TAC.ir for writing\n");
+    }
+        // Code optimization
+    printf("\n=== CODE OPTIMIZATION ===\n");
+    // Traverse the linked list of TAC entries and optimize
+    // But - you MIGHT need to traverse the AST again to optimize
+    optimizeTAC(&tacHead);
 
     initCodeGenerator("output.s");
     generateMIPS(tacHead);

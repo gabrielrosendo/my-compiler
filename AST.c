@@ -60,7 +60,7 @@ void freeAST(struct ASTNode* node) {
 
     switch (node->type) {
         case NodeType_Program:
-            freeAST(node->value.program.VarDeclList);
+            //freeAST(node->value.program.VarDeclList);
             freeAST(node->value.program.StmtList);
             break;
         case NodeType_VarDeclList:

@@ -201,6 +201,34 @@ void printTAC(TAC* tac) {
     }
 }
 
+void printTACToFile(const char* filename, TAC* tac) {
+    FILE* file = fopen(filename, "w");
+    if (!file) {
+        perror("Failed to open file");
+        return;
+    }   
+    TAC* current = tac;
+    while (current != NULL) {
+        if (strcmp(current->op, "VarDecl") == 0) {
+            fprintf(file, "%s %s ==> %s\n", current->arg1, current->arg2, current->result);
+        } else if (strcmp(current->op, "=") == 0) {
+            fprintf(file, "%s (%s) = %s\n", current->result, current->arg1, current->arg2);
+        } else if (strcmp(current->op, "Print") == 0) {
+            fprintf(file, "Print(%s (%s))\n", current->result, current->arg1);
+        } else if (strcmp(current->op, "+") == 0) {
+            fprintf(file, "%s = %s + %s\n", current->result, current->arg1, current->arg2);
+        } else if (strcmp(current->op, "Num") == 0) {
+            fprintf(file, "%s = %s\n", current->result, current->arg1);
+        } else if (strcmp(current->op, "ID") == 0) {
+            fprintf(file, "%s = %s (%s)\n", current->result, current->arg2, current->arg1);
+        }
+        current = current->next;
+    }   
+    fclose(file);
+    printf("TAC written to %s\n", filename);
+}
+
+
 void appendTAC(TAC** head, TAC* newInstruction) {
     if (!*head) {
         *head = newInstruction;

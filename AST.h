@@ -8,6 +8,7 @@ typedef enum {
     NodeType_VarDeclList,
     NodeType_VarDecl,
     NodeType_StmtList,
+    NodeType_Stmt,
     NodeType_Assignment,
     NodeType_Print,
     NodeType_Expression,
