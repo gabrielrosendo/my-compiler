@@ -7,6 +7,8 @@ main:
 	li $t1, 12
 	move $t4, $t1
 	li $t1, 33
+	li $t0, 33
+	move 33, 33
 	move $t5, $t1
 	li $v0, 1
 	move $a0, $t5
