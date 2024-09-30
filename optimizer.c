@@ -67,6 +67,7 @@ void constantFolding(TAC** head) {
             }
             char resultStr[20];
             sprintf(resultStr, "%d", result);
+            printf("Printing result = %s\n", resultStr);
             free(t0);
             free(t1);
             // Remove unnecessary instructions
@@ -75,10 +76,10 @@ void constantFolding(TAC** head) {
             } else {
                 *head = current->next;
             }
-            current->arg1 = NULL;
-            current->op = "=";
-            current->arg2 = strdup(resultStr);
-            current->result = strdup(resultStr); // Ensure the result is updated correctly
+            current->arg1 = strdup(resultStr);
+            current->arg2 = NULL;
+            current->op = "Num";
+            current->result = strdup("$t1"); // Ensure the result is updated correctly
             printf("Constant folding applied\n");
             printCurrentOptimizedTAC(current);
         }
