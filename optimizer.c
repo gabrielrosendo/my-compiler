@@ -53,7 +53,7 @@ void constantFolding(TAC** head) {
         if (current->op != NULL && strcmp(current->op, "+") == 0 || strcmp(current->op, "-") == 0) {
         
             
-            printf(current->arg2);
+            printf("%s", current->arg2);
             printf("\n");
             printf("$t0: %s\n", t0);
             printf("$t1: %s\n", t1);
@@ -75,9 +75,9 @@ void constantFolding(TAC** head) {
             } else {
                 *head = current->next;
             }
-            current->arg1 = strdup(resultStr);
+            current->arg1 = NULL;
             current->op = "=";
-            current->arg2 = NULL;
+            current->arg2 = strdup(resultStr);
             current->result = strdup(resultStr); // Ensure the result is updated correctly
             printf("Constant folding applied\n");
             printCurrentOptimizedTAC(current);

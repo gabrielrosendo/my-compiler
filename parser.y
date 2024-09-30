@@ -91,6 +91,12 @@ VarDecl: TYPE ID SEMICOLON {
             $$->value.VarDecl.initExpr = $4; 
             printf("Parsed variable declaration with initialization: %s\n", $2);
     }
+    		| TYPE ID {
+                  printf ("Missing semicolon after declaring variable: %s\n", $2);
+                  // stop compilation
+                    exit(1);
+
+             }
 ;
 
 StmtList: {}
@@ -116,6 +122,16 @@ Stmt: ID EQ Expr SEMICOLON {
                                             $$->value.print.name = $3;
                                          }
     // Handle missng semicolon  
+    | PRINT LPAREN ID RPAREN { 
+                                printf ("Missing semicolon after print statement: %s\n", $3);
+                                // stop compilation
+                                exit(1);
+                             }
+    | ID EQ Expr { 
+                    printf ("Missing semicolon after assignment statement: %s\n", $1);
+                    // stop compilation
+                    exit(1);
+                 }
 ;
 
 Expr: Expr BinOp Expr { printf("PARSER: Recognized expression\n");
