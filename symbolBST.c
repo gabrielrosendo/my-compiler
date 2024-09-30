@@ -28,7 +28,7 @@ SymbolBST* addSymbolPrivate(SymbolBST* curNode, Symbol* newSymbol, unsigned int 
         curNode->hash = curHash;
         curNode->symbol = newSymbol;
     } else if (curNode->hash == curHash) {
-        fprintf(stderr,"SymbolBST Error in addSymbolPrivate(): added symbol already esists \n");
+        fprintf(stderr,"SymbolBST Error in addSymbolPrivate(): added symbol already exists \n");
         free(newSymbol->name);
         free(newSymbol->type);
         free(newSymbol);
@@ -60,6 +60,7 @@ void addSymbol(SymbolBST* head, char* name, char* type) {
 
     if (head->hash == curHash) {
         fprintf(stderr,"SymbolBST Error in addSymbolPrivate(): added symbol already esists \n");
+        exit(0);
         return;
     }
 
