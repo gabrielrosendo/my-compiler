@@ -219,6 +219,7 @@ int main(int argc, char **argv) {
         printTAC(tempTac);
         tempTac = tempTac->next;
     }
+    printf("testing\n");
 
     if (optimizedTacFile) {
         printf("Writing optimized TAC to file...\n");
