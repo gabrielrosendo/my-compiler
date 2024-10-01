@@ -188,7 +188,10 @@ void constantPropagation(TAC** head) {
         current = current->next;
     }
 }
-void deadCodeElimination(TAC** head){
+void deadCodeElimination(TAC** head){ 
+    
+    /*Remove assignments that are not used
+    */
     
 }
 
