@@ -5,7 +5,7 @@
 
 void optimizeTAC(TAC** head) {
     constantPropagation(head);
-    //constantFolding(head); // This is currently giving a segmentation fault
+    constantFolding(head); // This is currently giving a segmentation fault
 
     /*
     copyPropagation(head);
@@ -153,15 +153,6 @@ void constantPropagation(TAC** head) {
             // Num found
             // CHange every instance of current->result to current->arg1
             TAC* temp = *head;
-            while (temp != NULL) {
-                if (temp->arg1 != NULL && strcmp(temp->arg1, current->result) == 0) {
-                    temp->arg1 = strdup(current->arg1);
-                }
-                if (temp->arg2 != NULL && strcmp(temp->arg2, current->result) == 0) {
-                    temp->arg2 = strdup(current->arg1);
-                }
-                temp = temp->next;
-            }
 
         }
         current = current->next;
