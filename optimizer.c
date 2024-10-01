@@ -110,7 +110,6 @@ void constantFolding(TAC** head) {
     free(prev_prev);
     free(prev_prev_prev);
     free(t1);
-    free(t1);
 }
 
 void updateTemp(TAC* current, char** t0, char** t1) {

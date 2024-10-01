@@ -3,3 +3,5 @@ parser.tab.c
 lex.yy.c
 parser.output
 parser.tab.h
+output.s
+optimizedTAC.ir
