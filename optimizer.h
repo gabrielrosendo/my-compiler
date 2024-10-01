@@ -16,6 +16,7 @@ void optimizeTAC(TAC** head);
 bool isConstant(const char* str);
 bool isVariable(const char* str);
 void constantFolding(TAC** head);
+void getVal(TAC* current, char** t0, char** t1);
 void constantPropagation(TAC** head);
 void copyPropagation(TAC** head);
 void deadCodeElimination(TAC** head);

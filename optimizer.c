@@ -5,8 +5,8 @@
 
 void optimizeTAC(TAC** head) {
     constantFolding(head);
-    /*
     constantPropagation(head);
+    /*
     copyPropagation(head);
     deadCodeElimination(head);
     */
@@ -41,16 +41,8 @@ void constantFolding(TAC** head) {
     char* t0 = '\0';
     char* t1 = '\0';
     while (current != NULL) {
-        if (current->op != NULL && strcmp(current->op, "Num") == 0 || strcmp(current->op, "ID") == 0){
-            printf("INSIDE\n");
-            if(strcmp(current->result, "$t0") == 0) {
-                t0 = current->arg1;
-                printf("$t0: %s\n", t0);
-            } else {
-                t1 = current->arg1;
-                printf("$t1: %s\n", t1);
-            }
-        }
+        getVal(current, &t0, &t1);
+
         if (current->op != NULL && strcmp(current->op, "+") == 0 || strcmp(current->op, "-") == 0) {
         
             
@@ -121,6 +113,50 @@ void constantFolding(TAC** head) {
     free(t1);
 }
 
+void updateTemp(TAC* current, char** t0, char** t1) {
+    if (current->op != NULL && (strcmp(current->op, "Num") == 0 || strcmp(current->op, "ID") == 0)) {
+        printf("INSIDE\n");
+        if (strcmp(current->result, "$t0") == 0) {
+            *t0 = current->arg1;
+            printf("$t0: %s\n", *t0);
+        } else {
+            *t1 = current->arg1;
+            printf("$t1: %s\n", *t1);
+        }
+    }
+}
+void getVal(TAC* current, char** t0, char** t1) {
+    if (current->op != NULL && (strcmp(current->op, "Num") == 0 || strcmp(current->op, "ID") == 0)) {
+        printf("INSIDE\n");
+        if (strcmp(current->result, "$t0") == 0) {
+            *t0 = current->arg1;
+            printf("$t0: %s\n", *t0);
+        } else {
+            *t1 = current->arg1;
+            printf("$t1: %s\n", *t1);
+        }
+    }
+}
+
+void constantPropagation(TAC** head) {
+    printf("Inside constant propagation\n");
+    TAC* current = *head;
+    char* t0 = NULL;
+    char* t1 = NULL;
+    while (current != NULL) {
+        printf("Current TAC: op=%s, arg1=%s, result=%s\n", current->op, current->arg1, current->result);\
+        // Check if the current TAC is an assignment
+        // and the right-hand side is a constant
+        if (current->op != NULL && strcmp(current->op, "Num") == 0) {
+            printf("result: %s\n", current->result);
+            printf("Num: %s\n", current->arg1);
+            // Num found
+            // CHange every instance of current->result to current->arg1
+
+        }
+        current = current->next;
+    }
+}
 void printCurrentOptimizedTAC(TAC* tac) {
     if (strcmp(tac->op, "VarDecl") == 0) {
         printf("%s %s ==> %s\n", tac->arg1, tac->arg2, tac->result);
