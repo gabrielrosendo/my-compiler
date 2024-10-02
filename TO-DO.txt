@@ -1,0 +1,18 @@
+- Add typecasting by deafultt 
+Ex:
+Expr: ID BinOp ID {...} |
+    LPAREN TYPE RPAREN ID BinOp LPAREN TYPE RPAREN ID {...}
+
+- Or type coercion
+
+- Support for arrays
+
+- Support for / and *
+** Operator precedence: https://web.mit.edu/gnu/doc/html/bison_8.html#:~:text=The%20Bison%20precedence%20declarations%2C%20%25left,the%20%25prec%20modifier%20for%20rules.&text=and%20it%20is%20written%20after%20the%20components%20of%20the%20rule
+- Declare and call functions
+
+- Division by zero is error
+
+- symbol table to store array name and lenght
+
+- array size has to be pre defined?
