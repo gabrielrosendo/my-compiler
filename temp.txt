@@ -1,0 +1,49 @@
+else if (prev_prev != NULL && strcmp(prev_prev->op, "+") == 0 || strcmp(prev_prev->op, "-") == 0) {
+            printf("----AHHHH----\n");
+            if (isConstant(t0) && isConstant(t1)) {
+                // Needs to be optimized
+                int result = 0;
+                if (strcmp(current->op, "+") == 0) {
+                    result = atoi(t0) + atoi(t1);
+                } else {
+                    result = atoi(t0) - atoi(t1);
+                }
+                char resultStr[20];
+                sprintf(resultStr, "%d", result);
+
+                printf("----Constant Folding CASE 2----\n");
+                printf("prev_prev_prev = ");
+                printCurrentOptimizedTAC(prev_prev_prev);
+                printf("prev_prev = ");
+                printCurrentOptimizedTAC(prev_prev);
+                printf("prev = ");
+                printCurrentOptimizedTAC(prev);
+                printf("current = ");
+                printCurrentOptimizedTAC(current);
+                printf("----END OF Constant Folding CASE 2----\n");
+
+                printf("Printing result = %s\n", resultStr);
+
+                free(prev);
+                free(prev_prev);
+                prev = NULL;
+                prev_prev = NULL;
+
+                prev_prev_prev->next = current;
+
+                prev_prev_prev->arg1 = strdup(resultStr);
+                prev_prev_prev->arg2 = NULL;
+                prev_prev_prev->op = "Num";
+                prev_prev_prev->result = strdup("$t0");
+                t1 = '\0';
+                t0 = resultStr;
+
+                printf("Constant folding applied CASE 2\n");
+                printCurrentOptimizedTAC(current);
+            }
+
+            if (t0 != '\0') {
+                t1 = t0;
+            }
+
+        }
