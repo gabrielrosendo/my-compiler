@@ -2,7 +2,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-
 void optimizeTAC(TAC** head) {
     constantFolding(head); // This is currently giving a segmentation fault
     constantPropagation(head);
@@ -108,9 +107,6 @@ void constantFolding(TAC** head) {
             }
 
         } else if (prev != NULL && prev->op != NULL && (strcmp(prev->op, "+") == 0 || strcmp(prev->op, "-") == 0)) {
-            printf("----AHHHH----\n");
-            printf("t1 = %s\n", t1);
-            printf("t0 = %s\n", t0);
             if (isConstant(t0) && isConstant(t1)) {
                 // Needs to be optimized
                 int result = 0;
@@ -244,9 +240,47 @@ void constantPropagation(TAC** head) {
     }
 }
 void deadCodeElimination(TAC** head){ 
+    TAC* current = *head;
+    TAC* prev = NULL;
     
-    /*Remove assignments that are not used
-    */
+    while (current != NULL) {
+        if(current->op != NULL && strcmp(current->op, "VarDecl") == 0) {
+
+            char* curVar = current->arg2;
+            TAC* useChecker = current->next;
+            bool isUsed = false;
+
+            while (useChecker != NULL) {   
+                printCurrentOptimizedTAC(useChecker);
+                printf("Current Var = %s\n", curVar);
+                printf("useChecker->op != NULL && strcmp(useChecker->op, \"=\") == 0 = %u\n", useChecker->op != NULL && strcmp(useChecker->op, "=") == 0);
+                printf("(useChecker->arg1 != NULL &&  strcmp(useChecker->arg1, curVar) == 0) = %u\n", (useChecker->arg1 != NULL &&  strcmp(useChecker->arg1, curVar) == 0));
+                if (useChecker->op != NULL && strcmp(useChecker->op, "=") == 0 &&
+                    (useChecker->arg1 != NULL && strcmp(useChecker->arg1, curVar) == 0)) {
+                     isUsed = true;
+                     break;   
+                }
+                useChecker = useChecker->next;
+            }
+
+            if (!isUsed) {
+                if(prev != NULL) {
+                    prev->next = current->next;
+                    free(current);
+                    current = prev->next;
+                    continue;
+                } else {
+                    *head = current->next;
+                    free(current);
+                    current = *head;
+                    continue;
+                }
+            }
+        }
+        prev = current;
+        current = current->next;
+    }
+    
     
 }
 
