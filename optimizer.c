@@ -2,14 +2,14 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-void optimizeTAC(TAC** head) {
-    constantFolding(head); // This is currently giving a segmentation fault
-    constantPropagation(head);
+void optimizeforMIPS(TAC** head) {
+    constantFolding(head);
     deadCodeElimination(head);
-
-    /*
-    copyPropagation(head);
-    */
+}
+void optimizeTAC(TAC** head) {
+    constantPropagation(head);
+    //copyPropagation(head);
+    
 }
 bool isConstant(const char* str) {
     if (str == NULL || *str == '\0') {
@@ -224,6 +224,45 @@ void constantPropagation(TAC** head) {
                 if (temp->arg2 != NULL && strcmp(temp->arg2, targetVar) == 0) {
                     printf("Replacing arg2 %s with constant %s\n", temp->arg2, constantValue);
                     temp->arg2 = constantValue;
+                }
+
+                // Stop propagating if the targetVar is reassigned
+                if (temp->result != NULL && strcmp(temp->result, targetVar) == 0) {
+                    printf("Stopping propagation since %s is reassigned\n", targetVar);
+                    break;
+                }
+
+                temp = temp->next;
+            }
+        }
+
+        current = current->next;
+    }
+}
+
+void copyPropagation(TAC** head) {
+    printf("Inside copy propagation\n");
+    TAC* current = *head;
+
+    while (current != NULL) {
+        // Check if the current TAC is a copy assignment (e.g., t1 = t2)
+        if (current->op != NULL && strcmp(current->op, "=") == 0 && current->arg1 != NULL && current->result != NULL) {
+            char* sourceVar = current->arg1;
+            char* targetVar = current->result;
+
+            // Now propagate this copy through subsequent TACs
+            TAC* temp = current->next;
+            while (temp != NULL) {
+                // Replace targetVar in arg1 or arg2 with sourceVar
+                if (temp->arg1 != NULL && strcmp(temp->arg1, targetVar) == 0) {
+                    printf("Replacing arg1 %s with %s\n", temp->arg1, sourceVar);
+                    free(temp->arg1);
+                    temp->arg1 = strdup(sourceVar);
+                }
+                if (temp->arg2 != NULL && strcmp(temp->arg2, targetVar) == 0) {
+                    printf("Replacing arg2 %s with %s\n", temp->arg2, sourceVar);
+                    free(temp->arg2);
+                    temp->arg2 = strdup(sourceVar);
                 }
 
                 // Stop propagating if the targetVar is reassigned

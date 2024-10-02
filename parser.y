@@ -10,6 +10,7 @@
 #include "codeGenerator.h"
 #include "optimizer.h"
 
+
 extern int yydebug;     // Debug mode for Bison
 extern int yylex();   // Declare yylex, the lexer function
 extern int yyparse(); // Declare yyparse, the parser function
@@ -205,13 +206,23 @@ int main(int argc, char **argv) {
     } else {
         fprintf(stderr, "Error: Could not open TAC.ir for writing\n");
     }
-        // Code optimization
+
+    
+    optimizeforMIPS(&tacHead);
+    initCodeGenerator("output.s");
+    generateMIPS(tacHead);
+    finalizeCodeGenerator("output.s");
+    // Code optimization
     printf("\n=== CODE OPTIMIZATION ===\n");
     // Traverse the linked list of TAC entries and optimize
     // But - you MIGHT need to traverse the AST again to optimize
     optimizeTAC(&tacHead);
     // Output optimized TAC to file
     FILE* optimizedTacFile = fopen("optimizedTAC.ir", "w");
+    
+    freeSymbolTable(symbolBST);
+    printf("Freeing AST...\n");
+    freeAST(root);
 
     printf("-----TAC CODE AFTER OPTIMIZATION-----\n");
     tempTac = tacHead;
@@ -226,14 +237,6 @@ int main(int argc, char **argv) {
         printTACToFile("optimizedTAC.ir", tacHead);
         fclose(optimizedTacFile);
     }
-
-    initCodeGenerator("output.s");
-    generateMIPS(tacHead);
-    finalizeCodeGenerator("output.s");
-    
-    freeSymbolTable(symbolBST);
-    printf("Freeing AST...\n");
-    freeAST(root);
 
     if(enableTesting) {
         printf("\n\n---------------------------------------------------------");

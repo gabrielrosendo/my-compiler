@@ -13,6 +13,7 @@
 #include <ctype.h>
 
 void optimizeTAC(TAC** head);
+void optimizeforMIPS(TAC** head);
 bool isConstant(const char* str);
 bool isVariable(const char* str);
 void constantFolding(TAC** head);
