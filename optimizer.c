@@ -4,12 +4,12 @@
 
 
 void optimizeTAC(TAC** head) {
-    constantPropagation(head);
     constantFolding(head); // This is currently giving a segmentation fault
+    constantPropagation(head);
+    deadCodeElimination(head);
 
     /*
     copyPropagation(head);
-    deadCodeElimination(head);
     */
 }
 bool isConstant(const char* str) {
@@ -205,23 +205,51 @@ void getVal(TAC* current, char** t0, char** t1) {
 void constantPropagation(TAC** head) {
     printf("Inside constant propagation\n");
     TAC* current = *head;
-    char* t0 = NULL;
-    char* t1 = NULL;
-    while (current != NULL) {
-        printf("Current TAC: op=%s, arg1=%s, result=%s\n", current->op, current->arg1, current->result);\
-        // Check if the current TAC is an assignment
-        // and the right-hand side is a constant
-        if (current->op != NULL && strcmp(current->op, "Num") == 0) {
-            printf("result: %s\n", current->result);
-            printf("Num: %s\n", current->arg1);
-            // Num found
-            // CHange every instance of current->result to current->arg1
-            TAC* temp = *head;
 
+    while (current != NULL) {
+        printf("Current TAC: op=%s, arg1=%s, result=%s\n", current->op, current->arg1, current->result);
+        if (current->arg2 != NULL) {
+            printf("arg2: %s \n", current->arg2);
         }
+
+        // Check if the current TAC is an assignment of a constant (Num)
+        if (current->op != NULL && strcmp(current->op, "Num") == 0) {
+            char* constantValue = current->arg1;
+            char* targetVar = current->result;
+
+            // Now propagate this constant through subsequent TACs
+            TAC* temp = current->next;
+            while (temp != NULL) {
+                // Replace targetVar in arg1 or arg2 with constantValue
+                if (temp->arg1 != NULL && strcmp(temp->arg1, targetVar) == 0) {
+                    printf("Replacing arg1 %s with constant %s\n", temp->arg1, constantValue);
+                    temp->arg1 = constantValue;
+                }
+                if (temp->arg2 != NULL && strcmp(temp->arg2, targetVar) == 0) {
+                    printf("Replacing arg2 %s with constant %s\n", temp->arg2, constantValue);
+                    temp->arg2 = constantValue;
+                }
+
+                // Stop propagating if the targetVar is reassigned
+                if (temp->result != NULL && strcmp(temp->result, targetVar) == 0) {
+                    printf("Stopping propagation since %s is reassigned\n", targetVar);
+                    break;
+                }
+
+                temp = temp->next;
+            }
+        }
+
         current = current->next;
     }
 }
+void deadCodeElimination(TAC** head){ 
+    
+    /*Remove assignments that are not used
+    */
+    
+}
+
 void printCurrentOptimizedTAC(TAC* tac) {
     if (tac == NULL) {
         printf("NULL\n");
