@@ -3,7 +3,7 @@ Ex:
 Expr: ID BinOp ID {...} |
     LPAREN TYPE RPAREN ID BinOp LPAREN TYPE RPAREN ID {...}
 
-- Or type coercion
+- Or type coercion?
 
 - Support for arrays
 
@@ -16,3 +16,9 @@ Expr: ID BinOp ID {...} |
 - symbol table to store array name and lenght
 
 - array size has to be pre defined?
+
+- different scopes in symbol table
+
+https://docs.google.com/document/d/1mUexL4rFo3SH2ms6porxyYbrrofqAq9Hs039YbdmfPA/edit
+
+- 
