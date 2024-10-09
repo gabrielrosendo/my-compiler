@@ -67,6 +67,29 @@ Program: StmtList {
         }
 ;
 
+// Handle functions
+FuncDeclList: {}
+            | FuncDecl FuncDeclList {
+                $$ = createNode(NodeType_FuncDeclList);
+                $$->value.FuncDeclList.FuncDecl = $1;
+                $$->value.FuncDeclList.nextFuncDecl = $2;
+            };
+
+FuncDecl: TYPE ID LPAREN ParamList RPAREN LBRACE Body RBRACE {
+            printf("PARSER: Recognized function declaration\n");
+            $$ = createNode(NodeType_FuncDecl);
+            $$->value.FuncDecl.funcType = $1;
+            $$->value.FuncDecl.funcName = $2;
+            $$->value.FuncDecl.paramList = $4;
+            $$->value.FuncDecl.body = $7;
+        };
+
+MainFunc: VOID MAIN LPAREN RPAREN LBRACE Body RBRACE {
+            printf("PARSER: Recognized main function\n");
+            $$ = createNode(NodeType_MainFunc);
+            $$->value.MainFunc.body = $6;
+        };
+
 VarDeclList: {}
            | VarDecl VarDeclList {
                 $$ = createNode(NodeType_VarDeclList); 
