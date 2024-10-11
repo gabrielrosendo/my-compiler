@@ -49,25 +49,29 @@ SymbolBST* symbolBST = NULL;
 %token <string> SEMICOLON
 %token <string> LBRACE
 %token <string> RBRACE
+%token <string> COMMA
+%token <string> RETURN
+%token <keyword> MAIN
+%token <keyword> VOID
 
 
-%type <ast> Program VarDeclList VarDecl StmtList Stmt Expr BinOp
+
+%type <ast> Program VarDeclList VarDecl StmtList Stmt Expr BinOp FuncDeclList FuncDecl MainFunc ParamList Body
+
+
 %%
 
-Program: StmtList { 
+Program: 
+        VarDeclList FuncDeclList MainFunc { 
             printf("The parser has started\n"); 
             root = createNode(NodeType_Program); // Create the program node
-            root->value.program.StmtList = $1; // Set the statement list
-        }
-       | VarDeclList StmtList { 
-            printf("The parser has started\n"); 
-            root = createNode(NodeType_Program); // Create the program node
-            root->value.program.VarDeclList = $1; // Set the variable declaration list
-            root->value.program.StmtList = $2; // Set the statement list
+            root->value.program.FuncDeclList = $1; // Set the variable declaration list
+            root->value.program.MainFunc = $2; // Set the statement list
         }
 ;
 
-// Handle functions
+// Changes made to handle functions
+
 FuncDeclList: {}
             | FuncDecl FuncDeclList {
                 $$ = createNode(NodeType_FuncDeclList);
@@ -89,6 +93,28 @@ MainFunc: VOID MAIN LPAREN RPAREN LBRACE Body RBRACE {
             $$ = createNode(NodeType_MainFunc);
             $$->value.MainFunc.body = $6;
         };
+
+ParamList:  {/*empty, i.e. it is possible not to have any parameter*/}
+	| ParamDecl {printf("One parameter\n");}
+	| ParamDecl COMMA ParamList { printf("PARSER: Recognized parameter list\n"); }
+;
+
+ParamDecl: TYPE ID { 
+				printf("PARSER: Recognized parameter declaration\n"); 
+						// Implementation needed
+					
+		}
+;
+
+Body: VarDeclList StmtList FuncTail{ 
+	printf("PARSER: Recognized function body\n"); }
+;
+
+FuncTail: /* no return statement, if a void function was defined*/
+	| RETURN Expr SEMICOLON { printf("PARSER: Recognized function tail\n"); }
+
+
+// Code changes end here
 
 VarDeclList: {}
            | VarDecl VarDeclList {

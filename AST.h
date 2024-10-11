@@ -14,7 +14,13 @@ typedef enum {
     NodeType_Expression,
     NodeType_Number,
     NodeType_Identifier,
-    NodeType_BinaryOp
+    NodeType_BinaryOp,
+    NodeType_FuncDeclList,
+    NodeType_FuncDecl,
+    NodeType_MainFunc,
+    NodeType_ParamList,
+    NodeType_ParamDecl,
+    NodeType_Body
 } NodeType;
 
 // Define AST Structure
@@ -70,6 +76,8 @@ typedef struct ASTNode {
         struct {
             char* op;
         } binaryOp;
+        // TO-DO: Add structure for function related nodes and change the ASTNode structure above to include these new nodes
+
 
     } value;
 }ASTNode;

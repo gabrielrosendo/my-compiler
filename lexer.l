@@ -44,12 +44,23 @@ BAD_ID {NUMBER}{ID}
     yylval.string = strdup(yytext);
     return TYPE;
 }
+"void"      { 
+    return VOID; }
+
+"main"      { 
+    return MAIN; }
+
+"return"    { 
+    words++; chars += strlen(yytext);
+    printf("%-10s | %-10s\n", yytext, "RETURN");
+    return RETURN; }
 
 "print" { 
     words++; chars += strlen(yytext);
     printf("%-10s | %-10s\n", yytext, "PRINT");
     return PRINT;
 }
+
 
 "write" { 
     words++; chars += strlen(yytext);
@@ -94,6 +105,11 @@ BAD_ID {NUMBER}{ID}
     printf("%-10s | %-10s\n", yytext, "EQ");
     yylval.string = strdup(yytext);
     return EQ;
+}
+"," { 
+    chars++;
+    printf("%-10s | %-10s\n", yytext, "COMMA");
+    return COMMA;
 }
 
 "{" { 
