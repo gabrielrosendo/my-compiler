@@ -9,8 +9,33 @@ struct ASTNode* createNode(NodeType type) {
 
     switch (type) {
         case NodeType_Program:
-            newNode->value.program.VarDeclList = NULL;
-            newNode->value.program.StmtList = NULL;
+            newNode->value.program.FuncDeclList = NULL;
+            newNode->value.program.MainFunc = NULL;
+            break;
+        case NodeType_FuncDeclList:
+            newNode->value.FuncDeclList.FuncDecl = NULL;
+            newNode->value.FuncDeclList.nextFuncDecl = NULL;
+            break;
+        case NodeType_FuncDecl:
+            newNode->value.FuncDecl.FuncType = NULL;
+            newNode->value.FuncDecl.FuncName = NULL;
+            newNode->value.FuncDecl.ParamList = NULL;
+            newNode->value.FuncDecl.Body = NULL;
+            break;
+        case NodeType_MainFunc:
+            newNode->value.MainFunc.Body = NULL;
+            break;
+        case NodeType_ParamList:
+            newNode->value.ParamList.ParamDecl = NULL;
+            newNode->value.ParamList.nextParamDecl = NULL;
+            break;
+        case NodeType_ParamDecl:
+            newNode->value.ParamDecl.paramType = NULL;
+            newNode->value.ParamDecl.paramName = NULL;
+            break;
+        case NodeType_Body:
+            newNode->value.Body.VarDeclList = NULL;
+            newNode->value.Body.StmtList = NULL;
             break;
         case NodeType_VarDeclList:
             newNode->value.VarDeclList.VarDecl = NULL;
@@ -28,6 +53,7 @@ struct ASTNode* createNode(NodeType type) {
         case NodeType_Assignment:
             newNode->value.assignment.op = NULL;
             newNode->value.assignment.varName = NULL;
+            newNode->value.assignment.expr = NULL;
             break;
         case NodeType_Print:
             newNode->value.print.name = NULL;
@@ -47,7 +73,7 @@ struct ASTNode* createNode(NodeType type) {
             newNode->value.binaryOp.op = '\0';
             break;
         default:
-            fprintf(stderr, "ERROR: unknow AST node type AST.c->createNode()\n");
+            fprintf(stderr, "ERROR: unknown AST node type AST.c->createNode()\n");
             exit(0);
             break;
     }
@@ -60,8 +86,33 @@ void freeAST(struct ASTNode* node) {
 
     switch (node->type) {
         case NodeType_Program:
-            //freeAST(node->value.program.VarDeclList);
-            freeAST(node->value.program.StmtList);
+            freeAST(node->value.program.FuncDeclList);
+            freeAST(node->value.program.MainFunc);
+            break;
+        case NodeType_FuncDeclList:
+            freeAST(node->value.FuncDeclList.FuncDecl);
+            freeAST(node->value.FuncDeclList.nextFuncDecl);
+            break;
+        case NodeType_FuncDecl:
+            free(node->value.FuncDecl.FuncType);
+            free(node->value.FuncDecl.FuncName);
+            freeAST(node->value.FuncDecl.ParamList);
+            freeAST(node->value.FuncDecl.Body);
+            break;
+        case NodeType_MainFunc:
+            freeAST(node->value.MainFunc.Body);
+            break;
+        case NodeType_ParamList:
+            freeAST(node->value.ParamList.ParamDecl);
+            freeAST(node->value.ParamList.nextParamDecl);
+            break;
+        case NodeType_ParamDecl:
+            free(node->value.ParamDecl.paramType);
+            free(node->value.ParamDecl.paramName);
+            break;
+        case NodeType_Body:
+            freeAST(node->value.Body.VarDeclList);
+            freeAST(node->value.Body.StmtList);
             break;
         case NodeType_VarDeclList:
             freeAST(node->value.VarDeclList.VarDecl);
@@ -84,17 +135,18 @@ void freeAST(struct ASTNode* node) {
         case NodeType_Print:
             free(node->value.print.name);
             break;
-        case NodeType_Expression :
+        case NodeType_Expression:
             freeAST(node->value.Expression.right);
             freeAST(node->value.Expression.left);
             free(node->value.Expression.op);
             break;
-        case NodeType_Number :
+        case NodeType_Number:
+            // No dynamic memory to free for numbers
             break;
         case NodeType_Identifier:
             free(node->value.identifier.name);
             break;
-        case NodeType_BinaryOp :
+        case NodeType_BinaryOp:
             free(node->value.binaryOp.op);
             break;
         default:
@@ -119,8 +171,49 @@ void printAST(struct ASTNode* node, int indent) {
         case NodeType_Program:
             spaceOut(indent);
             printf("AST Print: NodeType_Program\n");
-            printAST(node->value.program.VarDeclList, indent);
-            printAST(node->value.program.StmtList, indent);
+            printAST(node->value.program.FuncDeclList, indent);
+            printAST(node->value.program.MainFunc, indent);
+            break;
+        case NodeType_FuncDeclList:
+            spaceOut(indent);
+            printf("AST Print: NodeType_FuncDeclList\n");
+            printAST(node->value.FuncDeclList.FuncDecl, indent);
+            printAST(node->value.FuncDeclList.nextFuncDecl, indent);
+            break;
+        case NodeType_FuncDecl:
+            spaceOut(indent);
+            printf("AST Print: NodeType_FuncDecl\n");
+            spaceOut(indent);
+            printf("AST Print: FuncType = %s\n", node->value.FuncDecl.FuncType);
+            spaceOut(indent);
+            printf("AST Print: FuncName = %s\n", node->value.FuncDecl.FuncName);
+            printAST(node->value.FuncDecl.ParamList, indent);
+            printAST(node->value.FuncDecl.Body, indent);
+            break;
+        case NodeType_MainFunc:
+            spaceOut(indent);
+            printf("AST Print: NodeType_MainFunc\n");
+            printAST(node->value.MainFunc.Body, indent);
+            break;
+        case NodeType_ParamList:
+            spaceOut(indent);
+            printf("AST Print: NodeType_ParamList\n");
+            printAST(node->value.ParamList.ParamDecl, indent);
+            printAST(node->value.ParamList.nextParamDecl, indent);
+            break;
+        case NodeType_ParamDecl:
+            spaceOut(indent);
+            printf("AST Print: NodeType_ParamDecl\n");
+            spaceOut(indent);
+            printf("AST Print: paramType = %s\n", node->value.ParamDecl.paramType);
+            spaceOut(indent);
+            printf("AST Print: paramName = %s\n", node->value.ParamDecl.paramName);
+            break;
+        case NodeType_Body:
+            spaceOut(indent);
+            printf("AST Print: NodeType_Body\n");
+            printAST(node->value.Body.VarDeclList, indent);
+            printAST(node->value.Body.StmtList, indent);
             break;
         case NodeType_VarDeclList:
             spaceOut(indent);
@@ -155,9 +248,10 @@ void printAST(struct ASTNode* node, int indent) {
         case NodeType_Print:
             spaceOut(indent);
             printf("AST Print: NodeType_Print\n");
-            printf(node->value.print.name, indent);
+            spaceOut(indent);
+            printf("AST Print: name = %s\n", node->value.print.name);
             break;
-        case NodeType_Expression :
+        case NodeType_Expression:
             spaceOut(indent);
             printf("AST Print: NodeType_Expression\n");
             spaceOut(indent);
@@ -165,11 +259,11 @@ void printAST(struct ASTNode* node, int indent) {
             printAST(node->value.Expression.left, indent);
             printAST(node->value.Expression.right, indent);
             break;
-        case NodeType_Number :
+        case NodeType_Number:
             spaceOut(indent);
             printf("AST Print: NodeType_Number\n");
             spaceOut(indent);
-            printf("AST Print: number = %u\n", node->value.Number.number);
+            printf("AST Print: number = %d\n", node->value.Number.number);
             break;
         case NodeType_Identifier:
             spaceOut(indent);
@@ -177,12 +271,11 @@ void printAST(struct ASTNode* node, int indent) {
             spaceOut(indent);
             printf("AST Print: name = %s\n", node->value.identifier.name);
             break;
-        case NodeType_BinaryOp :
+        case NodeType_BinaryOp:
             spaceOut(indent);
-            printf("AST Print: NodeType_BinaryOp");
+            printf("AST Print: NodeType_BinaryOp\n");
             spaceOut(indent);
-            printf("AST Print: name = %s\n", node->value.binaryOp.op);
-            
+            printf("AST Print: op = %s\n", node->value.binaryOp.op);
             break;
         default:
             break;

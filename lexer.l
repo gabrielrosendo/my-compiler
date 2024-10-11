@@ -45,9 +45,13 @@ BAD_ID {NUMBER}{ID}
     return TYPE;
 }
 "void"      { 
+    words++; chars += strlen(yytext);
+    printf("%-10s | %-10s\n", yytext, "VOID");
     return VOID; }
 
 "main"      { 
+    words++; chars += strlen(yytext);
+    printf("%-10s | %-10s\n", yytext, "MAIN");
     return MAIN; }
 
 "return"    { 

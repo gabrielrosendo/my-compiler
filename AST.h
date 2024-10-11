@@ -28,8 +28,8 @@ typedef struct ASTNode {
     NodeType type;
     union {
         struct {
-            struct ASTNode* VarDeclList;
-            struct ASTNode* StmtList;
+            struct ASTNode* FuncDeclList;
+            struct ASTNode* MainFunc;
         } program;
 
         struct {
@@ -76,7 +76,32 @@ typedef struct ASTNode {
         struct {
             char* op;
         } binaryOp;
-        // TO-DO: Add structure for function related nodes and change the ASTNode structure above to include these new nodes
+        // Add structure for function related nodes and change the ASTNode structure above to include these new nodes
+        struct {
+            struct ASTNode* FuncDecl;
+            struct ASTNode* nextFuncDecl;
+        } FuncDeclList;
+        struct {
+            char* FuncType;
+            char* FuncName;
+            struct ASTNode* ParamList;
+            struct ASTNode* Body;
+        } FuncDecl;
+        struct {
+            struct ASTNode* Body;
+        } MainFunc;
+        struct {
+            struct ASTNode* ParamDecl;
+            struct ASTNode* nextParamDecl;
+        } ParamList;
+        struct {
+            char* paramType;
+            char* paramName;
+        } ParamDecl;
+        struct {
+            struct ASTNode* VarDeclList;
+            struct ASTNode* StmtList;
+        } Body;
 
 
     } value;

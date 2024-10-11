@@ -82,16 +82,16 @@ FuncDeclList: {}
 FuncDecl: TYPE ID LPAREN ParamList RPAREN LBRACE Body RBRACE {
             printf("PARSER: Recognized function declaration\n");
             $$ = createNode(NodeType_FuncDecl);
-            $$->value.FuncDecl.funcType = $1;
-            $$->value.FuncDecl.funcName = $2;
-            $$->value.FuncDecl.paramList = $4;
-            $$->value.FuncDecl.body = $7;
+            $$->value.FuncDecl.FuncType = $1;
+            $$->value.FuncDecl.FuncName = $2;
+            $$->value.FuncDecl.ParamList = $4;
+            $$->value.FuncDecl.Body = $7;
         };
 
 MainFunc: VOID MAIN LPAREN RPAREN LBRACE Body RBRACE {
             printf("PARSER: Recognized main function\n");
             $$ = createNode(NodeType_MainFunc);
-            $$->value.MainFunc.body = $6;
+            $$->value.MainFunc.Body = $6;
         };
 
 ParamList:  {/*empty, i.e. it is possible not to have any parameter*/}

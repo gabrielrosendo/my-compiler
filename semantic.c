@@ -15,8 +15,43 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab) {
         case NodeType_Program:
             printf("Starting semantic analysis\n");
             printf("Semantic Analysis running on node of type: NodeType_Program\n");
-            semanticAnalysis(node->value.program.VarDeclList, symTab);
-            semanticAnalysis(node->value.program.StmtList, symTab);
+            semanticAnalysis(node->value.program.FuncDeclList, symTab);
+            semanticAnalysis(node->value.program.MainFunc, symTab);
+            break;
+        case NodeType_FuncDeclList:
+            printf("Semantic Analysis running on node of type: NodeType_FuncDeclList\n");
+            semanticAnalysis(node->value.FuncDeclList.FuncDecl, symTab);
+            semanticAnalysis(node->value.FuncDeclList.nextFuncDecl, symTab);
+            break;
+        case NodeType_FuncDecl:
+            printf("Semantic Analysis running on node of type: NodeType_FuncDecl\n");
+            printf("FuncDecl Name: %s\n", node->value.FuncDecl.FuncName);
+            printf("FuncDecl Type: %s\n", node->value.FuncDecl.FuncType);
+            addSymbol(symTab, node->value.FuncDecl.FuncName, node->value.FuncDecl.FuncType);
+            printSymbolTable(symTab);
+            semanticAnalysis(node->value.FuncDecl.ParamList, symTab);
+            semanticAnalysis(node->value.FuncDecl.Body, symTab);
+            break;
+        case NodeType_MainFunc:
+            printf("Semantic Analysis running on node of type: NodeType_MainFunc\n");
+            semanticAnalysis(node->value.MainFunc.Body, symTab);
+            break;
+        case NodeType_ParamList:
+            printf("Semantic Analysis running on node of type: NodeType_ParamList\n");
+            semanticAnalysis(node->value.ParamList.ParamDecl, symTab);
+            semanticAnalysis(node->value.ParamList.nextParamDecl, symTab);
+            break;
+        case NodeType_ParamDecl:
+            printf("Semantic Analysis running on node of type: NodeType_ParamDecl\n");
+            printf("ParamDecl Name: %s\n", node->value.ParamDecl.paramName);
+            printf("ParamDecl Type: %s\n", node->value.ParamDecl.paramType);
+            addSymbol(symTab, node->value.ParamDecl.paramName, node->value.ParamDecl.paramType);
+            printSymbolTable(symTab);
+            break;
+        case NodeType_Body:
+            printf("Semantic Analysis running on node of type: NodeType_Body\n");
+            semanticAnalysis(node->value.Body.VarDeclList, symTab);
+            semanticAnalysis(node->value.Body.StmtList, symTab);
             break;
         case NodeType_VarDeclList:
             printf("Semantic Analysis running on node of type: NodeType_VarDeclList\n");
