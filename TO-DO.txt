@@ -1,4 +1,7 @@
-- Add typecasting by deafultt 
+- Add function handling to parser and lexer > Done?
+- Reflect changes in parser to AST/Optimizer/Generator
+
+- Add typecasting by default 
 Ex:
 Expr: ID BinOp ID {...} |
     LPAREN TYPE RPAREN ID BinOp LPAREN TYPE RPAREN ID {...}

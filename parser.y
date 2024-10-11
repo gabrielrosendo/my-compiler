@@ -62,10 +62,10 @@ SymbolBST* symbolBST = NULL;
 %%
 
 Program: 
-        VarDeclList FuncDeclList MainFunc { 
+        FuncDeclList MainFunc { 
             printf("The parser has started\n"); 
             root = createNode(NodeType_Program); // Create the program node
-            root->value.program.FuncDeclList = $1; // Set the variable declaration list
+            root->value.program.FuncDeclList = $1; // Set the function declaration list
             root->value.program.MainFunc = $2; // Set the statement list
         }
 ;
