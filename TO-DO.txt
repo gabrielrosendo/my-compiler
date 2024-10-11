@@ -1,27 +1,40 @@
-- Add function handling to parser and lexer > Done?
-- Reflect changes in parser to AST/Optimizer/Generator
+To-Do List
+Requirements: https://docs.google.com/document/d/1mUexL4rFo3SH2ms6porxyYbrrofqAq9Hs039YbdmfPA/edit
 
-- Add typecasting by default 
-Ex:
-Expr: ID BinOp ID {...} |
-    LPAREN TYPE RPAREN ID BinOp LPAREN TYPE RPAREN ID {...}
+1. Parser & Lexer Enhancements
+   - [ ] Add function handling to parser and lexer.
+     - Done? 
 
-- Or type coercion?
+2. Update and Reflect Changes
+   - [ ] Reflect changes in parser to:
+     - Abstract Syntax Tree (AST)
+     - Optimizer
+     - Code Generator
 
-- Support for arrays
+3. Type Handling
+   - [ ] Add typecasting by default.
+     - Example:
+       Expr: ID BinOp ID {...}
+            | LPAREN TYPE RPAREN ID BinOp LPAREN TYPE RPAREN ID {...}
+   - [ ] Decide between type coercion or explicit casting.
 
-- Support for / and *
-** Operator precedence: https://web.mit.edu/gnu/doc/html/bison_8.html#:~:text=The%20Bison%20precedence%20declarations%2C%20%25left,the%20%25prec%20modifier%20for%20rules.&text=and%20it%20is%20written%20after%20the%20components%20of%20the%20rule
-- Declare and call functions
+4. Optimization of Functions and Calls
+   - [ ] Apply previously discussed optimizations inside function definitions:
+     - Peephole optimization
+     - Dead code elimination
+        - Detect functions defined but never called
 
-- Division by zero is error
+5. Array Support
+   - [ ] Add support for arrays.
+     - [ ] Array size is pre-defined?
+     - [ ] Use a symbol table to store array names and lengths.
+     - [ ] Implement different scopes in the symbol table.
 
-- symbol table to store array name and lenght
+6. Arithmetic and Operator Precedence
+   - [ ] Add support for `/` and `*`.
+   - [ ] Ensure operator precedence rules are followed.
+     - Reference: https://web.mit.edu/gnu/doc/html/bison_8.html#:~:text=The%20Bison%20precedence%20declarations%2C%20%25left,the%20%25prec%20modifier%20for%20rules.&text=and%20it%20is%20written%20after%20the%20components%20of%20the%20rule
 
-- array size has to be pre defined?
-
-- different scopes in symbol table
-
-https://docs.google.com/document/d/1mUexL4rFo3SH2ms6porxyYbrrofqAq9Hs039YbdmfPA/edit
-
-- 
+7. Function Declaration & Error Handling
+   - [ ] Support declaring and calling functions.
+   - [ ] Handle division by zero as an error.
