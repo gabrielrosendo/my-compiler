@@ -20,7 +20,9 @@ typedef enum {
     NodeType_MainFunc,
     NodeType_ParamList,
     NodeType_ParamDecl,
-    NodeType_Body
+    NodeType_Body,
+    NodeType_FunctionCall,
+    NodeType_CallParamList
 } NodeType;
 
 // Define AST Structure
@@ -102,6 +104,15 @@ typedef struct ASTNode {
             struct ASTNode* VarDeclList;
             struct ASTNode* StmtList;
         } Body;
+        struct {
+            char* funcName;
+            struct ASTNode* CallParamList;
+        } FunctionCall;
+
+        struct {
+            struct ASTNode* expr;
+            struct ASTNode* nextParam;
+        } CallParamList;
 
 
     } value;

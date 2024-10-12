@@ -111,9 +111,15 @@ void freeSymbolTable(SymbolBST* node) {
     printf("LOG: freeing symbolBST\n");
     freeSymbolTable(node->right);
     freeSymbolTable(node->left);
-    free(node->symbol->name);
-    free(node->symbol->type);
+    if (node->symbol != NULL) {
+    if (node->symbol->name != NULL) {
+        free(node->symbol->name);
+    }
+    if (node->symbol->type != NULL) {
+        free(node->symbol->type);
+    }
     free(node->symbol);
+    }
     free(node);
 }
 

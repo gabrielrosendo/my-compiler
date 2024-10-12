@@ -72,6 +72,14 @@ struct ASTNode* createNode(NodeType type) {
         case NodeType_BinaryOp:
             newNode->value.binaryOp.op = '\0';
             break;
+        case NodeType_FunctionCall:
+            newNode->value.FunctionCall.funcName = NULL;
+            newNode->value.FunctionCall.CallParamList = NULL;
+            break;
+        case NodeType_CallParamList:
+            newNode->value.CallParamList.expr = NULL;
+            newNode->value.CallParamList.nextParam = NULL;
+            break;
         default:
             fprintf(stderr, "ERROR: unknown AST node type AST.c->createNode()\n");
             exit(0);
@@ -82,7 +90,9 @@ struct ASTNode* createNode(NodeType type) {
 }
 
 void freeAST(struct ASTNode* node) {
-    if (!node) return;
+    if (node == NULL) return;
+    printf("Freeing node of type: %d\n", node->type);
+
 
     switch (node->type) {
         case NodeType_Program:
@@ -136,20 +146,22 @@ void freeAST(struct ASTNode* node) {
             free(node->value.print.name);
             break;
         case NodeType_Expression:
-            freeAST(node->value.Expression.right);
             freeAST(node->value.Expression.left);
-            free(node->value.Expression.op);
+            freeAST(node->value.Expression.right);
             break;
         case NodeType_Number:
-            // No dynamic memory to free for numbers
+            // No dynamic memory to free
             break;
         case NodeType_Identifier:
             free(node->value.identifier.name);
             break;
         case NodeType_BinaryOp:
-            free(node->value.binaryOp.op);
+            // No dynamic memory to free
             break;
         default:
+            fprintf(stderr, "ERROR: unknown AST node type AST.c->freeAST()\n");
+            printf("node type: %d\n", node->type);
+            exit(0);
             break;
     }
 

@@ -113,6 +113,11 @@ Body: VarDeclList StmtList FuncTail{
 FuncTail: /* no return statement, if a void function was defined*/
 	| RETURN Expr SEMICOLON { printf("PARSER: Recognized function tail\n"); }
 
+CallParamList: /*empty, i.e. it is possible not to have any parameter*/
+    | Expr { printf("PARSER: Recognized call parameter list\n"); }
+    | Expr COMMA CallParamList { printf("PARSER: Recognized call parameter list\n"); }
+;
+
 
 // Code changes end here
 
@@ -182,7 +187,11 @@ Stmt: ID EQ Expr SEMICOLON {
                     // stop compilation
                     exit(1);
                  }
-;
+    | ID LPAREN CallParamList RPAREN SEMICOLON { printf("PARSER: Recognized function call\n"); 
+		// Check if the function has been declared
+		// Throw an error if the function has not been declared
+				}
+; 
 
 Expr: Expr BinOp Expr { printf("PARSER: Recognized expression\n");
 						$$ = createNode(NodeType_Expression);
@@ -268,7 +277,6 @@ int main(int argc, char **argv) {
     optimizeTAC(&tacHead);
     // Output optimized TAC to file
     FILE* optimizedTacFile = fopen("optimizedTAC.ir", "w");
-    
     freeSymbolTable(symbolBST);
     printf("Freeing AST...\n");
     freeAST(root);
@@ -276,6 +284,7 @@ int main(int argc, char **argv) {
     printf("-----TAC CODE AFTER OPTIMIZATION-----\n");
     tempTac = tacHead;
     while (tempTac != NULL) {
+        printf("testing\n");
         printTAC(tempTac);
         tempTac = tempTac->next;
     }

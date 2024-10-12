@@ -1,4 +1,9 @@
+int addOne(int x) {
+    x = x+1;
+    return x;
+}
 void main() {
-    int x = 10;
-    print(x);
+    int a = 3
+    int b = addOne(a)
+    print(res);
 }
