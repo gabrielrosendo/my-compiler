@@ -2,8 +2,11 @@ int addOne(int x) {
     x = x+1;
     return x;
 }
+
 void main() {
-    int a = 3
-    int b = addOne(a)
-    print(res);
+    int a;
+    int b;
+    a = 3;
+    b = addOne(a, 1);
+    print(b);
 }

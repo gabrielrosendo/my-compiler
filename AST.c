@@ -37,6 +37,10 @@ struct ASTNode* createNode(NodeType type) {
             newNode->value.Body.VarDeclList = NULL;
             newNode->value.Body.StmtList = NULL;
             break;
+        case NodeType_CallParamList:
+            newNode->value.CallParamList.expr = NULL;
+            newNode->value.CallParamList.nextParam = NULL;
+            break;
         case NodeType_VarDeclList:
             newNode->value.VarDeclList.VarDecl = NULL;
             newNode->value.VarDeclList.nextVarDecl = NULL;
@@ -69,16 +73,12 @@ struct ASTNode* createNode(NodeType type) {
         case NodeType_Identifier:
             newNode->value.identifier.name = NULL;
             break;
-        case NodeType_BinaryOp:
-            newNode->value.binaryOp.op = '\0';
-            break;
         case NodeType_FunctionCall:
             newNode->value.FunctionCall.funcName = NULL;
             newNode->value.FunctionCall.CallParamList = NULL;
             break;
-        case NodeType_CallParamList:
-            newNode->value.CallParamList.expr = NULL;
-            newNode->value.CallParamList.nextParam = NULL;
+        case NodeType_BinaryOp:
+            newNode->value.binaryOp.op = '\0';
             break;
         default:
             fprintf(stderr, "ERROR: unknown AST node type AST.c->createNode()\n");

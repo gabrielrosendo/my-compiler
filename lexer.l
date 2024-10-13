@@ -65,7 +65,6 @@ BAD_ID {NUMBER}{ID}
     return PRINT;
 }
 
-
 "write" { 
     words++; chars += strlen(yytext);
     printf("%-10s | %-10s\n", yytext, "PRINT");

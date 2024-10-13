@@ -40,6 +40,7 @@ SymbolBST* symbolBST = NULL;
 %token <number> NUMBER
 %token <string> ID
 %token <string> TYPE
+%token <keyword> VOID
 %token <string> PRINT
 %token <op> EQ
 %token <op> ADD
@@ -52,12 +53,8 @@ SymbolBST* symbolBST = NULL;
 %token <string> COMMA
 %token <string> RETURN
 %token <keyword> MAIN
-%token <keyword> VOID
 
-
-
-%type <ast> Program VarDeclList VarDecl StmtList Stmt Expr BinOp FuncDeclList FuncDecl MainFunc ParamList Body
-
+%type <ast> Program FuncDeclList FuncDecl MainFunc ParamList Body VarDeclList VarDecl StmtList Stmt Expr BinOp CallParamList
 
 %%
 
@@ -69,8 +66,6 @@ Program:
             root->value.program.MainFunc = $2; // Set the statement list
         }
 ;
-
-// Changes made to handle functions
 
 FuncDeclList: {}
             | FuncDecl FuncDeclList {
@@ -112,14 +107,6 @@ Body: VarDeclList StmtList FuncTail{
 
 FuncTail: /* no return statement, if a void function was defined*/
 	| RETURN Expr SEMICOLON { printf("PARSER: Recognized function tail\n"); }
-
-CallParamList: /*empty, i.e. it is possible not to have any parameter*/
-    | Expr { printf("PARSER: Recognized call parameter list\n"); }
-    | Expr COMMA CallParamList { printf("PARSER: Recognized call parameter list\n"); }
-;
-
-
-// Code changes end here
 
 VarDeclList: {}
            | VarDecl VarDeclList {
@@ -187,10 +174,6 @@ Stmt: ID EQ Expr SEMICOLON {
                     // stop compilation
                     exit(1);
                  }
-    | ID LPAREN CallParamList RPAREN SEMICOLON { printf("PARSER: Recognized function call\n"); 
-		// Check if the function has been declared
-		// Throw an error if the function has not been declared
-				}
 ; 
 
 Expr: Expr BinOp Expr { printf("PARSER: Recognized expression\n");
@@ -208,6 +191,12 @@ Expr: Expr BinOp Expr { printf("PARSER: Recognized expression\n");
 			$$ = createNode(NodeType_Identifier);
 			$$->value.identifier.name = $1;
 		}
+    | ID LPAREN CallParamList RPAREN {
+        printf("PARSER: Recognized function call\n");
+        $$ = createNode(NodeType_FunctionCall);
+        $$->value.FunctionCall.funcName = $1;
+        $$->value.FunctionCall.CallParamList = $3;
+    }
 ;
 
 BinOp: ADD {
@@ -215,6 +204,20 @@ BinOp: ADD {
 				$$ = createNode(NodeType_BinaryOp);
 				$$->value.binaryOp.op = $1;
             }
+;
+
+CallParamList: /*empty, i.e. it is possible not to have any parameter*/
+    | Expr { 
+            printf("PARSER: Recognized call parameter list\n");
+            $$ = createNode(NodeType_CallParamList);
+            $$->value.CallParamList.expr = $1;
+        }
+    | Expr COMMA CallParamList { 
+            printf("PARSER: Recognized call parameter list\n"); 
+            $$ = createNode(NodeType_CallParamList);
+            $$->value.CallParamList.expr = $1;
+            $$->value.CallParamList.nextParam = $3;
+        }
 ;
 
 %%

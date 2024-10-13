@@ -5,6 +5,14 @@
 // Define Node Types
 typedef enum {
     NodeType_Program,
+    NodeType_FuncDeclList,
+    NodeType_FuncDecl,
+    NodeType_MainFunc,
+    NodeType_ParamList,
+    NodeType_ParamDecl,
+    NodeType_Body,
+    NodeType_FunctionCall,
+    NodeType_CallParamList,
     NodeType_VarDeclList,
     NodeType_VarDecl,
     NodeType_StmtList,
@@ -14,15 +22,7 @@ typedef enum {
     NodeType_Expression,
     NodeType_Number,
     NodeType_Identifier,
-    NodeType_BinaryOp,
-    NodeType_FuncDeclList,
-    NodeType_FuncDecl,
-    NodeType_MainFunc,
-    NodeType_ParamList,
-    NodeType_ParamDecl,
-    NodeType_Body,
-    NodeType_FunctionCall,
-    NodeType_CallParamList
+    NodeType_BinaryOp
 } NodeType;
 
 // Define AST Structure
@@ -32,7 +32,38 @@ typedef struct ASTNode {
         struct {
             struct ASTNode* FuncDeclList;
             struct ASTNode* MainFunc;
-        } program;
+        }program;
+
+        struct {
+            struct ASTNode* FuncDecl;
+            struct ASTNode* nextFuncDecl;
+        }FuncDeclList;
+
+        struct {
+            char* FuncType;
+            char* FuncName;
+            struct ASTNode* ParamList;
+            struct ASTNode* Body;
+        }FuncDecl;
+
+        struct {
+            struct ASTNode* Body;
+        }MainFunc;
+
+        struct {
+            struct ASTNode* ParamDecl;
+            struct ASTNode* nextParamDecl;
+        }ParamList;
+
+        struct {
+            char* paramType;
+            char* paramName;
+        }ParamDecl;
+
+        struct {
+            struct ASTNode* VarDeclList;
+            struct ASTNode* StmtList;
+        }Body;
 
         struct {
             struct ASTNode* VarDecl;
@@ -76,45 +107,18 @@ typedef struct ASTNode {
         } identifier;
 
         struct {
-            char* op;
-        } binaryOp;
-        // Add structure for function related nodes and change the ASTNode structure above to include these new nodes
-        struct {
-            struct ASTNode* FuncDecl;
-            struct ASTNode* nextFuncDecl;
-        } FuncDeclList;
-        struct {
-            char* FuncType;
-            char* FuncName;
-            struct ASTNode* ParamList;
-            struct ASTNode* Body;
-        } FuncDecl;
-        struct {
-            struct ASTNode* Body;
-        } MainFunc;
-        struct {
-            struct ASTNode* ParamDecl;
-            struct ASTNode* nextParamDecl;
-        } ParamList;
-        struct {
-            char* paramType;
-            char* paramName;
-        } ParamDecl;
-        struct {
-            struct ASTNode* VarDeclList;
-            struct ASTNode* StmtList;
-        } Body;
-        struct {
             char* funcName;
             struct ASTNode* CallParamList;
-        } FunctionCall;
+        }FunctionCall;
+
+        struct {
+            char* op;
+        } binaryOp;
 
         struct {
             struct ASTNode* expr;
             struct ASTNode* nextParam;
-        } CallParamList;
-
-
+        }CallParamList;
     } value;
 }ASTNode;
 
