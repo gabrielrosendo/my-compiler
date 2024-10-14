@@ -11,6 +11,7 @@ SymbolBST* createSymbolBST() {
     if (!symbolBST) return NULL;
     symbolBST->right = NULL;
     symbolBST->left = NULL;
+    symbolBST->next = NULL;
     symbolBST->hash = 0;
     symbolBST->symbol = NULL;
     return symbolBST;
@@ -111,6 +112,7 @@ void freeSymbolTable(SymbolBST* node) {
     printf("LOG: freeing symbolBST\n");
     freeSymbolTable(node->right);
     freeSymbolTable(node->left);
+    freeSymbolTable(node->next);
     if (node->symbol != NULL) {
     if (node->symbol->name != NULL) {
         free(node->symbol->name);

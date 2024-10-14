@@ -18,6 +18,7 @@ typedef struct SymbolBST {
     unsigned int hash;
     struct SymbolBST* right;
     struct SymbolBST* left;
+    struct SymbolBST* next;
 } SymbolBST;
 
 // Function declarations

@@ -25,7 +25,7 @@ bool enableTesting = false;
 ASTNode* root = NULL; 
 
 SymbolBST* symbolBST = NULL;
-
+SymbolBST* functionBST = NULL;
 %}
 
 %union {
@@ -54,7 +54,7 @@ SymbolBST* symbolBST = NULL;
 %token <string> RETURN
 %token <keyword> MAIN
 
-%type <ast> Program FuncDeclList FuncDecl MainFunc ParamList Body VarDeclList VarDecl StmtList Stmt Expr BinOp CallParamList
+%type <ast> Program FuncDeclList FuncDecl MainFunc ParamList ParamDecl Body VarDeclList VarDecl StmtList Stmt Expr BinOp CallParamList
 
 %%
 
@@ -96,7 +96,9 @@ ParamList:  {/*empty, i.e. it is possible not to have any parameter*/}
 
 ParamDecl: TYPE ID { 
 				printf("PARSER: Recognized parameter declaration\n"); 
-						// Implementation needed
+                $$ = createNode(NodeType_ParamDecl);
+                $$->value.ParamDecl.paramType = $1;
+                $$->value.ParamDecl.paramName = $2;
 					
 		}
 ;
@@ -228,6 +230,7 @@ int main(int argc, char **argv) {
     #endif
 
     symbolBST = createSymbolBST();
+    functionBST = createSymbolBST();
 
     printf("Compiler started. \n\n");
 
@@ -250,7 +253,7 @@ int main(int argc, char **argv) {
     printf("-----printAST-----\n");
     printAST(root, 0);
 
-    semanticAnalysis(root, symbolBST);
+    semanticAnalysis(root, symbolBST, functionBST);
 
     printf("-----TAC CODE-----\n");
     TAC* tempTac = tacHead;
@@ -281,6 +284,7 @@ int main(int argc, char **argv) {
     // Output optimized TAC to file
     FILE* optimizedTacFile = fopen("optimizedTAC.ir", "w");
     freeSymbolTable(symbolBST);
+    freeSymbolTable(functionBST);
     printf("Freeing AST...\n");
     freeAST(root);
 

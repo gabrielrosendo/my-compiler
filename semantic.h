@@ -23,7 +23,7 @@ int allocateNextAvailableTempVar();
 void deallocateTempVar(int index);
 
 // Semantic analysis functions
-void semanticAnalysis(ASTNode* node, SymbolBST* symTab);
+void semanticAnalysis(ASTNode* node, SymbolBST* symTab, SymbolBST* functionBST);
 TAC* generateTACForExpr(ASTNode* expr);
 char* getVariableReference(char* variable);
 char* createTempVar();

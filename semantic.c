@@ -9,54 +9,63 @@ TAC* tacHead = NULL;
 int count = 2;
 bool isRight = true;
 
-void semanticAnalysis(ASTNode* node, SymbolBST* symTab) {
+void semanticAnalysis(ASTNode* node, SymbolBST* symTab, SymbolBST* functionBST) {
     if (node == NULL) return;
     switch (node->type) {
         case NodeType_Program:
             printf("Starting semantic analysis\n");
             printf("Semantic Analysis running on node of type: NodeType_Program\n");
-            semanticAnalysis(node->value.program.FuncDeclList, symTab);
-            semanticAnalysis(node->value.program.MainFunc, symTab);
+            semanticAnalysis(node->value.program.FuncDeclList, symTab, functionBST);
+            semanticAnalysis(node->value.program.MainFunc, symTab, functionBST);
             break;
         case NodeType_FuncDeclList:
             printf("Semantic Analysis running on node of type: NodeType_FuncDeclList\n");
-            semanticAnalysis(node->value.FuncDeclList.FuncDecl, symTab);
-            semanticAnalysis(node->value.FuncDeclList.nextFuncDecl, symTab);
+            semanticAnalysis(node->value.FuncDeclList.FuncDecl, symTab, functionBST);
+            semanticAnalysis(node->value.FuncDeclList.nextFuncDecl, symTab, functionBST);
             break;
         case NodeType_FuncDecl:
             printf("Semantic Analysis running on node of type: NodeType_FuncDecl\n");
             printf("FuncDecl Name: %s\n", node->value.FuncDecl.FuncName);
             printf("FuncDecl Type: %s\n", node->value.FuncDecl.FuncType);
-            addSymbol(symTab, node->value.FuncDecl.FuncName, node->value.FuncDecl.FuncType);
-            printSymbolTable(symTab);
-            semanticAnalysis(node->value.FuncDecl.ParamList, symTab);
-            semanticAnalysis(node->value.FuncDecl.Body, symTab);
+
+            //Check if function already exists with sybolBST specifically for functions
+            addSymbol(functionBST, node->value.FuncDecl.FuncName, node->value.FuncDecl.FuncType);
+            printSymbolTable(functionBST);
+
+            //Create a new symbol table to contain the scope of the next function
+            symTab->next = createSymbolBST();
+            symTab = symTab->next;
+
+            semanticAnalysis(node->value.FuncDecl.ParamList, symTab, functionBST);
+            semanticAnalysis(node->value.FuncDecl.Body, symTab, functionBST);
             break;
         case NodeType_MainFunc:
             printf("Semantic Analysis running on node of type: NodeType_MainFunc\n");
-            semanticAnalysis(node->value.MainFunc.Body, symTab);
+            semanticAnalysis(node->value.MainFunc.Body, symTab, functionBST);
             break;
         case NodeType_ParamList:
             printf("Semantic Analysis running on node of type: NodeType_ParamList\n");
-            semanticAnalysis(node->value.ParamList.ParamDecl, symTab);
-            semanticAnalysis(node->value.ParamList.nextParamDecl, symTab);
+            semanticAnalysis(node->value.ParamList.ParamDecl, symTab, functionBST);
+            semanticAnalysis(node->value.ParamList.nextParamDecl, symTab, functionBST);
             break;
         case NodeType_ParamDecl:
             printf("Semantic Analysis running on node of type: NodeType_ParamDecl\n");
             printf("ParamDecl Name: %s\n", node->value.ParamDecl.paramName);
             printf("ParamDecl Type: %s\n", node->value.ParamDecl.paramType);
+
+            // Add the parameters the the AST to be able to check for overlapping delcarations
             addSymbol(symTab, node->value.ParamDecl.paramName, node->value.ParamDecl.paramType);
             printSymbolTable(symTab);
             break;
         case NodeType_Body:
             printf("Semantic Analysis running on node of type: NodeType_Body\n");
-            semanticAnalysis(node->value.Body.VarDeclList, symTab);
-            semanticAnalysis(node->value.Body.StmtList, symTab);
+            semanticAnalysis(node->value.Body.VarDeclList, symTab, functionBST);
+            semanticAnalysis(node->value.Body.StmtList, symTab, functionBST);
             break;
         case NodeType_VarDeclList:
             printf("Semantic Analysis running on node of type: NodeType_VarDeclList\n");
-            semanticAnalysis(node->value.VarDeclList.VarDecl, symTab);
-            semanticAnalysis(node->value.VarDeclList.nextVarDecl, symTab);
+            semanticAnalysis(node->value.VarDeclList.VarDecl, symTab, functionBST);
+            semanticAnalysis(node->value.VarDeclList.nextVarDecl, symTab, functionBST);
             break;
         case NodeType_VarDecl:
             printf("Semantic Analysis running on node of type: NodeType_VarDecl\n");
@@ -64,24 +73,24 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab) {
             printf("VarDecl Type: %s\n", node->value.VarDecl.varType);
             addSymbol(symTab, node->value.VarDecl.varName, node->value.VarDecl.varType);
             printSymbolTable(symTab);
-            semanticAnalysis(node->value.VarDecl.initExpr, symTab);
+            semanticAnalysis(node->value.VarDecl.initExpr, symTab, functionBST);
             break;
         case NodeType_StmtList:
             printf("Semantic Analysis running on node of type: NodeType_StmtList\n");
-            semanticAnalysis(node->value.StmtList.stmt, symTab);
-            semanticAnalysis(node->value.StmtList.nextStmt, symTab);
+            semanticAnalysis(node->value.StmtList.stmt, symTab, functionBST);
+            semanticAnalysis(node->value.StmtList.nextStmt, symTab, functionBST);
             break;
         case NodeType_Assignment:
             printf("Semantic Analysis running on node of type: NodeType_Assignment\n");
-            semanticAnalysis(node->value.assignment.expr, symTab);
+            semanticAnalysis(node->value.assignment.expr, symTab, functionBST);
             break;
         case NodeType_Print:
             printf("Semantic Analysis running on node of type: NodeType_Print\n");
             break;
         case NodeType_Expression:
             printf("Semantic Analysis running on node of type: NodeType_Expression\n");
-            semanticAnalysis(node->value.Expression.right, symTab);
-            semanticAnalysis(node->value.Expression.left, symTab);
+            semanticAnalysis(node->value.Expression.right, symTab, functionBST);
+            semanticAnalysis(node->value.Expression.left, symTab, functionBST);
             break;
         case NodeType_Number:
             printf("Semantic Analysis running on node of type: NodeType_Number\n");
