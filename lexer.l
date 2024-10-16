@@ -96,6 +96,15 @@ BAD_ID {NUMBER}{ID}
     printf("%-10s | %-10s\n", yytext, "SUB");
     yylval.string = strdup(yytext); 
     return SUB; }
+"*"         { 
+    words++; chars += strlen(yytext);
+    printf("%-10s | %-10s\n", yytext, "MUL");
+    return MUL; }
+
+"/"         { 
+    words++; chars += strlen(yytext);
+    printf("%-10s | %-10s\n", yytext, "DIV");
+    return DIV; }
 
 ";" { 
     chars++;

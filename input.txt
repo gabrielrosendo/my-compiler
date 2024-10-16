@@ -1,6 +1,6 @@
 int addOne(int x) {
     int b;
-    x = x+1;
+    x = x*2;
     return x;
 }
 

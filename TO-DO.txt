@@ -2,8 +2,7 @@ To-Do List
 Requirements: https://docs.google.com/document/d/1mUexL4rFo3SH2ms6porxyYbrrofqAq9Hs039YbdmfPA/edit
 
 1. Parser & Lexer Enhancements
-   - [ ] Add function handling to parser and lexer.
-     - Done? 
+   - [X] Add function handling to parser and lexer.
 
 2. Update and Reflect Changes
    - [ ] Reflect changes in parser to:
@@ -31,7 +30,7 @@ Requirements: https://docs.google.com/document/d/1mUexL4rFo3SH2ms6porxyYbrrofqAq
      - [ ] Implement different scopes in the symbol table.
 
 6. Arithmetic and Operator Precedence
-   - [ ] Add support for `/` and `*`.
+   - [X] Add support for `/` and `*`.
    - [ ] Ensure operator precedence rules are followed.
      - Reference: https://web.mit.edu/gnu/doc/html/bison_8.html#:~:text=The%20Bison%20precedence%20declarations%2C%20%25left,the%20%25prec%20modifier%20for%20rules.&text=and%20it%20is%20written%20after%20the%20components%20of%20the%20rule
 

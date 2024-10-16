@@ -238,7 +238,14 @@ void printTAC(TAC* tac) {
         printf("Print(%s (%s))\n", tac->result, tac->arg1);
     } else if (strcmp(tac->op, "+") == 0) {
         printf("%s = %s + %s\n", tac->result, tac->arg1, tac->arg2);
-    } else if (strcmp(tac->op, "Num") == 0) {
+    } else if (strcmp(tac->op, "-") == 0) {
+        printf("%s = %s - %s\n", tac->result, tac->arg1, tac->arg2);
+    } else if (strcmp(tac->op, "*") == 0) {
+        printf("%s = %s * %s\n", tac->result, tac->arg1, tac->arg2);
+    } else if (strcmp(tac->op, "/") == 0) {
+        printf("%s = %s / %s\n", tac->result, tac->arg1, tac->arg2);
+    }
+    else if (strcmp(tac->op, "Num") == 0) {
         printf("%s = %s\n", tac->result, tac->arg1);
     } else if (strcmp(tac->op, "ID") == 0) {
         printf("%s = %s (%s)\n", tac->result, tac->arg2, tac->arg1);
@@ -261,7 +268,14 @@ void printTACToFile(const char* filename, TAC* tac) {
             fprintf(file, "Print(%s (%s))\n", current->result, current->arg1);
         } else if (strcmp(current->op, "+") == 0) {
             fprintf(file, "%s = %s + %s\n", current->result, current->arg1, current->arg2);
-        } else if (strcmp(current->op, "Num") == 0) {
+        } else if (strcmp(current->op, "-") == 0) {
+            fprintf(file, "%s = %s - %s\n", current->result, current->arg1, current->arg2);
+        } else if (strcmp(current->op, "*") == 0) {
+            fprintf(file, "%s = %s * %s\n", current->result, current->arg1, current->arg2);
+        } else if (strcmp(current->op, "/") == 0) {
+            fprintf(file, "%s = %s / %s\n", current->result, current->arg1, current->arg2);
+        }
+        else if (strcmp(current->op, "Num") == 0) {
             fprintf(file, "%s = %s\n", current->result, current->arg1);
         } else if (strcmp(current->op, "ID") == 0) {
             fprintf(file, "%s = %s (%s)\n", current->result, current->arg2, current->arg1);

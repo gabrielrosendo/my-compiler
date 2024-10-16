@@ -45,6 +45,8 @@ SymbolBST* functionBST = NULL;
 %token <op> EQ
 %token <op> ADD
 %token <op> SUB
+%token <op> MUL
+%token <op> DIV
 %token <string> LPAREN
 %token <string> RPAREN
 %token <string> SEMICOLON
@@ -53,6 +55,10 @@ SymbolBST* functionBST = NULL;
 %token <string> COMMA
 %token <string> RETURN
 %token <keyword> MAIN
+
+%left ADD SUB
+%left MUL DIV
+
 
 %type <ast> Program FuncDeclList FuncDecl MainFunc ParamList ParamDecl Body VarDeclList VarDecl StmtList Stmt Expr BinOp CallParamList
 
@@ -202,10 +208,26 @@ Expr: Expr BinOp Expr { printf("PARSER: Recognized expression\n");
 ;
 
 BinOp: ADD {
-				printf("PARSER: Recognized binary operator\n");
+				printf("PARSER: Recognized addition operator\n");
 				$$ = createNode(NodeType_BinaryOp);
 				$$->value.binaryOp.op = $1;
             }
+        | SUB {
+            printf("Recognized subtraction operator\n");
+            $$ = createNode(NodeType_BinaryOp);
+            $$->value.binaryOp.op = $1;
+        }
+        | MUL {
+            printf("Recognized multiplication operator\n");
+            $$ = createNode(NodeType_BinaryOp);
+            $$->value.binaryOp.op = $1;
+        }
+        | DIV {
+            printf("Recognized division operator\n");
+            $$ = createNode(NodeType_BinaryOp);
+            $$->value.binaryOp.op = $1;
+        }
+        
 ;
 
 CallParamList: /*empty, i.e. it is possible not to have any parameter*/
