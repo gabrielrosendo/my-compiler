@@ -274,8 +274,7 @@ void printTACToFile(const char* filename, TAC* tac) {
             fprintf(file, "%s = %s * %s\n", current->result, current->arg1, current->arg2);
         } else if (strcmp(current->op, "/") == 0) {
             fprintf(file, "%s = %s / %s\n", current->result, current->arg1, current->arg2);
-        }
-        else if (strcmp(current->op, "Num") == 0) {
+        } else if (strcmp(current->op, "Num") == 0) {
             fprintf(file, "%s = %s\n", current->result, current->arg1);
         } else if (strcmp(current->op, "ID") == 0) {
             fprintf(file, "%s = %s (%s)\n", current->result, current->arg2, current->arg1);

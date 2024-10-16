@@ -46,7 +46,23 @@ void generateMIPS(TAC* tacInstructions) {
             printf("%s = %s + %s\n", tac->result, tac->arg1, tac->arg2);
             printf("\tadd %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
             fprintf(outputFile, "\tadd %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
-        } else if (strcmp(tac->op, "Num") == 0) {
+        } else if (strcmp(tac->op, "-") == 0) {
+            printf("Generating MIPS for Subtraction\n");
+            printf("%s = %s - %s\n", tac->result, tac->arg1, tac->arg2);
+            printf("\tsub %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
+            fprintf(outputFile, "\tsub %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
+        } else if (strcmp(tac->op, "*") == 0) {
+            printf("Generating MIPS for Multiplication\n");
+            printf("%s = %s * %s\n", tac->result, tac->arg1, tac->arg2);
+            printf("\tmul %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
+            fprintf(outputFile, "\tmul %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
+        } else if (strcmp(tac->op, "/") == 0) {
+            printf("Generating MIPS for Division\n");
+            printf("%s = %s / %s\n", tac->result, tac->arg1, tac->arg2);
+            printf("\tdiv %s, %s\n\tmflo %s\n", tac->arg1, tac->arg2, tac->result);
+            fprintf(outputFile, "\tdiv %s, %s\n\tmflo %s\n", tac->arg1, tac->arg2, tac->result);
+        }
+        else if (strcmp(tac->op, "Num") == 0) {
             printf("Generating MIPS for Number\n");
             printf("%s = %s\n", tac->result, tac->arg1);
             printf("\tli %s, %s\n", tac->result, tac->arg1);
