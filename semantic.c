@@ -193,6 +193,15 @@ TAC* generateTACForExpr(ASTNode* expr) {
             }
             break;
         }
+        case NodeType_FuncDeclList: {
+            printf("Generating TAC for function declaration list\n");
+        }
+        case NodeType_FuncDecl: {
+            printf("Generating TAC for function declaration\n");
+        }
+        case NodeType_MainFunc: {
+            printf("Generating TAC for main function\n");
+        }
 
         // Add cases for other expression types...
 
