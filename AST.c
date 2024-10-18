@@ -95,8 +95,15 @@ struct ASTNode* createNode(NodeType type) {
 
 void freeAST(struct ASTNode* node) {
     if (node == NULL) return;
-    printf("Freeing node of type: %d\n", node->type);
-
+    // Store the type before potentially corrupted memory access
+    NodeType type = node->type;
+    printf("Freeing node of type: %d\n", type);
+    
+    // Add validation check
+    if (type < 0 || type > NodeType_FuncTail) {  // Assuming FuncTail is your last enum value
+        fprintf(stderr, "ERROR: Invalid node type in freeAST(): %d\n", type);
+        return;  // Return instead of exit to allow cleanup to continue
+    }
 
     switch (node->type) {
         case NodeType_Program:
