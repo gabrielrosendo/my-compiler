@@ -12,6 +12,7 @@ Requirements: https://docs.google.com/document/d/1mUexL4rFo3SH2ms6porxyYbrrofqAq
 
 3. Type Handling
    - [ ] Add typecasting by default.
+   - Add floats and other types
      - Example:
        Expr: ID BinOp ID {...}
             | LPAREN TYPE RPAREN ID BinOp LPAREN TYPE RPAREN ID {...}

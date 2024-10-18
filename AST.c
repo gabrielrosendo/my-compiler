@@ -80,8 +80,12 @@ struct ASTNode* createNode(NodeType type) {
         case NodeType_BinaryOp:
             newNode->value.binaryOp.op = '\0';
             break;
+        case NodeType_FuncTail:
+            newNode->value.FuncTail.expr = NULL;
+            break;
         default:
             fprintf(stderr, "ERROR: unknown AST node type AST.c->createNode()\n");
+            printf("node type: %d\n", type);
             exit(0);
             break;
     }
@@ -157,6 +161,13 @@ void freeAST(struct ASTNode* node) {
             break;
         case NodeType_BinaryOp:
             // No dynamic memory to free
+            break;
+        case NodeType_FunctionCall:
+            free(node->value.FunctionCall.funcName);
+            freeAST(node->value.FunctionCall.CallParamList);
+            break;
+        case NodeType_FuncTail:
+            freeAST(node->value.FuncTail.expr);
             break;
         default:
             fprintf(stderr, "ERROR: unknown AST node type AST.c->freeAST()\n");
@@ -245,6 +256,8 @@ void printAST(struct ASTNode* node, int indent) {
         case NodeType_StmtList:
             spaceOut(indent);
             printf("AST Print: NodeType_StmtList\n");
+            printf("DEBUG: stmt pointer = %p\n", (void*)node->value.StmtList.stmt);
+            printf("DEBUG: nextStmt pointer = %p\n", (void*)node->value.StmtList.nextStmt);
             printAST(node->value.StmtList.stmt, indent);
             printAST(node->value.StmtList.nextStmt, indent);
             break;

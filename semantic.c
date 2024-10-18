@@ -106,6 +106,7 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, SymbolBST* functionBST) 
             fprintf(stderr, "Unknown Node Type\n");
             printf("%u\n", node->type);
             break;
+
     }
 
     if (node->type == NodeType_VarDecl || 
@@ -137,7 +138,7 @@ TAC* generateTACForExpr(ASTNode* expr) {
         }
 
         case NodeType_Assignment: {
-             printf("Generating TAC for Assignment\n");
+            printf("Generating TAC for Assignment\n");
             instruction->arg1 = strdup(expr->value.assignment.varName);
             instruction->arg2 = strdup("$t1");
             instruction->op = strdup("=");
@@ -193,14 +194,30 @@ TAC* generateTACForExpr(ASTNode* expr) {
             }
             break;
         }
+
         case NodeType_FuncDeclList: {
             printf("Generating TAC for function declaration list\n");
+            // Generate TAC for each function declaration in the list
+            ASTNode* funcDecl = expr->value.FuncDeclList.FuncDecl;
+            while (funcDecl) {
+                generateTACForExpr(funcDecl);
+                funcDecl = funcDecl->value.FuncDeclList.nextFuncDecl;
+            }
+            break;
         }
+
         case NodeType_FuncDecl: {
             printf("Generating TAC for function declaration\n");
+            // Generate TAC for the function body
+            generateTACForExpr(expr->value.FuncDecl.Body);
+            break;
         }
+
         case NodeType_MainFunc: {
             printf("Generating TAC for main function\n");
+            // Generate TAC for the main function body
+            generateTACForExpr(expr->value.MainFunc.Body);
+            break;
         }
 
         // Add cases for other expression types...
@@ -217,7 +234,6 @@ TAC* generateTACForExpr(ASTNode* expr) {
 
     return instruction;
 }
-
 char* getVariableReference(char* variable) {
     TAC* current = tacHead;
     while(current != NULL) {
@@ -258,7 +274,7 @@ void printTAC(TAC* tac) {
         printf("%s = %s\n", tac->result, tac->arg1);
     } else if (strcmp(tac->op, "ID") == 0) {
         printf("%s = %s (%s)\n", tac->result, tac->arg2, tac->arg1);
-    }
+    } 
 }
 
 void printTACToFile(const char* filename, TAC* tac) {

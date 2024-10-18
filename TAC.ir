@@ -1,3 +1,9 @@
-int b ==> $t2
-int a ==> $t3
-int b ==> $t4
+int a ==> $t2
+int b ==> $t3
+$t1 = 3
+$t2 (a) = $t1
+$t1 = 1
+$t0 = $t2 (a)
+$t1 = $t0 + $t1
+$t3 (b) = $t1
+Print($t3 (b))

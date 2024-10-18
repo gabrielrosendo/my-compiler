@@ -22,7 +22,8 @@ typedef enum {
     NodeType_Expression,
     NodeType_Number,
     NodeType_Identifier,
-    NodeType_BinaryOp
+    NodeType_BinaryOp,
+    NodeType_FuncTail
 } NodeType;
 
 // Define AST Structure
@@ -63,7 +64,12 @@ typedef struct ASTNode {
         struct {
             struct ASTNode* VarDeclList;
             struct ASTNode* StmtList;
+            struct ASTNode* FuncTail;
         }Body;
+
+        struct {
+            struct ASTNode* expr;
+        }FuncTail;
 
         struct {
             struct ASTNode* VarDecl;

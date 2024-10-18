@@ -1,0 +1,21 @@
+int addOne(int a) {
+    int result;
+    result = a + 1;
+    return result;
+}
+
+int addNumbers(int a, int b) {
+    int result;
+    a = addOne(a);
+    b = addOne(b);
+    result = a + b;
+    return result;
+}
+
+void main() {
+    int x;
+    x = addOne(5);
+    write(x);
+    x = addNumbers(10, 20);
+    write(x);
+}

@@ -60,7 +60,7 @@ SymbolBST* functionBST = NULL;
 %left MUL DIV
 
 
-%type <ast> Program FuncDeclList FuncDecl MainFunc ParamList ParamDecl Body VarDeclList VarDecl StmtList Stmt Expr BinOp CallParamList
+%type <ast> Program FuncDeclList FuncDecl MainFunc ParamList ParamDecl Body VarDeclList VarDecl StmtList Stmt Expr BinOp CallParamList FuncTail
 
 %%
 
@@ -96,7 +96,8 @@ MainFunc: VOID MAIN LPAREN RPAREN LBRACE Body RBRACE {
         };
 
 ParamList:  {/*empty, i.e. it is possible not to have any parameter*/}
-	| ParamDecl {printf("One parameter\n");}
+	| ParamDecl {
+        printf("One parameter\n");}
 	| ParamDecl COMMA ParamList { printf("PARSER: Recognized parameter list\n"); }
 ;
 
@@ -109,14 +110,26 @@ ParamDecl: TYPE ID {
 		}
 ;
 
-Body: VarDeclList StmtList FuncTail{ 
-	printf("PARSER: Recognized function body\n"); }
+Body: VarDeclList StmtList FuncTail { 
+    printf("PARSER: Recognized function body\n");
+    $$ = createNode(NodeType_Body);
+    $$->value.Body.VarDeclList = $1;
+    $$->value.Body.StmtList = $2;
+    $$->value.Body.FuncTail = $3;
+    }
 ;
 
-FuncTail: /* no return statement, if a void function was defined*/
-	| RETURN Expr SEMICOLON { printf("PARSER: Recognized function tail\n"); }
-
-VarDeclList: {}
+FuncTail: /* no return statement, if a void function was defined */
+    { 
+        $$ = NULL; 
+    }
+    | RETURN Expr SEMICOLON { 
+        printf("PARSER: Recognized function tail\n");
+        $$ = createNode(NodeType_FuncTail);
+        $$->value.FuncTail.expr = $2;
+    }
+;
+VarDeclList: {$$ = NULL;}
            | VarDecl VarDeclList {
                 $$ = createNode(NodeType_VarDeclList); 
                 $$->value.VarDeclList.VarDecl = $1;
@@ -149,7 +162,7 @@ VarDecl: TYPE ID SEMICOLON {
              }
 ;
 
-StmtList: {}
+StmtList: {$$ = NULL;}
         | Stmt StmtList {
             printf("Parsed statement list\n");
             $$ = createNode(NodeType_StmtList);
@@ -230,7 +243,7 @@ BinOp: ADD {
         
 ;
 
-CallParamList: /*empty, i.e. it is possible not to have any parameter*/
+CallParamList:{$$ = NULL;} /*empty, i.e. it is possible not to have any parameter*/
     | Expr { 
             printf("PARSER: Recognized call parameter list\n");
             $$ = createNode(NodeType_CallParamList);
@@ -274,6 +287,7 @@ int main(int argc, char **argv) {
 
     printf("-----printAST-----\n");
     printAST(root, 0);
+    printf("Test 2 \n");
 
     semanticAnalysis(root, symbolBST, functionBST);
 
