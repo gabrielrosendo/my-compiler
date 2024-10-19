@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 
+
 struct ASTNode* createNode(NodeType type) {
     struct ASTNode* newNode = (struct ASTNode*)malloc(sizeof(struct ASTNode));
     newNode->type = type;
@@ -49,6 +50,8 @@ struct ASTNode* createNode(NodeType type) {
             newNode->value.VarDecl.varType = NULL;
             newNode->value.VarDecl.varName = NULL;
             newNode->value.VarDecl.initExpr = NULL;
+            newNode->value.VarDecl.isArray = 0;
+            newNode->value.VarDecl.arraySize = 0;
             break;
         case NodeType_StmtList:
             newNode->value.StmtList.stmt = NULL;
@@ -82,6 +85,15 @@ struct ASTNode* createNode(NodeType type) {
             break;
         case NodeType_FuncTail:
             newNode->value.FuncTail.expr = NULL;
+            break;
+        case NodeType_ArrayDecl:
+            newNode->value.ArrayDecl.arrayType = NULL;
+            newNode->value.ArrayDecl.arrayName = NULL;
+            newNode->value.ArrayDecl.arraySize = 0;
+            break;
+        case NodeType_ArrayAccess:
+            newNode->value.ArrayAccess.varName = NULL;
+            newNode->value.ArrayAccess.indexExpr = NULL;
             break;
         default:
             fprintf(stderr, "ERROR: unknown AST node type AST.c->createNode()\n");

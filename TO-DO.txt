@@ -31,7 +31,10 @@ FUNCTION BST DOES NOT STORE RELEVANT INFO?
         - Detect functions defined but never called
 
 5. Array Support
-   - [ ] Add support for arrays.
+   - [X] Add support for arrays.
+   - MOSTLY DONE
+   - NEED TO UPDATE TAC GENERATOR, OPTIMIZER, FREE/PRINT AST TO HANDLE
+   - ADDED ARRAY SYMBOL TABLE
      - [ ] Array size is pre-defined?
      - [ ] Use a symbol table to store array names and lengths.
      - [ ] Implement different scopes in the symbol table.

@@ -84,6 +84,15 @@ BAD_ID {NUMBER}{ID}
     yylval.number = atoi(yytext);
     return NUMBER;
 }
+"["         { 
+    words++; chars += strlen(yytext);
+    printf("%-10s | %-10s\n", yytext, "LBRACKET");
+    return LBRACKET; }
+
+"]"         { 
+    words++; chars += strlen(yytext);
+    printf("%-10s | %-10s\n", yytext, "RBRACKET");
+    return RBRACKET; }
 
 "+" {
     words++; chars += strlen(yytext);

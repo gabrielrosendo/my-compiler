@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include "semantic.h"
 #include "symbolBST.h"
+#include "arraySymbolTable.h"
 
 // Initialize the global TAC list
 TAC* tacHead = NULL;
@@ -9,19 +10,19 @@ TAC* tacHead = NULL;
 int count = 2;
 bool isRight = true;
 
-void semanticAnalysis(ASTNode* node, SymbolBST* symTab, SymbolBST* functionBST) {
+void semanticAnalysis(ASTNode* node, SymbolBST* symTab, SymbolBST* functionBST, ArraySymbolTable* arraySymTab) {
     if (node == NULL) return;
     switch (node->type) {
         case NodeType_Program:
             printf("Starting semantic analysis\n");
             printf("Semantic Analysis running on node of type: NodeType_Program\n");
-            semanticAnalysis(node->value.program.FuncDeclList, symTab, functionBST);
-            semanticAnalysis(node->value.program.MainFunc, symTab, functionBST);
+            semanticAnalysis(node->value.program.FuncDeclList, symTab, functionBST, arraySymTab);
+            semanticAnalysis(node->value.program.MainFunc, symTab, functionBST, arraySymTab);
             break;
         case NodeType_FuncDeclList:
             printf("Semantic Analysis running on node of type: NodeType_FuncDeclList\n");
-            semanticAnalysis(node->value.FuncDeclList.FuncDecl, symTab, functionBST);
-            semanticAnalysis(node->value.FuncDeclList.nextFuncDecl, symTab, functionBST);
+            semanticAnalysis(node->value.FuncDeclList.FuncDecl, symTab, functionBST, arraySymTab);
+            semanticAnalysis(node->value.FuncDeclList.nextFuncDecl, symTab, functionBST, arraySymTab);
             break;
         case NodeType_FuncDecl:
             printf("Semantic Analysis running on node of type: NodeType_FuncDecl\n");
@@ -36,17 +37,17 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, SymbolBST* functionBST) 
             symTab->next = createSymbolBST();
             symTab = symTab->next;
 
-            semanticAnalysis(node->value.FuncDecl.ParamList, symTab, functionBST);
-            semanticAnalysis(node->value.FuncDecl.Body, symTab, functionBST);
+            semanticAnalysis(node->value.FuncDecl.ParamList, symTab, functionBST, arraySymTab);
+            semanticAnalysis(node->value.FuncDecl.Body, symTab, functionBST, arraySymTab);
             break;
         case NodeType_MainFunc:
             printf("Semantic Analysis running on node of type: NodeType_MainFunc\n");
-            semanticAnalysis(node->value.MainFunc.Body, symTab, functionBST);
+            semanticAnalysis(node->value.MainFunc.Body, symTab, functionBST, arraySymTab);
             break;
         case NodeType_ParamList:
             printf("Semantic Analysis running on node of type: NodeType_ParamList\n");
-            semanticAnalysis(node->value.ParamList.ParamDecl, symTab, functionBST);
-            semanticAnalysis(node->value.ParamList.nextParamDecl, symTab, functionBST);
+            semanticAnalysis(node->value.ParamList.ParamDecl, symTab, functionBST, arraySymTab);
+            semanticAnalysis(node->value.ParamList.nextParamDecl, symTab, functionBST, arraySymTab);
             break;
         case NodeType_ParamDecl:
             printf("Semantic Analysis running on node of type: NodeType_ParamDecl\n");
@@ -59,38 +60,43 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, SymbolBST* functionBST) 
             break;
         case NodeType_Body:
             printf("Semantic Analysis running on node of type: NodeType_Body\n");
-            semanticAnalysis(node->value.Body.VarDeclList, symTab, functionBST);
-            semanticAnalysis(node->value.Body.StmtList, symTab, functionBST);
+            semanticAnalysis(node->value.Body.VarDeclList, symTab, functionBST, arraySymTab);
+            semanticAnalysis(node->value.Body.StmtList, symTab, functionBST, arraySymTab);
             break;
         case NodeType_VarDeclList:
             printf("Semantic Analysis running on node of type: NodeType_VarDeclList\n");
-            semanticAnalysis(node->value.VarDeclList.VarDecl, symTab, functionBST);
-            semanticAnalysis(node->value.VarDeclList.nextVarDecl, symTab, functionBST);
+            semanticAnalysis(node->value.VarDeclList.VarDecl, symTab, functionBST, arraySymTab);
+            semanticAnalysis(node->value.VarDeclList.nextVarDecl, symTab, functionBST, arraySymTab);
             break;
         case NodeType_VarDecl:
             printf("Semantic Analysis running on node of type: NodeType_VarDecl\n");
             printf("VarDecl Name: %s\n", node->value.VarDecl.varName);
             printf("VarDecl Type: %s\n", node->value.VarDecl.varType);
             addSymbol(symTab, node->value.VarDecl.varName, node->value.VarDecl.varType);
+            if (node->value.VarDecl.isArray) {
+                printf("Array Size: %d\n", node->value.VarDecl.arraySize);
+                addArray(arraySymTab, node->value.VarDecl.varName, node->value.VarDecl.varType, node->value.VarDecl.arraySize);
+                printArraySymbolTable(arraySymTab);
+            }
             printSymbolTable(symTab);
-            semanticAnalysis(node->value.VarDecl.initExpr, symTab, functionBST);
+            semanticAnalysis(node->value.VarDecl.initExpr, symTab, functionBST, arraySymTab);
             break;
         case NodeType_StmtList:
             printf("Semantic Analysis running on node of type: NodeType_StmtList\n");
-            semanticAnalysis(node->value.StmtList.stmt, symTab, functionBST);
-            semanticAnalysis(node->value.StmtList.nextStmt, symTab, functionBST);
+            semanticAnalysis(node->value.StmtList.stmt, symTab, functionBST, arraySymTab);
+            semanticAnalysis(node->value.StmtList.nextStmt, symTab, functionBST, arraySymTab);
             break;
         case NodeType_Assignment:
             printf("Semantic Analysis running on node of type: NodeType_Assignment\n");
-            semanticAnalysis(node->value.assignment.expr, symTab, functionBST);
+            semanticAnalysis(node->value.assignment.expr, symTab, functionBST, arraySymTab);
             break;
         case NodeType_Print:
             printf("Semantic Analysis running on node of type: NodeType_Print\n");
             break;
         case NodeType_Expression:
             printf("Semantic Analysis running on node of type: NodeType_Expression\n");
-            semanticAnalysis(node->value.Expression.right, symTab, functionBST);
-            semanticAnalysis(node->value.Expression.left, symTab, functionBST);
+            semanticAnalysis(node->value.Expression.right, symTab, functionBST, arraySymTab);
+            semanticAnalysis(node->value.Expression.left, symTab, functionBST, arraySymTab);
             break;
         case NodeType_Number:
             printf("Semantic Analysis running on node of type: NodeType_Number\n");
@@ -113,12 +119,22 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, SymbolBST* functionBST) 
                 printf("Function %s declared\n", node->value.FunctionCall.funcName);
             }
             // Analyze the parameters
-            semanticAnalysis(node->value.FunctionCall.CallParamList, symTab, functionBST);
+            semanticAnalysis(node->value.FunctionCall.CallParamList, symTab, functionBST, arraySymTab);
             break;
         case NodeType_CallParamList:
             printf("Semantic Analysis running on node of type: NodeType_CallParamList\n");
-            semanticAnalysis(node->value.CallParamList.expr, symTab, functionBST);
-            semanticAnalysis(node->value.CallParamList.nextParam, symTab, functionBST);
+            semanticAnalysis(node->value.CallParamList.expr, symTab, functionBST, arraySymTab);
+            semanticAnalysis(node->value.CallParamList.nextParam, symTab, functionBST, arraySymTab);
+            break;
+        case NodeType_ArrayAccess:
+            printf("Semantic Analysis running on node of type: NodeType_ArrayAccess\n");
+            // Check if the array exists
+            if (!lookupSymbol(symTab, node->value.ArrayAccess.varName)) {
+                fprintf(stderr, "Error: Array %s not declared\n", node->value.ArrayAccess.varName);
+                exit(1);
+            }
+            // Analyze the index expression
+            semanticAnalysis(node->value.ArrayAccess.indexExpr, symTab, functionBST, arraySymTab);
             break;
         default:
             fprintf(stderr, "Unknown Node Type\n");

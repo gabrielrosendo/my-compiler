@@ -3,6 +3,8 @@
 
 #include "AST.h"         
 #include "symbolBST.h" // Ensure this header defines symbolBST, or include the correct header file
+#include "arraySymbolTable.h" // Ensure this header defines ArraySymbolTable, or include the correct header file
+
 
 typedef struct TAC {
     char *op;
@@ -23,7 +25,7 @@ int allocateNextAvailableTempVar();
 void deallocateTempVar(int index);
 
 // Semantic analysis functions
-void semanticAnalysis(ASTNode* node, SymbolBST* symTab, SymbolBST* functionBST);
+void semanticAnalysis(ASTNode* node, SymbolBST* symTab, SymbolBST* functionBST, ArraySymbolTable* arrayTable);
 TAC* generateTACForExpr(ASTNode* expr);
 char* getVariableReference(char* variable);
 char* createTempVar();
