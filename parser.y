@@ -243,7 +243,9 @@ Expr: Expr BinOp Expr { printf("PARSER: Recognized expression\n");
     }
     | ID LBRACKET Expr RBRACKET {
         printf("PARSER: Recognized array access\n");
-        // TODO: Implement array access
+        //$$ = createNode(NodeType_ArrayAccess);
+        //$$->value.ArrayAccess.varName = $1;
+        //$$->value.ArrayAccess.indexExpr = $3;
     }
 ;
 FunctionCall: ID LPAREN CallParamList RPAREN {
