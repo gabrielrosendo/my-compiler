@@ -73,6 +73,10 @@ void generateMIPS(TAC* tacInstructions) {
             printf("\tmove %s, %s\n", tac->result, tac->arg2);
             fprintf(outputFile, "\tmove %s, %s\n", tac->result, tac->arg2);
         }
+        else {
+            printf("Unknown TAC operation: %s\n", tac->op);
+        }
+
         tac = tac->next;
     }
 

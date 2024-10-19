@@ -1,6 +1,9 @@
 To-Do List
 Requirements: https://docs.google.com/document/d/1mUexL4rFo3SH2ms6porxyYbrrofqAq9Hs039YbdmfPA/edit
 
+OPTIMIZERS ARE BROKEN
+COMMENTED IT OUT FOR NOW TO WORK ON CODE GENERATOR
+
 1. Parser & Lexer Enhancements
    - [X] Add function handling to parser and lexer.
 
@@ -36,5 +39,7 @@ Requirements: https://docs.google.com/document/d/1mUexL4rFo3SH2ms6porxyYbrrofqAq
      - Reference: https://web.mit.edu/gnu/doc/html/bison_8.html#:~:text=The%20Bison%20precedence%20declarations%2C%20%25left,the%20%25prec%20modifier%20for%20rules.&text=and%20it%20is%20written%20after%20the%20components%20of%20the%20rule
 
 7. Function Declaration & Error Handling
-   - [ ] Support declaring and calling functions.
-   - [ ] Handle division by zero as an error.
+   - [X] Support declaring and calling functions.
+   - **FIXED** FUNCTION DOES NOT WORK WITH DIRECT NUMBER INPUT AS OF NOW, EX:
+            * x = addOne(5) does not work but x = addOne(b) works if b was declared
+            * Change it so when a function is called on a int, a variable is created for that

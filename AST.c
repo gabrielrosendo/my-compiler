@@ -176,6 +176,10 @@ void freeAST(struct ASTNode* node) {
         case NodeType_FuncTail:
             freeAST(node->value.FuncTail.expr);
             break;
+        case NodeType_CallParamList:
+            freeAST(node->value.CallParamList.expr);
+            freeAST(node->value.CallParamList.nextParam);
+            break;
         default:
             fprintf(stderr, "ERROR: unknown AST node type AST.c->freeAST()\n");
             printf("node type: %d\n", node->type);

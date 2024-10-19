@@ -102,6 +102,24 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, SymbolBST* functionBST) 
         case NodeType_BinaryOp:
             printf("Semantic Analysis running on node of type: NodeType_BinaryOp\n");
             break;
+        case NodeType_FunctionCall:
+            printf("Semantic Analysis running on node of type: NodeType_FunctionCall\n");
+            // Check if the function exists
+            if (!lookupSymbol(functionBST, node->value.FunctionCall.funcName)) {
+                fprintf(stderr, "Error: Function %s not declared\n", node->value.FunctionCall.funcName);
+                exit(1);
+            }
+            else {
+                printf("Function %s declared\n", node->value.FunctionCall.funcName);
+            }
+            // Analyze the parameters
+            semanticAnalysis(node->value.FunctionCall.CallParamList, symTab, functionBST);
+            break;
+        case NodeType_CallParamList:
+            printf("Semantic Analysis running on node of type: NodeType_CallParamList\n");
+            semanticAnalysis(node->value.CallParamList.expr, symTab, functionBST);
+            semanticAnalysis(node->value.CallParamList.nextParam, symTab, functionBST);
+            break;
         default:
             fprintf(stderr, "Unknown Node Type\n");
             printf("%u\n", node->type);
@@ -114,7 +132,9 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, SymbolBST* functionBST) 
         node->type == NodeType_Expression || 
         node->type == NodeType_Number || 
         node->type == NodeType_Print || 
-        node->type == NodeType_Identifier) {
+        node->type == NodeType_Identifier ||
+        node->type == NodeType_FunctionCall
+        ) {
         TAC* tac = generateTACForExpr(node);
     }
 
@@ -183,8 +203,11 @@ TAC* generateTACForExpr(ASTNode* expr) {
 
         case NodeType_Identifier: {
             printf("Generating TAC for identifier\n");
+            printf("Identifier: %s\n", expr->value.identifier.name);
             instruction->arg1 = strdup(expr->value.identifier.name);
+            // Line below causes seg fault with inpput file 2
             instruction->arg2 = getVariableReference(expr->value.identifier.name);
+
             instruction->op = strdup("ID");
             if (isRight) {
                 instruction->result = strdup("$t1");
@@ -235,16 +258,36 @@ TAC* generateTACForExpr(ASTNode* expr) {
     return instruction;
 }
 char* getVariableReference(char* variable) {
+    if (!variable) {
+        printf("ERROR: Null variable name passed to getVariableReference\n");
+        return NULL;
+    }
+
     TAC* current = tacHead;
-    while(current != NULL) {
-        if (strcmp(current->arg2, variable) == 0) {
+    while (current != NULL) {
+        printf("Checking TAC instruction: op=%s, arg1=%s, arg2=%s, result=%s\n", 
+               current->op ? current->op : "NULL",
+               current->arg1 ? current->arg1 : "NULL",
+               current->arg2 ? current->arg2 : "NULL",
+               current->result ? current->result : "NULL");
+
+        // Check all possible fields where the variable could be
+        if (current->arg2 && strcmp(current->arg2, variable) == 0) {
             return current->result;
-            break;
         }
+        // Also check arg1 and result in case the variable appears there
+        if (current->arg1 && strcmp(current->arg1, variable) == 0) {
+            return current->result;
+        }
+        if (current->result && strcmp(current->result, variable) == 0) {
+            return current->result;
+        }
+
         current = current->next;
     }
-    printf("ERROR: Could not find variable %s in TAC, exiting program.", variable);
-    exit(0);
+
+    printf("WARNING: Could not find variable %s in TAC\n", variable);
+    return variable;  // Return the original variable name instead of exiting
 }
 
 // TODO: make algo for if the number of temperary registers is exceeded

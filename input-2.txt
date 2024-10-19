@@ -1,0 +1,12 @@
+int addOne(int a) {
+    int result;
+    result = a + 1;
+    return result;
+}
+
+void main() {
+    int x;
+    x = addOne(5);
+    write(x);
+
+}

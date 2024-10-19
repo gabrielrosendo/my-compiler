@@ -60,7 +60,7 @@ SymbolBST* functionBST = NULL;
 %left MUL DIV
 
 
-%type <ast> Program FuncDeclList FuncDecl MainFunc ParamList ParamDecl Body VarDeclList VarDecl StmtList Stmt Expr BinOp CallParamList FuncTail
+%type <ast> Program FuncDeclList FuncDecl MainFunc ParamList ParamDecl Body VarDeclList VarDecl StmtList Stmt Expr BinOp CallParamList FuncTail FunctionCall
 
 %%
 
@@ -95,19 +95,29 @@ MainFunc: VOID MAIN LPAREN RPAREN LBRACE Body RBRACE {
             $$->value.MainFunc.Body = $6;
         };
 
-ParamList:  {/*empty, i.e. it is possible not to have any parameter*/}
-	| ParamDecl {
-        printf("One parameter\n");}
-	| ParamDecl COMMA ParamList { printf("PARSER: Recognized parameter list\n"); }
+ParamList: /* empty */ {
+    $$ = NULL;  /* Empty parameter list */
+}
+| ParamDecl {
+    $$ = createNode(NodeType_ParamList);
+    $$->value.ParamList.ParamDecl = $1;
+    $$->value.ParamList.nextParamDecl = NULL;
+    printf("One parameter\n");
+}
+| ParamDecl COMMA ParamList {
+    $$ = createNode(NodeType_ParamList);
+    $$->value.ParamList.ParamDecl = $1;
+    $$->value.ParamList.nextParamDecl = $3;
+    printf("PARSER: Recognized parameter list\n");
+}
 ;
 
-ParamDecl: TYPE ID { 
-				printf("PARSER: Recognized parameter declaration\n"); 
-                $$ = createNode(NodeType_ParamDecl);
-                $$->value.ParamDecl.paramType = $1;
-                $$->value.ParamDecl.paramName = $2;
-					
-		}
+ParamDecl: TYPE ID {
+    $$ = createNode(NodeType_ParamDecl);
+    $$->value.ParamDecl.paramType = $1;
+    $$->value.ParamDecl.paramName = $2;
+    printf("PARSER: Recognized parameter declaration\n");
+}
 ;
 
 Body: VarDeclList StmtList FuncTail { 
@@ -219,6 +229,28 @@ Expr: Expr BinOp Expr { printf("PARSER: Recognized expression\n");
         $$->value.FunctionCall.CallParamList = $3;
     }
 ;
+FunctionCall: ID LPAREN CallParamList RPAREN {
+        printf("PARSER: Recognized function call\n");
+        $$ = createNode(NodeType_FunctionCall);
+        $$->value.FunctionCall.funcName = $1;
+        $$->value.FunctionCall.CallParamList = $3;
+    }
+
+
+CallParamList:{$$ = NULL;} /*empty, i.e. it is possible not to have any parameter*/
+    | Expr { 
+            printf("PARSER: Recognized SINGULAR call parameter\n");
+            $$ = createNode(NodeType_CallParamList);
+            $$->value.CallParamList.expr = $1;
+        }
+    | Expr COMMA CallParamList { 
+            printf("PARSER: Recognized call parameter list\n"); 
+            $$ = createNode(NodeType_CallParamList);
+            $$->value.CallParamList.expr = $1;
+            $$->value.CallParamList.nextParam = $3;
+        }
+;
+
 
 BinOp: ADD {
 				printf("PARSER: Recognized addition operator\n");
@@ -241,20 +273,6 @@ BinOp: ADD {
             $$->value.binaryOp.op = $1;
         }
         
-;
-
-CallParamList:{$$ = NULL;} /*empty, i.e. it is possible not to have any parameter*/
-    | Expr { 
-            printf("PARSER: Recognized call parameter list\n");
-            $$ = createNode(NodeType_CallParamList);
-            $$->value.CallParamList.expr = $1;
-        }
-    | Expr COMMA CallParamList { 
-            printf("PARSER: Recognized call parameter list\n"); 
-            $$ = createNode(NodeType_CallParamList);
-            $$->value.CallParamList.expr = $1;
-            $$->value.CallParamList.nextParam = $3;
-        }
 ;
 
 %%
@@ -308,7 +326,7 @@ int main(int argc, char **argv) {
     }
 
     
-    optimizeforMIPS(&tacHead);
+    //optimizeforMIPS(&tacHead);
     initCodeGenerator("output.s");
     generateMIPS(tacHead);
     finalizeCodeGenerator("output.s");
@@ -316,7 +334,7 @@ int main(int argc, char **argv) {
     printf("\n=== CODE OPTIMIZATION ===\n");
     // Traverse the linked list of TAC entries and optimize
     // But - you MIGHT need to traverse the AST again to optimize
-    optimizeTAC(&tacHead);
+    //optimizeTAC(&tacHead);
     // Output optimized TAC to file
     FILE* optimizedTacFile = fopen("optimizedTAC.ir", "w");
     freeSymbolTable(symbolBST);
