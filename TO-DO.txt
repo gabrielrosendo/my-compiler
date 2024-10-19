@@ -35,9 +35,8 @@ FUNCTION BST DOES NOT STORE RELEVANT INFO?
    - MOSTLY DONE
    - NEED TO UPDATE TAC GENERATOR, OPTIMIZER, FREE/PRINT AST TO HANDLE
    - ADDED ARRAY SYMBOL TABLE
-     - [ ] Array size is pre-defined?
-     - [ ] Use a symbol table to store array names and lengths.
-     - [ ] Implement different scopes in the symbol table.
+   - [X] Use a symbol table to store array names and lengths.
+   - [ ] Implement different scopes in the symbol table.
 
 6. Arithmetic and Operator Precedence
    - [X] Add support for `/` and `*`.
