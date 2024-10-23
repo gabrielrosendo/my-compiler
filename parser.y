@@ -272,7 +272,7 @@ FunctionCall: ID LPAREN CallParamList RPAREN {
         $$->value.FunctionCall.funcName = $1;
         $$->value.FunctionCall.CallParamList = $3;
     }
-
+;
 
 CallParamList:
            {
