@@ -5,7 +5,7 @@
 
 static int indentMagnitude = 3;
 
-FunctionSymbolBST* createSymbolBST() {
+FunctionSymbolBST* createFunctionSymbolBST() {
     printf("Log: creating symbolBST\n");
     FunctionSymbolBST* symbolBST = (FunctionSymbolBST*)malloc(sizeof(FunctionSymbolBST));
     if (!symbolBST) return NULL;
@@ -13,44 +13,45 @@ FunctionSymbolBST* createSymbolBST() {
     symbolBST->left = NULL;
     symbolBST->hash = 0;
     symbolBST->symbol = NULL;
+    symbolBST->parameters = NULL;
     return symbolBST;
 }
 
-unsigned int hash(char* name) {
+unsigned int functionHash(char* name) {
     unsigned int hashval = 0;
     for (; *name != '\0'; name++) hashval = *name + (hashval << 5) - hashval;
     return hashval;
 }
 
-FunctionSymbolBST* addSymbolPrivate(FunctionSymbolBST* curNode, Symbol* newSymbol, unsigned int curHash, FunctionSymbolBST* prevNode) {
+FunctionSymbolBST* addFunctionSymbolPrivate(FunctionSymbolBST* curNode, Symbol* newSymbol, unsigned int curHash, FunctionSymbolBST* prevNode) {
     if(curNode == NULL) {
-        curNode = createSymbolBST();
+        curNode = createFunctionSymbolBST();
         curNode->hash = curHash;
         curNode->symbol = newSymbol;
     } else if (curNode->hash == curHash) {
-        fprintf(stderr,"SymbolBST Error in addSymbolPrivate(): added symbol already exists \n");
+        fprintf(stderr,"SymbolBST Error in addFunctionSymbolPrivate(): added symbol already exists \n");
         free(newSymbol->name);
         free(newSymbol->type);
         free(newSymbol);
         exit(0);
     } else if (curNode->hash < curHash) {
-        curNode->right = addSymbolPrivate(curNode->right, newSymbol, curHash, curNode);
+        curNode->right = addFunctionSymbolPrivate(curNode->right, newSymbol, curHash, curNode);
     } else {
-        curNode->left = addSymbolPrivate(curNode->left, newSymbol, curHash, curNode);
+        curNode->left = addFunctionSymbolPrivate(curNode->left, newSymbol, curHash, curNode);
     }
     return curNode;
 }
 
-void addSymbol(FunctionSymbolBST* head, char* name, char* type) {
+void addFunctionSymbol(FunctionSymbolBST* head, char* name, char* type) {
     Symbol* newSymbol = (Symbol*)malloc(sizeof(Symbol));
     if (!newSymbol) return;
     newSymbol->name = strdup(name);
     newSymbol->type = strdup(type);
 
-    unsigned int curHash = hash(name);
+    unsigned int curHash = functionHash(name);
 
     if (head == NULL) {
-        fprintf(stderr,"SymbolBST Error in addSymbol(): input node not initialized \n");
+        fprintf(stderr,"SymbolBST Error in addFunctionSymbol(): input node not initialized \n");
         free(newSymbol->name);
         free(newSymbol->type);
         free(newSymbol);
@@ -59,7 +60,7 @@ void addSymbol(FunctionSymbolBST* head, char* name, char* type) {
     }
 
     if (head->hash == curHash) {
-        fprintf(stderr,"SymbolBST Error in addSymbolPrivate(): added symbol already esists \n");
+        fprintf(stderr,"SymbolBST Error in addFunctionSymbol(): added symbol already esists \n");
         exit(0);
         return;
     }
@@ -69,57 +70,126 @@ void addSymbol(FunctionSymbolBST* head, char* name, char* type) {
         head->symbol = newSymbol;
 
     } else if (head->hash < curHash) {
-        head->right = addSymbolPrivate(head->right,newSymbol, curHash, head);
+        head->right = addFunctionSymbolPrivate(head->right,newSymbol, curHash, head);
     } else {
-        head->left = addSymbolPrivate(head->left, newSymbol, curHash, head);
+        head->left = addFunctionSymbolPrivate(head->left, newSymbol, curHash, head);
     }
 }
 
-Symbol* lookupSymbol(FunctionSymbolBST* head, char* name)   {
+FunctionSymbolBST* lookupFunctionNode(FunctionSymbolBST* head, char* name)   {
     if (head == NULL) {
         fprintf(stderr,"Use of undeclared symbol: %s\n", name);
         exit(0);
     }
 
     if (head->symbol == NULL) {
-        fprintf(stderr,"SymbolBST Error in lookupSymbol(): symbol could not be found in SymbolBST \n");
+        fprintf(stderr,"FunctionSymbolBST Error in lookupFunctionNode(): symbol could not be found in FunctionSymbolBST \n");
         return NULL;
     }
 
-    unsigned int curHash = hash(name);
+    unsigned int curHash = functionHash(name);
 
     if (head->hash == curHash) {
-        return head->symbol;
+        return head;
     }
     
     if (head->hash < curHash) {
-        return lookupSymbol(head->right, name);
+        return lookupFunctionNode(head->right, name);
     }
 
     // else (head->hash > curHash)    
     if (head->left == NULL) {
-        fprintf(stderr,"SymbolBST Error in lookupSymbol(): symbol could not be found in SymbolBST \n");
+        fprintf(stderr,"FunctionSymbolBST Error in lookupFunctionNode(): symbol could not be found in FunctionSymbolBST \n");
         exit(0);
     }
-    return lookupSymbol(head->left, name);
+    return lookupFunctionNode(head->left, name);
+}
+
+void addParameterInternal(FunctionSymbolBST* node, Parameter* parameter, unsigned int curHash) {
+    if (node == NULL) {
+        fprintf(stderr,"Use of undeclared function: %s\n", parameter->name);
+        free(parameter->name);
+        free(parameter->type);
+        free(parameter);
+        exit(0);
+    }
+
+    if (node->symbol == NULL) {
+        fprintf(stderr,"FucntionSymbolBST Error in addParameterInternal(): symbol could not be found in FunctionSymbolBST \n");
+        exit(0);
+    }
+
+    if (node->hash == curHash) {
+        addParamtersToFunctionInternal(node, parameter);
+    } else if (node->hash < curHash) {
+        addParameterInternal(node->right, parameter, curHash);
+    } else {
+        addParameterInternal(node->left, parameter, curHash);
+    }
 }
 
 void addParameter(FunctionSymbolBST* head, char* functionName, char* parameterName, char* parameterType) {
-    Parameter* newParameter = (Symbol*)malloc(sizeof(Symbol));
+    if (head == NULL) {
+        fprintf(stderr,"Use of undeclared function: %s\n", functionName);
+        exit(0);
+    }
+
+    if (head->symbol == NULL) {
+        fprintf(stderr,"FucntionSymbolBST Error in addParameter(): symbol could not be found in FunctionSymbolBST \n");
+        exit(0);
+    }
+
+    Parameter* newParameter = (Parameter*)malloc(sizeof(Parameter));
     if (!newParameter) return;
     newParameter->name = strdup(parameterName);
     newParameter->type = strdup(parameterType);
+    newParameter->next = NULL;
 
-    
+    unsigned int curHash = functionHash(functionName);
+
+    if (head->hash == curHash) {
+        addParamtersToFunctionInternal(head, newParameter);
+    } else if (head->hash < curHash) {
+        addParameterInternal(head->right, newParameter, curHash);
+    } else {
+        addParameterInternal(head->left, newParameter, curHash);
+    }
+
 }
 
-void freeSymbolTable(FunctionSymbolBST* node) {
+void addParamtersToFunctionInternal(FunctionSymbolBST* node,  Parameter* parameter) {
+   
+    if(node->parameters == NULL) {
+        node->parameters = parameter;
+        return;
+    } 
+
+    Parameter* curParam = node->parameters;
+
+    while(curParam->next != NULL) {
+        curParam = curParam->next;
+    }
+
+    curParam->next = parameter;
+}
+
+void freeParameters (Parameter* parameter) {
+    if(parameter != NULL) {
+        freeParameters(parameter->next);
+        free(parameter->name);
+        free(parameter->type);
+        free(parameter);
+    }
+}
+
+void freeFunctionSymbolTable(FunctionSymbolBST* node) {
     if (node == NULL) {
         return;
     }
     printf("LOG: freeing symbolBST\n");
-    freeSymbolTable(node->right);
-    freeSymbolTable(node->left);
+    freeFunctionSymbolTable(node->right);
+    freeFunctionSymbolTable(node->left);
+    freeParameters(node->parameters);
     if (node->symbol != NULL) {
     if (node->symbol->name != NULL) {
         free(node->symbol->name);
@@ -127,13 +197,16 @@ void freeSymbolTable(FunctionSymbolBST* node) {
     if (node->symbol->type != NULL) {
         free(node->symbol->type);
     }
+    if(node->parameters != NULL) {
+        free(node->parameters);
+    }
     free(node->symbol);
     }
     free(node);
 }
 
 
-void printSymbolTablePrivateRight(FunctionSymbolBST* curNode, int indent)  {
+void printFunctionSymbolTablePrivateRight(FunctionSymbolBST* curNode, int indent)  {
 
     //Pring null right node with formatting
     if (curNode->right == NULL) {
@@ -146,7 +219,7 @@ void printSymbolTablePrivateRight(FunctionSymbolBST* curNode, int indent)  {
     } else {
 
         //Print right nodes first
-        printSymbolTablePrivateRight(curNode->right, indent + indentMagnitude);
+        printFunctionSymbolTablePrivateRight(curNode->right, indent + indentMagnitude);
 
         //Print right node with formatting
         for(int i = 0; i < indent; i++) printf("\t");
@@ -155,14 +228,22 @@ void printSymbolTablePrivateRight(FunctionSymbolBST* curNode, int indent)  {
         printf("Right Node: { type: %s }\n", curNode->right->symbol->type);
         for(int i = 0; i < indent; i++) printf("\t");
         printf("            { hash: %u }\n", curNode->right->hash);
+        for(int i = 0; i < indent; i++) printf("\t");
+        printf("Parameters: {");
+        Parameter* curParam = curNode->right->parameters;
+        while (curParam != NULL) {
+            printf("name: %s, type: %s", curParam->name, curParam->type);
+            if (curParam->next != NULL) printf(", ");
+        }
+        printf("}\n");
 
         //Print left nodes last
-        printSymbolTablePrivateLeft(curNode->right, indent + indentMagnitude);  
+        printFunctionSymbolTablePrivateLeft(curNode->right, indent + indentMagnitude);  
     }
     
 }
 
-void printSymbolTablePrivateLeft(FunctionSymbolBST* curNode, int indent)  {
+void printFunctionSymbolTablePrivateLeft(FunctionSymbolBST* curNode, int indent)  {
 
     //Print null left node with formatting
     if (curNode->left == NULL) {
@@ -173,7 +254,7 @@ void printSymbolTablePrivateLeft(FunctionSymbolBST* curNode, int indent)  {
 
     } else {
         //Print right nodes first
-        printSymbolTablePrivateRight(curNode->left, indent + indentMagnitude);
+        printFunctionSymbolTablePrivateRight(curNode->left, indent + indentMagnitude);
 
         //Print left node with formatting
         for(int i = 0; i < indent; i++) printf("\t");
@@ -182,13 +263,21 @@ void printSymbolTablePrivateLeft(FunctionSymbolBST* curNode, int indent)  {
         printf("Left Node: { type: %s }\n", curNode->left->symbol->type);
         for(int i = 0; i < indent; i++) printf("\t");
         printf("           { hash: %u }\n", curNode->left->hash);
+        for(int i = 0; i < indent; i++) printf("\t");
+        printf("Parameters: {");
+        Parameter* curParam = curNode->left->parameters;
+        while (curParam != NULL) {
+            printf("name: %s, type: %s", curParam->name, curParam->type);
+            if (curParam->next != NULL) printf(", ");
+        }
+        printf("}\n");
 
         //Print left nodes last
-        printSymbolTablePrivateLeft(curNode->left, indent + indentMagnitude);
+        printFunctionSymbolTablePrivateLeft(curNode->left, indent + indentMagnitude);
     }
 }
 
-void printSymbolTable(FunctionSymbolBST* head)  {
+void printFunctionSymbolTable(FunctionSymbolBST* head)  {
 
     //Print empty head node
     if(head->symbol == NULL) {
@@ -197,13 +286,21 @@ void printSymbolTable(FunctionSymbolBST* head)  {
     }
 
     //Print right nodes first
-    printSymbolTablePrivateRight(head, indentMagnitude);
+    printFunctionSymbolTablePrivateRight(head, indentMagnitude);
 
     //Print head with formatting
     printf("      { name: %s }\n", head->symbol->name);
     printf("Head: { type: %s }\n", head->symbol->type);
     printf("      { hash: %u }\n", head->hash);
+    printf("Parameters: {");
+    Parameter* curParam = head->parameters;
+    while (curParam != NULL) {
+        printf("name: %s, type: %s", curParam->name, curParam->type);
+        if (curParam->next != NULL) printf(", ");
+        curParam = curParam->next;
+    }
+    printf("}\n");
 
     //Print left nodes last
-    printSymbolTablePrivateLeft(head, indentMagnitude);
+    printFunctionSymbolTablePrivateLeft(head, indentMagnitude);
 }  

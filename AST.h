@@ -129,12 +129,14 @@ typedef struct ASTNode {
             struct ASTNode* expr;
             struct ASTNode* nextParam;
         }CallParamList;
+
         // Array Declaration
         struct {
             char* arrayType;
             char* arrayName;
             int arraySize;
         }ArrayDecl;
+        
         // Array Access
         struct {
             char* varName;

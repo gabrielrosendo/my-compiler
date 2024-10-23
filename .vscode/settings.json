@@ -4,6 +4,8 @@
         "symboltable.h": "c",
         "stdlib.h": "c",
         "symbolbst_test.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "string.h": "c",
+        "functionsymbolbst.h": "c"
     }
 }

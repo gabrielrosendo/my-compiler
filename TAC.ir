@@ -1,1 +1,12 @@
-int arr ==> $t2
+int b ==> $t2
+$t1 = 1
+$t0 = a (a)
+$t1 = $t0 + $t1
+$t2 (b) = $t1
+int a ==> $t3
+int b ==> $t4
+$t1 = 3
+$t0 (a) = $t1
+$t1 = $t0 (a)
+$t2 (b) = $t1
+Print($t2 (b))

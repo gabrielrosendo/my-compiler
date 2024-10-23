@@ -5,6 +5,7 @@
 #include <string.h>
 #include "AST.h"
 #include "symbolBST.h"
+#include "functionSymbolBST.h"
 #include "symbolBST_Test.h"
 #include "semantic.h"
 #include "codeGenerator.h"
@@ -27,7 +28,7 @@ bool enableTesting = false;
 ASTNode* root = NULL; 
 
 SymbolBST* symbolBST = NULL;
-SymbolBST* functionBST = NULL;
+FunctionSymbolBST* functionBST = NULL;
 ArraySymbolTable* arraySymTab = NULL;
 %}
 
@@ -256,7 +257,11 @@ FunctionCall: ID LPAREN CallParamList RPAREN {
     }
 
 
-CallParamList:{$$ = NULL;} /*empty, i.e. it is possible not to have any parameter*/
+CallParamList:
+           {
+            printf("PARSER: Recognized no call parameters\n");
+            $$ = createNode(NodeType_CallParamList);
+        } /*empty, i.e. it is possible not to have any parameter*/
     | Expr { 
             printf("PARSER: Recognized SINGULAR call parameter\n");
             $$ = createNode(NodeType_CallParamList);
@@ -302,7 +307,7 @@ int main(int argc, char **argv) {
     #endif
 
     symbolBST = createSymbolBST();
-    functionBST = createSymbolBST();
+    functionBST = createFunctionSymbolBST();
     arraySymTab = createArraySymbolTable();
 
 
@@ -359,7 +364,7 @@ int main(int argc, char **argv) {
     // Output optimized TAC to file
     FILE* optimizedTacFile = fopen("optimizedTAC.ir", "w");
     freeSymbolTable(symbolBST);
-    freeSymbolTable(functionBST);
+    freeFunctionSymbolTable(functionBST);
     freeArraySymbolTable(arraySymTab);
 
     printf("Freeing AST...\n");

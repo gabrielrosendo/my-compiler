@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include "semantic.h"
 #include "symbolBST.h"
+#include "functionSymbolBST.h"
 #include "arraySymbolTable.h"
 
 // Initialize the global TAC list
@@ -9,8 +10,10 @@ TAC* tacHead = NULL;
 
 int count = 2;
 bool isRight = true;
+char* currentFunctionName = NULL;
+Parameter* currentParameter = NULL;
 
-void semanticAnalysis(ASTNode* node, SymbolBST* symTab, SymbolBST* functionBST, ArraySymbolTable* arraySymTab) {
+void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* functionBST, ArraySymbolTable* arraySymTab) {
     if (node == NULL) return;
     switch (node->type) {
         case NodeType_Program:
@@ -30,8 +33,10 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, SymbolBST* functionBST, 
             printf("FuncDecl Type: %s\n", node->value.FuncDecl.FuncType);
 
             //Check if function already exists with sybolBST specifically for functions
-            addSymbol(functionBST, node->value.FuncDecl.FuncName, node->value.FuncDecl.FuncType);
-            printSymbolTable(functionBST);
+            addFunctionSymbol(functionBST, node->value.FuncDecl.FuncName, node->value.FuncDecl.FuncType);
+            printFunctionSymbolTable(functionBST);
+
+            currentFunctionName = node->value.FuncDecl.FuncName;
 
             //Create a new symbol table to contain the scope of the next function
             symTab->next = createSymbolBST();
@@ -39,6 +44,9 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, SymbolBST* functionBST, 
 
             semanticAnalysis(node->value.FuncDecl.ParamList, symTab, functionBST, arraySymTab);
             semanticAnalysis(node->value.FuncDecl.Body, symTab, functionBST, arraySymTab);
+
+            //Print Function SymbolTable
+            printFunctionSymbolTable(functionBST);
             break;
         case NodeType_MainFunc:
             printf("Semantic Analysis running on node of type: NodeType_MainFunc\n");
@@ -54,7 +62,10 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, SymbolBST* functionBST, 
             printf("ParamDecl Name: %s\n", node->value.ParamDecl.paramName);
             printf("ParamDecl Type: %s\n", node->value.ParamDecl.paramType);
 
-            // Add the parameters the the AST to be able to check for overlapping delcarations
+            // Add the parameter to functionBST to check if the right parameters are being used
+            addParameter(functionBST, currentFunctionName, node->value.ParamDecl.paramName, node->value.ParamDecl.paramType);
+
+            // Add the parameters the the symbolBST to be able to check for overlapping delcarations
             addSymbol(symTab, node->value.ParamDecl.paramName, node->value.ParamDecl.paramType);
             printSymbolTable(symTab);
             break;
@@ -111,18 +122,37 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, SymbolBST* functionBST, 
         case NodeType_FunctionCall:
             printf("Semantic Analysis running on node of type: NodeType_FunctionCall\n");
             // Check if the function exists
-            if (!lookupSymbol(functionBST, node->value.FunctionCall.funcName)) {
+            if (!lookupFunctionNode(functionBST, node->value.FunctionCall.funcName)) {
                 fprintf(stderr, "Error: Function %s not declared\n", node->value.FunctionCall.funcName);
                 exit(1);
             }
-            else {
-                printf("Function %s declared\n", node->value.FunctionCall.funcName);
-            }
+
+            currentFunctionName = node->value.FunctionCall.funcName;
+            currentParameter = lookupFunctionNode(functionBST, node->value.FunctionCall.funcName)->parameters;
+
             // Analyze the parameters
             semanticAnalysis(node->value.FunctionCall.CallParamList, symTab, functionBST, arraySymTab);
+
+            if (currentParameter != NULL) {
+                fprintf(stderr, "Error: Function call had too few inputs. Function call: %s\n", currentFunctionName);
+                exit(0);
+            }
+
             break;
         case NodeType_CallParamList:
             printf("Semantic Analysis running on node of type: NodeType_CallParamList\n");
+
+            if (currentParameter == NULL) {
+                fprintf(stderr, "Error: Function call had too many inputs. Function call: %s\n", currentFunctionName);
+                exit(0);
+            }
+
+            if (currentParameter->next == NULL) {
+                currentParameter = NULL;
+            } else {
+                currentParameter = currentParameter->next;
+            }
+            
             semanticAnalysis(node->value.CallParamList.expr, symTab, functionBST, arraySymTab);
             semanticAnalysis(node->value.CallParamList.nextParam, symTab, functionBST, arraySymTab);
             break;
