@@ -234,6 +234,7 @@ void printFunctionSymbolTablePrivateRight(FunctionSymbolBST* curNode, int indent
         while (curParam != NULL) {
             printf("name: %s, type: %s", curParam->name, curParam->type);
             if (curParam->next != NULL) printf(", ");
+            curParam = curParam->next;
         }
         printf("}\n");
 
@@ -269,6 +270,7 @@ void printFunctionSymbolTablePrivateLeft(FunctionSymbolBST* curNode, int indent)
         while (curParam != NULL) {
             printf("name: %s, type: %s", curParam->name, curParam->type);
             if (curParam->next != NULL) printf(", ");
+            curParam = curParam->next;
         }
         printf("}\n");
 
