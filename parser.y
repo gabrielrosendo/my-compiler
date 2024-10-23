@@ -168,16 +168,7 @@ VarDecl: TYPE ID SEMICOLON {
             $$->value.VarDecl.varName = $2;
             $$->value.VarDecl.initExpr = $4; 
             printf("Parsed variable declaration with initialization: %s\n", $2);
-        }
-        | TYPE ID LBRACKET NUMBER RBRACKET SEMICOLON {
-            printf("PARSER: Recognized array declaration\n");
-            //TODO: Implement array declaration
-                $$ = createNode(NodeType_VarDecl);
-                $$->value.VarDecl.varType = $1;
-                $$->value.VarDecl.varName = $2;
-                $$->value.VarDecl.isArray = 1;
-                $$->value.VarDecl.arraySize = $4;
-        }    		
+        }   		
         | TYPE ID {
                   printf ("Missing semicolon after declaring variable: %s\n", $2);
                   // stop compilation
@@ -242,20 +233,15 @@ Expr: Expr BinOp Expr { printf("PARSER: Recognized expression\n");
         $$->value.FunctionCall.funcName = $1;
         $$->value.FunctionCall.CallParamList = $3;
     }
-    | ID LBRACKET Expr RBRACKET {
-        printf("PARSER: Recognized array access\n");
-        //$$ = createNode(NodeType_ArrayAccess);
-        //$$->value.ArrayAccess.varName = $1;
-        //$$->value.ArrayAccess.indexExpr = $3;
-    }
 ;
+
 FunctionCall: ID LPAREN CallParamList RPAREN {
         printf("PARSER: Recognized function call\n");
         $$ = createNode(NodeType_FunctionCall);
         $$->value.FunctionCall.funcName = $1;
         $$->value.FunctionCall.CallParamList = $3;
     }
-
+;
 
 CallParamList:
            {
