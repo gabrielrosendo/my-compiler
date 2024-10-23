@@ -4,9 +4,16 @@ int addOne(int a) {
     return b;
 }
 
+int addTwo(int a) {
+    int v;
+    c = a + 2;
+    return c;
+}
+
 void main() {
     int a;
-    int b;
-    a = 3;
-    print(b);
+    int d;
+    d = addOne(a);
+    d = addTwo(d);
+    print(d);
 }
