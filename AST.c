@@ -274,7 +274,15 @@ void printAST(struct ASTNode* node, int indent) {
             printf("AST Print: varType = %s\n", node->value.VarDecl.varType);
             spaceOut(indent);
             printf("AST Print: varName = %s\n", node->value.VarDecl.varName);
-            printAST(node->value.VarDecl.initExpr, indent);
+            if (node->value.VarDecl.isArray) {
+                spaceOut(indent);
+                printf("AST Print: isArray = true\n");
+                spaceOut(indent);
+                printf("AST Print: arraySize = %d\n", node->value.VarDecl.arraySize);
+            }
+            if (node->value.VarDecl.initExpr) {
+                printAST(node->value.VarDecl.initExpr, indent);
+            }
             break;
         case NodeType_StmtList:
             spaceOut(indent);
@@ -287,12 +295,28 @@ void printAST(struct ASTNode* node, int indent) {
         case NodeType_Assignment:
             spaceOut(indent);
             printf("AST Print: NodeType_Assignment\n");
-            spaceOut(indent);
-            printf("AST Print: varName = %s\n", node->value.assignment.varName);
+            if (node->value.assignment.varName) {
+                spaceOut(indent);
+                printf("AST Print: Array Name = %s\n", node->value.assignment.varName);
+            }
             spaceOut(indent);
             printf("AST Print: op = %s\n", node->value.assignment.op);
-            printAST(node->value.assignment.expr, indent);
+            if (node->value.assignment.expr) {
+                spaceOut(indent);
+                printf("AST Print: Assigned Expression:\n");
+                printAST(node->value.assignment.expr, indent + 1);
+            }
             break;
+        case NodeType_ArrayAccess:
+            spaceOut(indent);
+            printf("AST Print: NodeType_ArrayAccess\n");
+            spaceOut(indent);
+            printf("AST Print: Array Name = %s\n", node->value.ArrayAccess.varName);
+            spaceOut(indent);
+            printf("AST Print: Index Expression:\n");
+            printAST(node->value.ArrayAccess.indexExpr, indent + 1);
+            break;
+
         case NodeType_Print:
             spaceOut(indent);
             printf("AST Print: NodeType_Print\n");

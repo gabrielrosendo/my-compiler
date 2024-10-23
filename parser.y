@@ -175,6 +175,22 @@ VarDecl: TYPE ID SEMICOLON {
                     exit(1);
 
              }
+        | ID LBRACKET Expr RBRACKET EQ Expr SEMICOLON {
+            printf("PARSER: Recognized array assignment\n");
+            $$ = createNode(NodeType_Assignment);
+            
+            // Create the array access node
+            ASTNode* arrayAccess = createNode(NodeType_ArrayAccess);
+            arrayAccess->value.ArrayAccess.varName = strdup($1);
+            arrayAccess->value.ArrayAccess.indexExpr = $3;
+            
+            // Link it to the assignment
+            $$->value.assignment.varName = strdup($1);
+            $$->value.assignment.op = strdup($5);
+            $$->value.assignment.expr = $6;
+        }
+
+        
 ;
 
 StmtList: {$$ = NULL;}
