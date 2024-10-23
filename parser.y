@@ -171,12 +171,13 @@ VarDecl: TYPE ID SEMICOLON {
         }
         | TYPE ID LBRACKET NUMBER RBRACKET SEMICOLON {
             printf("PARSER: Recognized array declaration\n");
-            //TODO: Implement array declaration
                 $$ = createNode(NodeType_VarDecl);
                 $$->value.VarDecl.varType = $1;
                 $$->value.VarDecl.varName = $2;
                 $$->value.VarDecl.isArray = 1;
                 $$->value.VarDecl.arraySize = $4;
+                $$->value.VarDecl.initExpr = NULL;
+
         }    		
         | TYPE ID {
                   printf ("Missing semicolon after declaring variable: %s\n", $2);
@@ -184,6 +185,22 @@ VarDecl: TYPE ID SEMICOLON {
                     exit(1);
 
              }
+        | ID LBRACKET Expr RBRACKET EQ Expr SEMICOLON {
+            printf("PARSER: Recognized array assignment\n");
+            $$ = createNode(NodeType_Assignment);
+            
+            // Create the array access node
+            ASTNode* arrayAccess = createNode(NodeType_ArrayAccess);
+            arrayAccess->value.ArrayAccess.varName = strdup($1);
+            arrayAccess->value.ArrayAccess.indexExpr = $3;
+            
+            // Link it to the assignment
+            $$->value.assignment.varName = strdup($1);
+            $$->value.assignment.op = strdup($5);
+            $$->value.assignment.expr = $6;
+        }
+
+        
 ;
 
 StmtList: {$$ = NULL;}
@@ -244,9 +261,9 @@ Expr: Expr BinOp Expr { printf("PARSER: Recognized expression\n");
     }
     | ID LBRACKET Expr RBRACKET {
         printf("PARSER: Recognized array access\n");
-        //$$ = createNode(NodeType_ArrayAccess);
-        //$$->value.ArrayAccess.varName = $1;
-        //$$->value.ArrayAccess.indexExpr = $3;
+        $$ = createNode(NodeType_ArrayAccess);
+        $$->value.ArrayAccess.varName = $1;
+        $$->value.ArrayAccess.indexExpr = $3;
     }
 ;
 FunctionCall: ID LPAREN CallParamList RPAREN {
