@@ -10,13 +10,7 @@ FUNCTION BST DOES NOT STORE RELEVANT INFO?
 1. Parser & Lexer Enhancements
    - [X] Add function handling to parser and lexer.
 
-2. Update and Reflect Changes
-   - [ ] Reflect changes in parser to:
-     - Abstract Syntax Tree (AST)
-     - Optimizer
-     - Code Generator
-
-3. Type Handling
+2. Type Handling
    - [ ] Add typecasting by default.
    - Add floats and other types
      - Example:
@@ -24,13 +18,13 @@ FUNCTION BST DOES NOT STORE RELEVANT INFO?
             | LPAREN TYPE RPAREN ID BinOp LPAREN TYPE RPAREN ID {...}
    - [ ] Decide between type coercion or explicit casting.
 
-4. Optimization of Functions and Calls
+3. Optimization of Functions and Calls
    - [ ] Apply previously discussed optimizations inside function definitions:
      - Peephole optimization
      - Dead code elimination
         - Detect functions defined but never called
 
-5. Array Support
+4. Array Support
    - [X] Add support for arrays.
    - MOSTLY DONE
    - NEED TO UPDATE TAC GENERATOR, OPTIMIZER, FREE/PRINT AST TO HANDLE
@@ -38,12 +32,12 @@ FUNCTION BST DOES NOT STORE RELEVANT INFO?
    - [X] Use a symbol table to store array names and lengths.
    - [ ] Implement different scopes in the symbol table.
 
-6. Arithmetic and Operator Precedence
+5. Arithmetic and Operator Precedence
    - [X] Add support for `/` and `*`.
    - [ ] Ensure operator precedence rules are followed.
      - Reference: https://web.mit.edu/gnu/doc/html/bison_8.html#:~:text=The%20Bison%20precedence%20declarations%2C%20%25left,the%20%25prec%20modifier%20for%20rules.&text=and%20it%20is%20written%20after%20the%20components%20of%20the%20rule
 
-7. Function Declaration & Error Handling
+6. Function Declaration & Error Handling
    - [X] Support declaring and calling functions.
    - **FIXED** FUNCTION DOES NOT WORK WITH DIRECT NUMBER INPUT AS OF NOW, EX:
             * x = addOne(5) does not work but x = addOne(b) works if b was declared
