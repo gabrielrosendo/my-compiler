@@ -5,7 +5,7 @@ int addOne(int a) {
 }
 
 int addTwo(int a) {
-    int v;
+    int c;
     c = a + 2;
     return c;
 }
