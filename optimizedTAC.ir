@@ -1,17 +1,17 @@
-int b ==> $t2
+int b ==> addOneb
 $t1 = 1
-$t0 = a (a)
+$t0 = addOnea (a)
 $t1 = $t0 + $t1
-$t2 (b) = $t1
-int c ==> $t3
+addOneb (b) = $t1
+int c ==> addTwoc
 $t1 = 2
-$t0 = $t0 (a)
+$t0 = addOnea (a)
 $t1 = $t0 + $t1
-$t3 (c) = $t1
-int a ==> $t4
-int d ==> $t5
-$t1 = $t0 (a)
-$t5 (d) = $t1
-$t1 = $t5 (d)
-$t5 (d) = $t1
-Print($t5 (d))
+addTwoc (c) = $t1
+int a ==> addTwoa
+int d ==> addTwod
+$t1 = addOnea (a)
+addTwod (d) = $t1
+$t1 = addTwod (d)
+addTwod (d) = $t1
+Print(addTwod (d))

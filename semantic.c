@@ -14,6 +14,9 @@ char* currentFunctionName = NULL;
 Parameter* currentParameter = NULL;
 
 void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* functionBST, ArraySymbolTable* arraySymTab) {
+
+    TAC* tac = NULL;
+
     if (node == NULL) return;
     switch (node->type) {
         case NodeType_Program:
@@ -31,6 +34,9 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
             printf("Semantic Analysis running on node of type: NodeType_FuncDecl\n");
             printf("FuncDecl Name: %s\n", node->value.FuncDecl.FuncName);
             printf("FuncDecl Type: %s\n", node->value.FuncDecl.FuncType);
+
+            //Generate TAC early to get the function decl before the body
+            tac = generateTACForExpr(node);
 
             //Check if function already exists with sybolBST specifically for functions
             addFunctionSymbol(functionBST, node->value.FuncDecl.FuncName, node->value.FuncDecl.FuncType);
@@ -50,6 +56,13 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
             break;
         case NodeType_MainFunc:
             printf("Semantic Analysis running on node of type: NodeType_MainFunc\n");
+
+            //Update current function name for naming variables
+            currentFunctionName = "main";
+
+            //Generate TAC early to get the function decl before the body
+            tac = generateTACForExpr(node);
+            
             semanticAnalysis(node->value.MainFunc.Body, symTab, functionBST, arraySymTab);
             break;
         case NodeType_ParamList:
@@ -173,7 +186,8 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
 
     }
 
-    if (node->type == NodeType_VarDecl || 
+    if (node->type == NodeType_ParamDecl ||
+        node->type == NodeType_VarDecl || 
         node->type == NodeType_Assignment || 
         node->type == NodeType_Expression || 
         node->type == NodeType_Number || 
@@ -181,7 +195,7 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
         node->type == NodeType_Identifier ||
         node->type == NodeType_FunctionCall
         ) {
-        TAC* tac = generateTACForExpr(node);
+        tac = generateTACForExpr(node);
     }
 
     return;
@@ -194,12 +208,43 @@ TAC* generateTACForExpr(ASTNode* expr) {
     if (!instruction) return NULL;
 
     switch (expr->type) {
+
+        case NodeType_FuncDecl: {
+            printf("Generating TAC for function declaration\n");
+            instruction->arg1 = strdup(expr->value.FuncDecl.FuncType);
+            instruction->arg2 = strdup(expr->value.FuncDecl.FuncName);
+            instruction->op = strdup("FuncDecl");
+            instruction->result = "";
+            break;
+        }
+
+        case NodeType_MainFunc: {
+            printf("Generating TAC for main function\n");
+            instruction->arg1 = strdup("Main");
+            instruction->arg2 = strdup("");
+            instruction->op = strdup("Main");
+            instruction->result = "";
+            break;
+        }
+
+        case NodeType_ParamDecl: {
+            printf("Generating TAC for variable declaration\n");
+            instruction->arg1 = strdup(expr->value.ParamDecl.paramType);
+            instruction->arg2 = strdup(expr->value.ParamDecl.paramName);
+            instruction->op = strdup("ParamDecl");
+            printf("--------------PARAMETER NAME: %s \n", expr->value.ParamDecl.paramName);
+            char* temp = strdup(currentFunctionName);
+            instruction->result = strcat(temp, expr->value.ParamDecl.paramName);
+            break;
+        }
+
         case NodeType_VarDecl: {
             printf("Generating TAC for variable declaration\n");
             instruction->arg1 = strdup(expr->value.VarDecl.varType);
             instruction->arg2 = strdup(expr->value.VarDecl.varName);
             instruction->op = strdup("VarDecl");
-            instruction->result = createTempVar();
+            char* temp = strdup(currentFunctionName);
+            instruction->result = strcat(temp, expr->value.VarDecl.varName);
             break;
         }
 
@@ -264,33 +309,6 @@ TAC* generateTACForExpr(ASTNode* expr) {
             break;
         }
 
-        case NodeType_FuncDeclList: {
-            printf("Generating TAC for function declaration list\n");
-            // Generate TAC for each function declaration in the list
-            ASTNode* funcDecl = expr->value.FuncDeclList.FuncDecl;
-            while (funcDecl) {
-                generateTACForExpr(funcDecl);
-                funcDecl = funcDecl->value.FuncDeclList.nextFuncDecl;
-            }
-            break;
-        }
-
-        case NodeType_FuncDecl: {
-            printf("Generating TAC for function declaration\n");
-            // Generate TAC for the function body
-            generateTACForExpr(expr->value.FuncDecl.Body);
-            break;
-        }
-
-        case NodeType_MainFunc: {
-            printf("Generating TAC for main function\n");
-            // Generate TAC for the main function body
-            generateTACForExpr(expr->value.MainFunc.Body);
-            break;
-        }
-
-        // Add cases for other expression types...
-
         default:
             free(instruction);
             return NULL;
@@ -344,25 +362,30 @@ char* createTempVar() {
 }
 
 void printTAC(TAC* tac) {
-    if (strcmp(tac->op, "VarDecl") == 0) {
-        printf("%s %s ==> %s\n", tac->arg1, tac->arg2, tac->result);
+    if (strcmp(tac->op, "FuncDecl") == 0) {
+        printf("Function: %s %s %s:\n", tac->arg1, tac->arg2, tac->result);
+    } else if (strcmp(tac->op, "Main") == 0) {
+        printf("Main Function:\n");
+    } else if (strcmp(tac->op, "ParamDecl") == 0) {
+        printf("\tParameter: %s %s ==> %s\n", tac->arg1, tac->arg2, tac->result);
+    } else if (strcmp(tac->op, "VarDecl") == 0) {
+        printf("\tVariable: %s %s ==> %s\n", tac->arg1, tac->arg2, tac->result);
     } else if (strcmp(tac->op, "=") == 0) {
-        printf("%s (%s) = %s\n", tac->result, tac->arg1, tac->arg2);
+        printf("\t%s (%s) = %s\n", tac->result, tac->arg1, tac->arg2);
     } else if (strcmp(tac->op, "Print") == 0) {
-        printf("Print(%s (%s))\n", tac->result, tac->arg1);
+        printf("\tPrint(%s (%s))\n", tac->result, tac->arg1);
     } else if (strcmp(tac->op, "+") == 0) {
-        printf("%s = %s + %s\n", tac->result, tac->arg1, tac->arg2);
+        printf("\t%s = %s + %s\n", tac->result, tac->arg1, tac->arg2);
     } else if (strcmp(tac->op, "-") == 0) {
-        printf("%s = %s - %s\n", tac->result, tac->arg1, tac->arg2);
+        printf("\t%s = %s - %s\n", tac->result, tac->arg1, tac->arg2);
     } else if (strcmp(tac->op, "*") == 0) {
-        printf("%s = %s * %s\n", tac->result, tac->arg1, tac->arg2);
+        printf("\t%s = %s * %s\n", tac->result, tac->arg1, tac->arg2);
     } else if (strcmp(tac->op, "/") == 0) {
-        printf("%s = %s / %s\n", tac->result, tac->arg1, tac->arg2);
-    }
-    else if (strcmp(tac->op, "Num") == 0) {
-        printf("%s = %s\n", tac->result, tac->arg1);
+        printf("\t%s = %s / %s\n", tac->result, tac->arg1, tac->arg2);
+    } else if (strcmp(tac->op, "Num") == 0) {
+        printf("\t%s = %s\n", tac->result, tac->arg1);
     } else if (strcmp(tac->op, "ID") == 0) {
-        printf("%s = %s (%s)\n", tac->result, tac->arg2, tac->arg1);
+        printf("\t%s = %s (%s)\n", tac->result, tac->arg2, tac->arg1);
     } 
 }
 
