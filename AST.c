@@ -85,6 +85,7 @@ struct ASTNode* createNode(NodeType type) {
             break;
         case NodeType_FuncTail:
             newNode->value.FuncTail.expr = NULL;
+            newNode->value.FuncTail.type = NULL;
             break;
         case NodeType_ArrayDecl:
             newNode->value.ArrayDecl.arrayType = NULL;
@@ -110,12 +111,6 @@ void freeAST(struct ASTNode* node) {
     // Store the type before potentially corrupted memory access
     NodeType type = node->type;
     printf("Freeing node of type: %d\n", type);
-    
-    // Add validation check
-    if (type < 0 || type > NodeType_FuncTail) {  // Assuming FuncTail is your last enum value
-        fprintf(stderr, "ERROR: Invalid node type in freeAST(): %d\n", type);
-        return;  // Return instead of exit to allow cleanup to continue
-    }
 
     switch (node->type) {
         case NodeType_Program:
@@ -187,6 +182,7 @@ void freeAST(struct ASTNode* node) {
             break;
         case NodeType_FuncTail:
             freeAST(node->value.FuncTail.expr);
+            free(node->value.FuncTail.type);
             break;
         case NodeType_CallParamList:
             freeAST(node->value.CallParamList.expr);
@@ -260,6 +256,14 @@ void printAST(struct ASTNode* node, int indent) {
             printf("AST Print: NodeType_Body\n");
             printAST(node->value.Body.VarDeclList, indent);
             printAST(node->value.Body.StmtList, indent);
+            printAST(node->value.Body.FuncTail, indent);
+            break;
+        case NodeType_FuncTail:
+            spaceOut(indent);
+            printf("AST Print: NodeType_FuncTail\n");
+            spaceOut(indent);
+            printf("AST Print: type = %s\n", node->value.FuncTail.type);
+            printAST(node->value.FuncTail.expr, indent);
             break;
         case NodeType_VarDeclList:
             spaceOut(indent);

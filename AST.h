@@ -11,6 +11,7 @@ typedef enum {
     NodeType_ParamList,
     NodeType_ParamDecl,
     NodeType_Body,
+    NodeType_FuncTail,
     NodeType_FunctionCall,
     NodeType_CallParamList,
     NodeType_VarDeclList,
@@ -23,7 +24,6 @@ typedef enum {
     NodeType_Number,
     NodeType_Identifier,
     NodeType_BinaryOp,
-    NodeType_FuncTail,
     NodeType_ArrayDecl,
     NodeType_ArrayAccess
 } NodeType;
@@ -71,6 +71,7 @@ typedef struct ASTNode {
 
         struct {
             struct ASTNode* expr;
+            char* type;
         }FuncTail;
 
         struct {
