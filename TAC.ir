@@ -1,17 +1,13 @@
-int b ==> addOneb
+int a ==> maina
+int d ==> maind
+$t1 = 10
+maina (a) = $t1
 $t1 = 1
-$t0 = addOnea (a)
+$t0 = maina (a)
 $t1 = $t0 + $t1
-addOneb (b) = $t1
-int c ==> addTwoc
-$t1 = 2
-$t0 = addOnea (a)
+maind (d) = $t1
+$t1 = maind (d)
+$t0 = maina (a)
 $t1 = $t0 + $t1
-addTwoc (c) = $t1
-int a ==> addTwoa
-int d ==> addTwod
-$t1 = addOnea (a)
-addTwod (d) = $t1
-$t1 = addTwod (d)
-addTwod (d) = $t1
-Print(addTwod (d))
+maind (d) = $t1
+Print(maind (d))

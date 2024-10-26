@@ -10,7 +10,7 @@
 #define NUM_TEMP_REGISTERS 10
 
 // Initializes code generation, setting up any necessary structures
-void initCodeGenerator(const char* outputFilename);
+void initCodeGenerator(const char* outputFilename, TAC* tacInstructions);
 
 // Generates MIPS assembly code from the provided TAC
 void generateMIPS(TAC* tacInstructions);

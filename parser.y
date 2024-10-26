@@ -136,12 +136,15 @@ Body: VarDeclList StmtList FuncTail {
 
 FuncTail: /* no return statement, if a void function was defined */
     { 
-        $$ = NULL; 
+        $$ = createNode(NodeType_FuncTail);
+        $$->value.FuncTail.expr = NULL;
+        $$->value.FuncTail.type = strdup("void");
     }
     | RETURN Expr SEMICOLON { 
         printf("PARSER: Recognized function tail\n");
         $$ = createNode(NodeType_FuncTail);
         $$->value.FuncTail.expr = $2;
+        $$->value.FuncTail.type = strdup("unknown");
     }
 ;
 VarDeclList: {$$ = NULL;}
@@ -339,7 +342,7 @@ int main(int argc, char **argv) {
 
     
     //optimizeforMIPS(&tacHead);
-    initCodeGenerator("output.s");
+    initCodeGenerator("output.s", tacHead);
     generateMIPS(tacHead);
     finalizeCodeGenerator("output.s");
     // Code optimization

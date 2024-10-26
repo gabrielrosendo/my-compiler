@@ -86,6 +86,12 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
             printf("Semantic Analysis running on node of type: NodeType_Body\n");
             semanticAnalysis(node->value.Body.VarDeclList, symTab, functionBST, arraySymTab);
             semanticAnalysis(node->value.Body.StmtList, symTab, functionBST, arraySymTab);
+            semanticAnalysis(node->value.Body.FuncTail, symTab, functionBST, arraySymTab);
+            break;
+        case NodeType_FuncTail:
+            printf("Semantic Analysis running on node of type: NodeType_FuncDecl\n");
+            printf("FuncTail type: %s\n", node->value.FuncTail.type);
+            semanticAnalysis(node->value.FuncTail.expr, symTab, functionBST, arraySymTab);
             break;
         case NodeType_VarDeclList:
             printf("Semantic Analysis running on node of type: NodeType_VarDeclList\n");
@@ -187,6 +193,7 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
     }
 
     if (node->type == NodeType_ParamDecl ||
+        node->type == NodeType_FuncTail ||
         node->type == NodeType_VarDecl || 
         node->type == NodeType_Assignment || 
         node->type == NodeType_Expression || 
@@ -228,13 +235,21 @@ TAC* generateTACForExpr(ASTNode* expr) {
         }
 
         case NodeType_ParamDecl: {
-            printf("Generating TAC for variable declaration\n");
+            printf("Generating TAC for parameter declaration\n");
             instruction->arg1 = strdup(expr->value.ParamDecl.paramType);
             instruction->arg2 = strdup(expr->value.ParamDecl.paramName);
             instruction->op = strdup("ParamDecl");
-            printf("--------------PARAMETER NAME: %s \n", expr->value.ParamDecl.paramName);
             char* temp = strdup(currentFunctionName);
             instruction->result = strcat(temp, expr->value.ParamDecl.paramName);
+            break;
+        }
+
+        case NodeType_FuncTail: {
+            printf("Generating TAC for variable declaration\n");
+            instruction->arg1 = strdup(expr->value.FuncTail.type);
+            instruction->arg2 = strdup("$t1");
+            instruction->op = strdup("return");
+            instruction->result = strdup("$t1");
             break;
         }
 
@@ -368,6 +383,8 @@ void printTAC(TAC* tac) {
         printf("Main Function:\n");
     } else if (strcmp(tac->op, "ParamDecl") == 0) {
         printf("\tParameter: %s %s ==> %s\n", tac->arg1, tac->arg2, tac->result);
+    } else if (strcmp(tac->op, "return") == 0) {
+        printf("\tReturn: %s %s\n", tac->arg1, tac->arg2);
     } else if (strcmp(tac->op, "VarDecl") == 0) {
         printf("\tVariable: %s %s ==> %s\n", tac->arg1, tac->arg2, tac->result);
     } else if (strcmp(tac->op, "=") == 0) {

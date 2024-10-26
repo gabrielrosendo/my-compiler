@@ -4,7 +4,7 @@
 
 static FILE* outputFile;
 
-void initCodeGenerator(const char* outputFilename) {
+void initCodeGenerator(const char* outputFilename, TAC* tacInstructions) {
     outputFile = fopen(outputFilename, "w");
     if (outputFile == NULL) {
         perror("Failed to open output file");
@@ -12,6 +12,21 @@ void initCodeGenerator(const char* outputFilename) {
     }
     // Write the data section header
     fprintf(outputFile, ".data\n");
+
+    TAC* tac = tacInstructions;
+
+    while (tac != NULL) {
+        if (strcmp(tac->op, "VarDecl") == 0) {
+            printf("\tParameter: %s %s ==> %s\n", tac->arg1, tac->arg2, tac->result);
+            fprintf(outputFile, "%s: .word 0\n", tac->result);
+        } else if (strcmp(tac->op, "VarDecl") == 0) {
+            printf("\tVariable: %s %s ==> %s\n", tac->arg1, tac->arg2, tac->result);
+            fprintf(outputFile, "%s: .word 0\n", tac->result);
+        } 
+        tac = tac->next;
+    }
+    
+    fprintf(outputFile, "\n");
 }
 
 void finalizeCodeGenerator(const char* outputFilename) {
@@ -34,13 +49,13 @@ void generateMIPS(TAC* tacInstructions) {
             printf("Generating MIPS for Assignment operation\n");
             printf("%s (%s) = %s\n", tac->result, tac->arg1, tac->arg2);
             printf("\tmove %s, %s\n", tac->result, tac->arg2);
-            fprintf(outputFile, "\tmove %s, %s\n", tac->result, tac->arg2);
+            fprintf(outputFile, "\tla $t2, %s\n", tac->result);
+            fprintf(outputFile, "\tsw $t1, 0($t2)\n\n");
         } else if (strcmp(tac->op, "Print") == 0) {
             printf("Generating MIPS for Print operation\n");
             printf("Print(%s (%s))\n", tac->result, tac->arg1);
-            printf("\tli $v0, 4\n\tmove $a0, %s\n\tsyscall\n", tac->result);
-            fprintf(outputFile, "\tli $v0, 1\n\tmove $a0, %s\n\tsyscall\n", tac->result);
-            fprintf(outputFile, "\tli $v0, 11\n\tli $a0, 10\n\tsyscall\n");
+            printf("\tli $v0, 4\n\tmove $a0, %s\n\tsyscall\n\n", tac->result);
+            fprintf(outputFile, "\tla $t2, %s\n\tlw $a0, 0($t2)\n\tli $v0, 1\n\tsyscall\n\n", tac->result);
         } else if (strcmp(tac->op, "+") == 0) {
             printf("Generating MIPS for Addition\n");
             printf("%s = %s + %s\n", tac->result, tac->arg1, tac->arg2);
@@ -70,8 +85,9 @@ void generateMIPS(TAC* tacInstructions) {
         } else if (strcmp(tac->op, "ID") == 0) {
             printf("Generating MIPS for Identifier\n");
             printf("%s = %s (%s)\n", tac->result, tac->arg2, tac->arg1);
-            printf("\tmove %s, %s\n", tac->result, tac->arg2);
-            fprintf(outputFile, "\tmove %s, %s\n", tac->result, tac->arg2);
+            printf("\tla %s, %s\n", tac->result, tac->arg2);
+            fprintf(outputFile, "\tla $t2, %s\n", tac->arg2);
+            fprintf(outputFile, "\tlw %s, 0($t2)\n", tac->result);
         }
         else {
             printf("Unknown TAC operation: %s\n", tac->op);
