@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+char* currentFunctionNameMIPS = NULL;
+TAC* currentFunctionTACHead = NULL;
 static FILE* outputFile;
 
 void initCodeGenerator(const char* outputFilename, TAC* tacInstructions) {
@@ -19,7 +21,7 @@ void initCodeGenerator(const char* outputFilename, TAC* tacInstructions) {
         if (strcmp(tac->op, "VarDecl") == 0) {
             printf("\tParameter: %s %s ==> %s\n", tac->arg1, tac->arg2, tac->result);
             fprintf(outputFile, "%s: .word 0\n", tac->result);
-        } else if (strcmp(tac->op, "VarDecl") == 0) {
+        } else if (strcmp(tac->op, "ParamDecl") == 0) {
             printf("\tVariable: %s %s ==> %s\n", tac->arg1, tac->arg2, tac->result);
             fprintf(outputFile, "%s: .word 0\n", tac->result);
         } 
@@ -39,38 +41,87 @@ void finalizeCodeGenerator(const char* outputFilename) {
 
 void generateMIPS(TAC* tacInstructions) {  
     TAC* tac = tacInstructions;
-    fprintf(outputFile, ".text\n.globl main\nmain:\n");
+    fprintf(outputFile, ".text\n.globl main\n\n");
 
     printf("Generating MIPS code...\n");
     while (tac != NULL) {
-        if (strcmp(tac->op, "VarDecl") == 0) {
-            printf("%s %s ==> %s\n", tac->arg1, tac->arg2, tac->result);
+
+        if (strcmp(tac->op, "FuncDecl") == 0) {
+            printf("Generating MIPS for Function Declaration\n");
+            printf("Function: %s %s %s:\n", tac->arg1, tac->arg2, tac->result);
+            fprintf(outputFile, "%s:\n", tac->arg2);
+
+            currentFunctionTACHead = tac;
+
+            if(currentFunctionNameMIPS != NULL) {
+                free(currentFunctionNameMIPS);
+            }
+
+            currentFunctionNameMIPS = strdup(tac->arg2);
+
+            // Get values for parameters off stack
+            unstackParameters(tac->next);
+
+            // Save the Return address on the stack
+            fprintf(outputFile, "\taddi $sp, $sp, -4\n");
+            fprintf(outputFile, "\tsw $ra, 0($sp)\n\n");
+
+        } else if (strcmp(tac->op, "Main") == 0) {
+            printf("Generating MIPS for Main Function Declaration\n");
+            printf("Main:\n");
+            fprintf(outputFile, "main:\n");
+
+            currentFunctionTACHead = tac;
+
+            if(currentFunctionNameMIPS != NULL) {
+                free(currentFunctionNameMIPS);
+            }
+
+            currentFunctionNameMIPS = strdup("main");
+
+        } else if (strcmp(tac->op, "return") == 0 && strcmp(currentFunctionNameMIPS, "main") != 0) {
+            printf("Generating MIPS for Return Statement\n");
+            printf("\tReturn: %s %s\n", tac->arg1, tac->arg2);
+
+            fprintf(outputFile, "\tlw $ra, 0($sp)\t\t# Get return address off stack\n");
+            fprintf(outputFile, "\taddi $sp, $sp, 4\t\t# Dealloc stack\n\n");
+
+            fprintf(outputFile, "\taddi $sp, $sp, -4\t\t# Add space on the stack\n");
+            fprintf(outputFile, "\tsw $t1, 0($sp)\t\t# Put $t1 on the stack to return\n\n");
+            
+            fprintf(outputFile, "\tjr $ra\n\n");
+
         } else if (strcmp(tac->op, "=") == 0) {
             printf("Generating MIPS for Assignment operation\n");
             printf("%s (%s) = %s\n", tac->result, tac->arg1, tac->arg2);
             printf("\tmove %s, %s\n", tac->result, tac->arg2);
             fprintf(outputFile, "\tla $t2, %s\n", tac->result);
             fprintf(outputFile, "\tsw $t1, 0($t2)\n\n");
+
         } else if (strcmp(tac->op, "Print") == 0) {
             printf("Generating MIPS for Print operation\n");
             printf("Print(%s (%s))\n", tac->result, tac->arg1);
             printf("\tli $v0, 4\n\tmove $a0, %s\n\tsyscall\n\n", tac->result);
             fprintf(outputFile, "\tla $t2, %s\n\tlw $a0, 0($t2)\n\tli $v0, 1\n\tsyscall\n\n", tac->result);
+
         } else if (strcmp(tac->op, "+") == 0) {
             printf("Generating MIPS for Addition\n");
             printf("%s = %s + %s\n", tac->result, tac->arg1, tac->arg2);
             printf("\tadd %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
             fprintf(outputFile, "\tadd %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
+
         } else if (strcmp(tac->op, "-") == 0) {
             printf("Generating MIPS for Subtraction\n");
             printf("%s = %s - %s\n", tac->result, tac->arg1, tac->arg2);
             printf("\tsub %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
             fprintf(outputFile, "\tsub %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
+
         } else if (strcmp(tac->op, "*") == 0) {
             printf("Generating MIPS for Multiplication\n");
             printf("%s = %s * %s\n", tac->result, tac->arg1, tac->arg2);
             printf("\tmul %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
             fprintf(outputFile, "\tmul %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
+
         } else if (strcmp(tac->op, "/") == 0) {
             printf("Generating MIPS for Division\n");
             printf("%s = %s / %s\n", tac->result, tac->arg1, tac->arg2);
@@ -82,14 +133,42 @@ void generateMIPS(TAC* tacInstructions) {
             printf("%s = %s\n", tac->result, tac->arg1);
             printf("\tli %s, %s\n", tac->result, tac->arg1);
             fprintf(outputFile, "\tli %s, %s\n", tac->result, tac->arg1);
+
         } else if (strcmp(tac->op, "ID") == 0) {
             printf("Generating MIPS for Identifier\n");
             printf("%s = %s (%s)\n", tac->result, tac->arg2, tac->arg1);
             printf("\tla %s, %s\n", tac->result, tac->arg2);
             fprintf(outputFile, "\tla $t2, %s\n", tac->arg2);
             fprintf(outputFile, "\tlw %s, 0($t2)\n", tac->result);
-        }
-        else {
+
+        } else if (strcmp(tac->op, "FuncCall") == 0) {
+            printf("Generating MIPS for Function Call\n");
+            printf("\tFunction Call: %s => %s\n", tac->arg1, tac->result);
+            fprintf(outputFile, "\taddi $sp, $sp, -4\n");
+            fprintf(outputFile, "\tsw $t1, 0($sp)\n\n");
+            stackAllVariable();
+            fprintf(outputFile, "\t#TODO FUNCTION CALL\n");
+
+        } else if (strcmp(tac->op, "FuncCallEnd") == 0) {
+            printf("Generating MIPS for Function Call End\n");
+            printf("\tFunction Call End: %s => %s\n", tac->arg1, tac->result);
+            fprintf(outputFile, "\tjal %s\n\n", tac->arg1);
+            fprintf(outputFile, "\tlw $t3, 0($sp)\n");
+            fprintf(outputFile, "\taddi $sp, $sp, 4\n\n");
+            unStackAllVariable(currentFunctionTACHead->next);
+            fprintf(outputFile, "\tlw $t1, 0($sp)\n");
+            fprintf(outputFile, "\taddi $sp, $sp, 4\n\n");
+            fprintf(outputFile, "\tmove %s, $t3\n", tac->result);
+            fprintf(outputFile, "\t#TODO FUNCTION CALL END\n");
+
+        } else if (strcmp(tac->op, "ParamCall") == 0) {
+            printf("Generating MIPS for Parameter Call\n");
+            printf("\tParameter Call: %s\n", tac->arg1);
+            fprintf(outputFile, "\taddi $sp, $sp, -4\n");
+            fprintf(outputFile, "\tsw $t1, 0($sp)\n\n");
+            fprintf(outputFile, "\t#TODO PARAMETER CALL\n");
+
+        } else {
             printf("Unknown TAC operation: %s\n", tac->op);
         }
 
@@ -98,4 +177,39 @@ void generateMIPS(TAC* tacInstructions) {
 
     // Exit program
     fprintf(outputFile, "\tli $v0, 10\n\tsyscall\n");
+}
+
+void unstackParameters(TAC* tac) {
+    if(strcmp(tac->op, "ParamDecl") != 0) return;
+
+    unstackParameters(tac->next);
+
+    fprintf(outputFile, "\tlw $t1, 0($sp)\n");
+    fprintf(outputFile, "\tla $t2, %s\n", tac->result);
+    fprintf(outputFile, "\tsw $t1, 0($t2)\n");
+    fprintf(outputFile, "\taddi $sp, $sp, 4\n\n");
+}
+
+void stackAllVariable() {
+    TAC* tac = currentFunctionTACHead;
+    tac = tac->next;
+    
+    while (strcmp(tac->op, "ParamDecl") == 0 || strcmp(tac->op, "VarDecl") == 0) {
+        fprintf(outputFile, "\tla $t2, %s\n", tac->result);
+        fprintf(outputFile, "\tlw $t1, 0($t2)\n");
+        fprintf(outputFile, "\taddi $sp, $sp, -4\n");
+        fprintf(outputFile, "\tsw $t1, 0($sp)\n\n");
+        tac = tac->next;
+    }
+}
+
+void unStackAllVariable(TAC* tac) {
+    if(strcmp(tac->op, "ParamDecl") != 0 && strcmp(tac->op, "VarDecl") != 0) return;
+
+    unStackAllVariable(tac->next);
+
+    fprintf(outputFile, "\tlw $t1, 0($sp)\n");
+    fprintf(outputFile, "\tla $t2, %s\n", tac->result);
+    fprintf(outputFile, "\tsw $t1, 0($t2)\n");
+    fprintf(outputFile, "\taddi $sp, $sp, 4\n\n");
 }

@@ -11,7 +11,7 @@ TAC* tacHead = NULL;
 int count = 2;
 bool isRight = true;
 char* currentFunctionName = NULL;
-Parameter* currentParameter = NULL;
+char* currentFunctionCallName = NULL;
 
 void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* functionBST, ArraySymbolTable* arraySymTab) {
 
@@ -25,11 +25,13 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
             semanticAnalysis(node->value.program.FuncDeclList, symTab, functionBST, arraySymTab);
             semanticAnalysis(node->value.program.MainFunc, symTab, functionBST, arraySymTab);
             break;
+
         case NodeType_FuncDeclList:
             printf("Semantic Analysis running on node of type: NodeType_FuncDeclList\n");
             semanticAnalysis(node->value.FuncDeclList.FuncDecl, symTab, functionBST, arraySymTab);
             semanticAnalysis(node->value.FuncDeclList.nextFuncDecl, symTab, functionBST, arraySymTab);
             break;
+
         case NodeType_FuncDecl:
             printf("Semantic Analysis running on node of type: NodeType_FuncDecl\n");
             printf("FuncDecl Name: %s\n", node->value.FuncDecl.FuncName);
@@ -41,6 +43,10 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
             //Check if function already exists with sybolBST specifically for functions
             addFunctionSymbol(functionBST, node->value.FuncDecl.FuncName, node->value.FuncDecl.FuncType);
             printFunctionSymbolTable(functionBST);
+
+            if (currentFunctionName != NULL && strcmp(currentFunctionName, "main") == 0) {
+                free(currentFunctionName);
+            }
 
             currentFunctionName = node->value.FuncDecl.FuncName;
 
@@ -54,22 +60,28 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
             //Print Function SymbolTable
             printFunctionSymbolTable(functionBST);
             break;
+
         case NodeType_MainFunc:
             printf("Semantic Analysis running on node of type: NodeType_MainFunc\n");
 
             //Update current function name for naming variables
-            currentFunctionName = "main";
+            currentFunctionName = strdup("main");
+
+            addFunctionSymbol(functionBST, strdup("main"), strdup("void"));
+            printFunctionSymbolTable(functionBST);
 
             //Generate TAC early to get the function decl before the body
             tac = generateTACForExpr(node);
             
             semanticAnalysis(node->value.MainFunc.Body, symTab, functionBST, arraySymTab);
             break;
+
         case NodeType_ParamList:
             printf("Semantic Analysis running on node of type: NodeType_ParamList\n");
             semanticAnalysis(node->value.ParamList.ParamDecl, symTab, functionBST, arraySymTab);
             semanticAnalysis(node->value.ParamList.nextParamDecl, symTab, functionBST, arraySymTab);
             break;
+
         case NodeType_ParamDecl:
             printf("Semantic Analysis running on node of type: NodeType_ParamDecl\n");
             printf("ParamDecl Name: %s\n", node->value.ParamDecl.paramName);
@@ -82,22 +94,26 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
             addSymbol(symTab, node->value.ParamDecl.paramName, node->value.ParamDecl.paramType);
             printSymbolTable(symTab);
             break;
+
         case NodeType_Body:
             printf("Semantic Analysis running on node of type: NodeType_Body\n");
             semanticAnalysis(node->value.Body.VarDeclList, symTab, functionBST, arraySymTab);
             semanticAnalysis(node->value.Body.StmtList, symTab, functionBST, arraySymTab);
             semanticAnalysis(node->value.Body.FuncTail, symTab, functionBST, arraySymTab);
             break;
+
         case NodeType_FuncTail:
             printf("Semantic Analysis running on node of type: NodeType_FuncDecl\n");
             printf("FuncTail type: %s\n", node->value.FuncTail.type);
             semanticAnalysis(node->value.FuncTail.expr, symTab, functionBST, arraySymTab);
             break;
+
         case NodeType_VarDeclList:
             printf("Semantic Analysis running on node of type: NodeType_VarDeclList\n");
             semanticAnalysis(node->value.VarDeclList.VarDecl, symTab, functionBST, arraySymTab);
             semanticAnalysis(node->value.VarDeclList.nextVarDecl, symTab, functionBST, arraySymTab);
             break;
+
         case NodeType_VarDecl:
             printf("Semantic Analysis running on node of type: NodeType_VarDecl\n");
             printf("VarDecl Name: %s\n", node->value.VarDecl.varName);
@@ -111,33 +127,42 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
             printSymbolTable(symTab);
             semanticAnalysis(node->value.VarDecl.initExpr, symTab, functionBST, arraySymTab);
             break;
+
         case NodeType_StmtList:
             printf("Semantic Analysis running on node of type: NodeType_StmtList\n");
             semanticAnalysis(node->value.StmtList.stmt, symTab, functionBST, arraySymTab);
             semanticAnalysis(node->value.StmtList.nextStmt, symTab, functionBST, arraySymTab);
             break;
+
         case NodeType_Assignment:
             printf("Semantic Analysis running on node of type: NodeType_Assignment\n");
             semanticAnalysis(node->value.assignment.expr, symTab, functionBST, arraySymTab);
             break;
+
         case NodeType_Print:
             printf("Semantic Analysis running on node of type: NodeType_Print\n");
+            lookupSymbol(symTab, node->value.print.name);
             break;
+
         case NodeType_Expression:
             printf("Semantic Analysis running on node of type: NodeType_Expression\n");
             semanticAnalysis(node->value.Expression.right, symTab, functionBST, arraySymTab);
             semanticAnalysis(node->value.Expression.left, symTab, functionBST, arraySymTab);
             break;
+
         case NodeType_Number:
             printf("Semantic Analysis running on node of type: NodeType_Number\n");
             break;
+
         case NodeType_Identifier:
             printf("Semantic Analysis running on node of type: NodeType_Identifier\n");
             lookupSymbol(symTab, node->value.identifier.name);
             break;
+
         case NodeType_BinaryOp:
             printf("Semantic Analysis running on node of type: NodeType_BinaryOp\n");
             break;
+            
         case NodeType_FunctionCall:
             printf("Semantic Analysis running on node of type: NodeType_FunctionCall\n");
             // Check if the function exists
@@ -146,35 +171,76 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
                 exit(1);
             }
 
-            currentFunctionName = node->value.FunctionCall.funcName;
-            currentParameter = lookupFunctionNode(functionBST, node->value.FunctionCall.funcName)->parameters;
+            currentFunctionCallName = node->value.FunctionCall.funcName;
+            Parameter* currentParameter = lookupFunctionNode(functionBST, node->value.FunctionCall.funcName)->parameters;
+            
+            bool tempIsRight = isRight;
+            tac = generateTACForExpr(node);
 
-            // Analyze the parameters
-            semanticAnalysis(node->value.FunctionCall.CallParamList, symTab, functionBST, arraySymTab);
+            //Semantic Analysis for CallParamList
+            ASTNode* node2 = node->value.FunctionCall.CallParamList;
+            while (node2 != NULL)
+            {
+                printf("Semantic Analysis running on node of type: NodeType_CallParamList\n");
+
+                if (currentParameter == NULL) {
+                    fprintf(stderr, "Error: Function call had too many inputs. Function call: %s\n", currentFunctionCallName);
+                    exit(0);
+                }
+
+                if (currentParameter->next == NULL) {
+                    currentParameter = NULL;
+                } else {
+                    currentParameter = currentParameter->next;
+                }
+
+                semanticAnalysis(node2->value.CallParamList.expr, symTab, functionBST, arraySymTab);
+                semanticAnalysis(node2->value.CallParamList.nextParam, symTab, functionBST, arraySymTab);
+
+                tac = generateTACForExpr(node2);
+
+                node2->value.CallParamList.nextParam == NULL;
+
+                if(node2->value.CallParamList.nextParam == NULL) {
+                    node2 = NULL;
+                } else {
+                    node2 = node2->value.CallParamList.nextParam;
+                }
+            
+            }
 
             if (currentParameter != NULL) {
-                fprintf(stderr, "Error: Function call had too few inputs. Function call: %s\n", currentFunctionName);
+                fprintf(stderr, "Error: Function call had too few inputs. Function call: %s\n", currentFunctionCallName);
                 exit(0);
             }
 
-            break;
-        case NodeType_CallParamList:
-            printf("Semantic Analysis running on node of type: NodeType_CallParamList\n");
 
-            if (currentParameter == NULL) {
-                fprintf(stderr, "Error: Function call had too many inputs. Function call: %s\n", currentFunctionName);
+            // Generate custome TAC for end of function call
+            TAC* instruction = (TAC*)malloc(sizeof(TAC));
+            if (!instruction) {
+                fprintf(stderr, "Failed to create custom tac instruction for function call: %s\n", currentFunctionCallName);
                 exit(0);
             }
 
-            if (currentParameter->next == NULL) {
-                currentParameter = NULL;
+            printf("Generating TAC for function call end\n");
+            instruction->arg1 = strdup(node->value.FunctionCall.funcName);
+            instruction->arg2 = strdup("");
+            instruction->op = strdup("FuncCallEnd");
+            instruction->result = "";
+            if (tempIsRight) {
+                instruction->result = strdup("$t1");;
             } else {
-                currentParameter = currentParameter->next;
+                instruction->result = strdup("$t0");
             }
-            
-            semanticAnalysis(node->value.CallParamList.expr, symTab, functionBST, arraySymTab);
-            semanticAnalysis(node->value.CallParamList.nextParam, symTab, functionBST, arraySymTab);
+            isRight = false;
+
+            instruction->next = NULL; // Make sure to null-terminate the new instruction
+
+            // Append to the global TAC list
+            appendTAC(&tacHead, instruction);
+
             break;
+
         case NodeType_ArrayAccess:
             printf("Semantic Analysis running on node of type: NodeType_ArrayAccess\n");
             // Check if the array exists
@@ -199,8 +265,7 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
         node->type == NodeType_Expression || 
         node->type == NodeType_Number || 
         node->type == NodeType_Print || 
-        node->type == NodeType_Identifier ||
-        node->type == NodeType_FunctionCall
+        node->type == NodeType_Identifier
         ) {
         tac = generateTACForExpr(node);
     }
@@ -222,6 +287,7 @@ TAC* generateTACForExpr(ASTNode* expr) {
             instruction->arg2 = strdup(expr->value.FuncDecl.FuncName);
             instruction->op = strdup("FuncDecl");
             instruction->result = "";
+            isRight = true;
             break;
         }
 
@@ -231,6 +297,7 @@ TAC* generateTACForExpr(ASTNode* expr) {
             instruction->arg2 = strdup("");
             instruction->op = strdup("Main");
             instruction->result = "";
+            isRight = true;
             break;
         }
 
@@ -239,13 +306,12 @@ TAC* generateTACForExpr(ASTNode* expr) {
             instruction->arg1 = strdup(expr->value.ParamDecl.paramType);
             instruction->arg2 = strdup(expr->value.ParamDecl.paramName);
             instruction->op = strdup("ParamDecl");
-            char* temp = strdup(currentFunctionName);
-            instruction->result = strcat(temp, expr->value.ParamDecl.paramName);
+            instruction->result = getVariableReference(expr->value.ParamDecl.paramName);
             break;
         }
 
         case NodeType_FuncTail: {
-            printf("Generating TAC for variable declaration\n");
+            printf("Generating TAC for Function tail\n");
             instruction->arg1 = strdup(expr->value.FuncTail.type);
             instruction->arg2 = strdup("$t1");
             instruction->op = strdup("return");
@@ -258,8 +324,7 @@ TAC* generateTACForExpr(ASTNode* expr) {
             instruction->arg1 = strdup(expr->value.VarDecl.varType);
             instruction->arg2 = strdup(expr->value.VarDecl.varName);
             instruction->op = strdup("VarDecl");
-            char* temp = strdup(currentFunctionName);
-            instruction->result = strcat(temp, expr->value.VarDecl.varName);
+            instruction->result = getVariableReference(expr->value.VarDecl.varName);
             break;
         }
 
@@ -313,13 +378,40 @@ TAC* generateTACForExpr(ASTNode* expr) {
             instruction->arg1 = strdup(expr->value.identifier.name);
             // Line below causes seg fault with inpput file 2
             instruction->arg2 = getVariableReference(expr->value.identifier.name);
-
             instruction->op = strdup("ID");
+
             if (isRight) {
                 instruction->result = strdup("$t1");
                 isRight = false;
             } else {
                 instruction->result = strdup("$t0");
+            }
+            break;
+        }
+
+        case NodeType_FunctionCall: {
+            printf("Generating TAC for Function Call\n");
+            instruction->arg1 = strdup(expr->value.FunctionCall.funcName);
+            instruction->arg2 = strdup("");
+            instruction->op = strdup("FuncCall");
+
+            if (isRight) {
+                instruction->result = strdup("$t1");
+            } else {
+                instruction->result = strdup("$t0");
+            }
+            isRight = true;
+            break;
+        }
+
+        case NodeType_CallParamList: {
+            if(expr->value.CallParamList.expr != NULL) {
+                printf("Generating TAC for Call Parameter\n");
+                instruction->arg1 = strdup("$t1");
+                instruction->arg2 = strdup("");
+                instruction->op = strdup("ParamCall");
+                instruction->result = strdup("");
+                isRight = true;
             }
             break;
         }
@@ -339,34 +431,15 @@ TAC* generateTACForExpr(ASTNode* expr) {
 char* getVariableReference(char* variable) {
     if (!variable) {
         printf("ERROR: Null variable name passed to getVariableReference\n");
-        return NULL;
+        exit(0);
     }
 
-    TAC* current = tacHead;
-    while (current != NULL) {
-        printf("Checking TAC instruction: op=%s, arg1=%s, arg2=%s, result=%s\n", 
-               current->op ? current->op : "NULL",
-               current->arg1 ? current->arg1 : "NULL",
-               current->arg2 ? current->arg2 : "NULL",
-               current->result ? current->result : "NULL");
-
-        // Check all possible fields where the variable could be
-        if (current->arg2 && strcmp(current->arg2, variable) == 0) {
-            return current->result;
-        }
-        // Also check arg1 and result in case the variable appears there
-        if (current->arg1 && strcmp(current->arg1, variable) == 0) {
-            return current->result;
-        }
-        if (current->result && strcmp(current->result, variable) == 0) {
-            return current->result;
-        }
-
-        current = current->next;
+    if (!currentFunctionName) {
+        printf("ERROR: Null function name when getVariableReference was envoked\n");
+        exit(0);
     }
 
-    printf("WARNING: Could not find variable %s in TAC\n", variable);
-    return variable;  // Return the original variable name instead of exiting
+    return  strcat(strdup(currentFunctionName), variable);
 }
 
 // TODO: make algo for if the number of temperary registers is exceeded
@@ -384,7 +457,7 @@ void printTAC(TAC* tac) {
     } else if (strcmp(tac->op, "ParamDecl") == 0) {
         printf("\tParameter: %s %s ==> %s\n", tac->arg1, tac->arg2, tac->result);
     } else if (strcmp(tac->op, "return") == 0) {
-        printf("\tReturn: %s %s\n", tac->arg1, tac->arg2);
+        printf("\tReturn: %s %s\n\n", tac->arg1, tac->arg2);
     } else if (strcmp(tac->op, "VarDecl") == 0) {
         printf("\tVariable: %s %s ==> %s\n", tac->arg1, tac->arg2, tac->result);
     } else if (strcmp(tac->op, "=") == 0) {
@@ -403,7 +476,13 @@ void printTAC(TAC* tac) {
         printf("\t%s = %s\n", tac->result, tac->arg1);
     } else if (strcmp(tac->op, "ID") == 0) {
         printf("\t%s = %s (%s)\n", tac->result, tac->arg2, tac->arg1);
-    } 
+    }  else if (strcmp(tac->op, "FuncCall") == 0) {
+        printf("\tFunction Call: %s => %s\n", tac->arg1, tac->result);
+    }  else if (strcmp(tac->op, "FuncCallEnd") == 0) {
+        printf("\tFunction Call End: %s => %s\n", tac->arg1, tac->result);
+    }else if (strcmp(tac->op, "ParamCall") == 0) {
+        printf("\tParameter Call: %s\n", tac->arg1);
+    }
 }
 
 void printTACToFile(const char* filename, TAC* tac) {
