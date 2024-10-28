@@ -14,6 +14,7 @@ void initCodeGenerator(const char* outputFilename, TAC* tacInstructions) {
     }
     // Write the data section header
     fprintf(outputFile, ".data\n");
+    fprintf(outputFile, "newline: .asciiz \"\\n\"  # Define a new line character\n");
 
     TAC* tac = tacInstructions;
 
@@ -88,21 +89,27 @@ void generateMIPS(TAC* tacInstructions) {
 
             fprintf(outputFile, "\taddi $sp, $sp, -4\t\t# Add space on the stack\n");
             fprintf(outputFile, "\tsw $t1, 0($sp)\t\t# Put $t1 on the stack to return\n\n");
-            
-            fprintf(outputFile, "\tjr $ra\n\n");
+
+            fprintf(outputFile, "\tjr $ra\t\t# Call return address to end function\n\n");
 
         } else if (strcmp(tac->op, "=") == 0) {
             printf("Generating MIPS for Assignment operation\n");
             printf("%s (%s) = %s\n", tac->result, tac->arg1, tac->arg2);
             printf("\tmove %s, %s\n", tac->result, tac->arg2);
-            fprintf(outputFile, "\tla $t2, %s\n", tac->result);
-            fprintf(outputFile, "\tsw $t1, 0($t2)\n\n");
+            fprintf(outputFile, "\tla $t2, %s\t\t# Load address of %s into $t2\n", tac->result, tac->result);
+            fprintf(outputFile, "\tsw $t1, 0($t2)\t\t# Save $t1 into variable\n\n");
 
         } else if (strcmp(tac->op, "Print") == 0) {
             printf("Generating MIPS for Print operation\n");
             printf("Print(%s (%s))\n", tac->result, tac->arg1);
-            printf("\tli $v0, 4\n\tmove $a0, %s\n\tsyscall\n\n", tac->result);
-            fprintf(outputFile, "\tla $t2, %s\n\tlw $a0, 0($t2)\n\tli $v0, 1\n\tsyscall\n\n", tac->result);
+            fprintf(outputFile, "\tla $t2, %s\t\t# Load %s into $t2\n", tac->result, tac->result);
+            fprintf(outputFile, "\tlw $a0, 0($t2)\t\t# Move $t2 to $a0 for print output\n");
+            fprintf(outputFile, "\tli $v0, 1\t\t# Load print int system function\n");
+            fprintf(outputFile, "\tsyscall\t\t# Syscall to print int\n\n");
+
+            fprintf(outputFile, "\tli $v0, 4\t\t# Load syscall code for print string\n");
+            fprintf(outputFile, "\tla $a0, newline\t\t# Load address of newline into $a0\n");
+            fprintf(outputFile, "\tsyscall\t\t# Syscall to print string\n\n");
 
         } else if (strcmp(tac->op, "+") == 0) {
             printf("Generating MIPS for Addition\n");
@@ -147,7 +154,6 @@ void generateMIPS(TAC* tacInstructions) {
             fprintf(outputFile, "\taddi $sp, $sp, -4\n");
             fprintf(outputFile, "\tsw $t1, 0($sp)\n\n");
             stackAllVariable();
-            fprintf(outputFile, "\t#TODO FUNCTION CALL\n");
 
         } else if (strcmp(tac->op, "FuncCallEnd") == 0) {
             printf("Generating MIPS for Function Call End\n");
@@ -158,15 +164,13 @@ void generateMIPS(TAC* tacInstructions) {
             unStackAllVariable(currentFunctionTACHead->next);
             fprintf(outputFile, "\tlw $t1, 0($sp)\n");
             fprintf(outputFile, "\taddi $sp, $sp, 4\n\n");
-            fprintf(outputFile, "\tmove %s, $t3\n", tac->result);
-            fprintf(outputFile, "\t#TODO FUNCTION CALL END\n");
+            fprintf(outputFile, "\tmove %s, $t3\n\n", tac->result);
 
         } else if (strcmp(tac->op, "ParamCall") == 0) {
             printf("Generating MIPS for Parameter Call\n");
             printf("\tParameter Call: %s\n", tac->arg1);
             fprintf(outputFile, "\taddi $sp, $sp, -4\n");
             fprintf(outputFile, "\tsw $t1, 0($sp)\n\n");
-            fprintf(outputFile, "\t#TODO PARAMETER CALL\n");
 
         } else {
             printf("Unknown TAC operation: %s\n", tac->op);
