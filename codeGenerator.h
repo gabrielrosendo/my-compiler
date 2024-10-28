@@ -18,13 +18,12 @@ void generateMIPS(TAC* tacInstructions);
 // Finalizes code generation, closing files and cleaning up
 void finalizeCodeGenerator(const char* outputFilename);
 
-// Allocate a register
-int allocateRegister();
+// Get put all variables onto the stack
+void stackAllVariable();
 
-// Deallocate a register
-void deallocateRegister(int regIndex);
+// Get all variables and parameters off the stack
+void unStackAllVariable(TAC* tac);
 
-// Print the current TAC instruction
-void printCurrentTAC(TAC* tac);
+void unstackParameters(TAC* tac);
 
 #endif // CODE_GENERATOR_H

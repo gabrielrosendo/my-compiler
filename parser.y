@@ -103,6 +103,7 @@ MainFunc: VOID MAIN LPAREN RPAREN LBRACE Body RBRACE {
 ParamList: /* empty */ {
     $$ = NULL;  /* Empty parameter list */
 }
+
 | ParamDecl {
     $$ = createNode(NodeType_ParamList);
     $$->value.ParamList.ParamDecl = $1;
@@ -264,7 +265,7 @@ FunctionCall: ID LPAREN CallParamList RPAREN {
 CallParamList:
            {
             printf("PARSER: Recognized no call parameters\n");
-            $$ = createNode(NodeType_CallParamList);
+            $$ = NULL;
         } /*empty, i.e. it is possible not to have any parameter*/
     | Expr { 
             printf("PARSER: Recognized SINGULAR call parameter\n");
@@ -339,12 +340,14 @@ int main(int argc, char **argv) {
 
     semanticAnalysis(root, symbolBST, functionBST, arraySymTab);
 
-    printf("-----TAC CODE-----\n");
+    printf("\n-----TAC CODE-----\n\n");
     TAC* tempTac = tacHead;
     while (tempTac != NULL) {
         printTAC(tempTac);
         tempTac = tempTac->next;
     }
+    printf("---END TAC CODE----\n\n");
+
     // Output TAC to file
     FILE* tacFile = fopen("TAC.ir", "w");
     if (tacFile) {
