@@ -157,6 +157,7 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
                     semanticAnalysis(node->value.Expression.left, symTab, functionBST, arraySymTab);
                     if (node->value.Expression.right->type == NodeType_Expression) {
                         moveRegisters(strdup("$t1"), strdup("$t4"));
+                        isRight = true;
                     }
                     semanticAnalysis(node->value.Expression.right, symTab, functionBST, arraySymTab);
                     if (node->value.Expression.right->type == NodeType_Expression) {

@@ -117,25 +117,63 @@ void generateMIPS(TAC* tacInstructions) {
             printf("\tadd %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
             fprintf(outputFile, "\tadd %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
 
+            fprintf(outputFile, "\tmove $a0, $t1\t\t# Move $t1 to $a0 for print output\n");
+            fprintf(outputFile, "\tli $v0, 1\t\t# Load print int system function\n");
+            fprintf(outputFile, "\tsyscall\t\t# Syscall to print int\n\n");
+
+            fprintf(outputFile, "\tli $v0, 4\t\t# Load syscall code for print string\n");
+            fprintf(outputFile, "\tla $a0, newline\t\t# Load address of newline into $a0\n");
+            fprintf(outputFile, "\tsyscall\t\t# Syscall to print string\n\n");
+
         } else if (strcmp(tac->op, "-") == 0) {
             printf("Generating MIPS for Subtraction\n");
             printf("%s = %s - %s\n", tac->result, tac->arg1, tac->arg2);
             printf("\tsub %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
             fprintf(outputFile, "\tsub %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
 
+            fprintf(outputFile, "\tmove $a0, $t1\t\t# Move $t1 to $a0 for print output\n");
+            fprintf(outputFile, "\tli $v0, 1\t\t# Load print int system function\n");
+            fprintf(outputFile, "\tsyscall\t\t# Syscall to print int\n\n");
+
+            fprintf(outputFile, "\tli $v0, 4\t\t# Load syscall code for print string\n");
+            fprintf(outputFile, "\tla $a0, newline\t\t# Load address of newline into $a0\n");
+            fprintf(outputFile, "\tsyscall\t\t# Syscall to print string\n\n");
+
         } else if (strcmp(tac->op, "*") == 0) {
             printf("Generating MIPS for Multiplication\n");
             printf("%s = %s * %s\n", tac->result, tac->arg1, tac->arg2);
-            printf("\tmul %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
+            printf("\tmult %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
             fprintf(outputFile, "\tmul %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
+
+            fprintf(outputFile, "\tmove $a0, $t1\t\t# Move $t1 to $a0 for print output\n");
+            fprintf(outputFile, "\tli $v0, 1\t\t# Load print int system function\n");
+            fprintf(outputFile, "\tsyscall\t\t# Syscall to print int\n\n");
+
+            fprintf(outputFile, "\tli $v0, 4\t\t# Load syscall code for print string\n");
+            fprintf(outputFile, "\tla $a0, newline\t\t# Load address of newline into $a0\n");
+            fprintf(outputFile, "\tsyscall\t\t# Syscall to print string\n\n");
 
         } else if (strcmp(tac->op, "/") == 0) {
             printf("Generating MIPS for Division\n");
             printf("%s = %s / %s\n", tac->result, tac->arg1, tac->arg2);
             printf("\tdiv %s, %s\n\tmflo %s\n", tac->arg1, tac->arg2, tac->result);
             fprintf(outputFile, "\tdiv %s, %s\n\tmflo %s\n", tac->arg1, tac->arg2, tac->result);
-        }
-        else if (strcmp(tac->op, "Num") == 0) {
+
+            fprintf(outputFile, "\tmove $a0, $t1\t\t# Move $t1 to $a0 for print output\n");
+            fprintf(outputFile, "\tli $v0, 1\t\t# Load print int system function\n");
+            fprintf(outputFile, "\tsyscall\t\t# Syscall to print int\n\n");
+
+            fprintf(outputFile, "\tli $v0, 4\t\t# Load syscall code for print string\n");
+            fprintf(outputFile, "\tla $a0, newline\t\t# Load address of newline into $a0\n");
+            fprintf(outputFile, "\tsyscall\t\t# Syscall to print string\n\n");
+
+        } else if (strcmp(tac->op, "move") == 0) {
+            printf("Generating MIPS for move\n");
+            printf("\t%s --> %s\n", tac->arg1, tac->result);
+            printf("\tmove %s, %s\n", tac->result, tac->arg1);
+            fprintf(outputFile, "\tmove %s, %s\n", tac->result, tac->arg1);
+
+        } else if (strcmp(tac->op, "Num") == 0) {
             printf("Generating MIPS for Number\n");
             printf("%s = %s\n", tac->result, tac->arg1);
             printf("\tli %s, %s\n", tac->result, tac->arg1);
