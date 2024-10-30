@@ -166,6 +166,7 @@ void freeAST(struct ASTNode* node) {
         case NodeType_Expression:
             freeAST(node->value.Expression.left);
             freeAST(node->value.Expression.right);
+            free(node->value.Expression.op);
             break;
         case NodeType_Number:
             // No dynamic memory to free
