@@ -147,14 +147,26 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
         case NodeType_Expression:
             printf("Semantic Analysis running on node of type: NodeType_Expression\n");
             if (strcmp(node->value.Expression.op, "*") == 0 || strcmp(node->value.Expression.op, "*") == 0) {
-                tac = generateTACForExpr(node);
                 semanticAnalysis(node->value.Expression.right, symTab, functionBST, arraySymTab);
                 semanticAnalysis(node->value.Expression.left, symTab, functionBST, arraySymTab);
-            } else {
-                semanticAnalysis(node->value.Expression.right, symTab, functionBST, arraySymTab);
-                semanticAnalysis(node->value.Expression.left, symTab, functionBST, arraySymTab);
-                tac = generateTACForExpr(node);
+            } else { 
+                if(node->value.Expression.left->type != NodeType_Expression) {
+                    semanticAnalysis(node->value.Expression.right, symTab, functionBST, arraySymTab);
+                    semanticAnalysis(node->value.Expression.left, symTab, functionBST, arraySymTab);
+                } else {
+                    semanticAnalysis(node->value.Expression.left, symTab, functionBST, arraySymTab);
+                    if (node->value.Expression.right->type == NodeType_Expression) {
+                        moveRegisters(strdup("$t1"), strdup("$t4"));
+                    }
+                    semanticAnalysis(node->value.Expression.right, symTab, functionBST, arraySymTab);
+                    if (node->value.Expression.right->type == NodeType_Expression) {
+                        moveRegisters(strdup("$t1"), strdup("$t0"));
+                        moveRegisters(strdup("$t4"), strdup("$t1"));
+                    }
+                }
             }
+            
+            tac = generateTACForExpr(node);
             break;
 
         case NodeType_Number:
@@ -222,7 +234,7 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
             }
 
 
-            // Generate custome TAC for end of function call
+            // Generate custom TAC for end of function call
             TAC* instruction = (TAC*)malloc(sizeof(TAC));
             if (!instruction) {
                 fprintf(stderr, "Failed to create custom tac instruction for function call: %s\n", currentFunctionCallName);
@@ -479,6 +491,8 @@ void printTAC(TAC* tac) {
         printf("\t%s = %s * %s\n", tac->result, tac->arg1, tac->arg2);
     } else if (strcmp(tac->op, "/") == 0) {
         printf("\t%s = %s / %s\n", tac->result, tac->arg1, tac->arg2);
+    } else if (strcmp(tac->op, "move") == 0) {
+        printf("\t%s --> %s\n", tac->arg1, tac->result);
     } else if (strcmp(tac->op, "Num") == 0) {
         printf("\t%s = %s\n", tac->result, tac->arg1);
     } else if (strcmp(tac->op, "ID") == 0) {
@@ -536,4 +550,21 @@ void appendTAC(TAC** head, TAC* newInstruction) {
         }
         current->next = newInstruction;
     }
+}
+
+
+void moveRegisters(char* from, char* to) {
+    TAC* instruction = (TAC*)malloc(sizeof(TAC));
+                        if (!instruction) {
+                            fprintf(stderr, "Failed to create custom tac instruction for function call: %s\n", currentFunctionCallName);
+                            exit(0);
+                        }
+
+                        printf("Generating TAC for register move\n");
+                        instruction->arg1 = strdup(from);
+                        instruction->arg2 = strdup("");
+                        instruction->op = strdup("move");
+                        instruction->result = strdup(to);
+                        instruction->next = NULL; 
+                        appendTAC(&tacHead, instruction);
 }

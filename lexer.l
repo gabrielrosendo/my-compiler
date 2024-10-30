@@ -108,11 +108,13 @@ BAD_ID {NUMBER}{ID}
 "*"         { 
     words++; chars += strlen(yytext);
     printf("%-10s | %-10s\n", yytext, "MUL");
+    yylval.string = strdup(yytext); 
     return MUL; }
 
 "/"         { 
     words++; chars += strlen(yytext);
     printf("%-10s | %-10s\n", yytext, "DIV");
+    yylval.string = strdup(yytext); 
     return DIV; }
 
 ";" { 
