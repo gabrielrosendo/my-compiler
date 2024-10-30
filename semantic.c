@@ -146,8 +146,15 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
 
         case NodeType_Expression:
             printf("Semantic Analysis running on node of type: NodeType_Expression\n");
-            semanticAnalysis(node->value.Expression.right, symTab, functionBST, arraySymTab);
-            semanticAnalysis(node->value.Expression.left, symTab, functionBST, arraySymTab);
+            if (strcmp(node->value.Expression.op, "*") == 0 || strcmp(node->value.Expression.op, "*") == 0) {
+                tac = generateTACForExpr(node);
+                semanticAnalysis(node->value.Expression.right, symTab, functionBST, arraySymTab);
+                semanticAnalysis(node->value.Expression.left, symTab, functionBST, arraySymTab);
+            } else {
+                semanticAnalysis(node->value.Expression.right, symTab, functionBST, arraySymTab);
+                semanticAnalysis(node->value.Expression.left, symTab, functionBST, arraySymTab);
+                tac = generateTACForExpr(node);
+            }
             break;
 
         case NodeType_Number:
@@ -262,7 +269,6 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
         node->type == NodeType_FuncTail ||
         node->type == NodeType_VarDecl || 
         node->type == NodeType_Assignment || 
-        node->type == NodeType_Expression || 
         node->type == NodeType_Number || 
         node->type == NodeType_Print || 
         node->type == NodeType_Identifier
@@ -349,9 +355,10 @@ TAC* generateTACForExpr(ASTNode* expr) {
 
         case NodeType_Expression: {
             printf("Generating TAC for expression\n");
+            char* op = strdup(expr->value.Expression.op);
             instruction->arg1 = strdup("$t0");
             instruction->arg2 = strdup("$t1");
-            instruction->op = strdup("+");
+            instruction->op = op;
             instruction->result = strdup("$t1");
             break;
         }

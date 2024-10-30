@@ -65,7 +65,7 @@ ArraySymbolTable* arraySymTab = NULL;
 %left MUL DIV
 
 
-%type <ast> Program FuncDeclList FuncDecl MainFunc ParamList ParamDecl Body VarDeclList VarDecl StmtList Stmt Expr BinOp CallParamList FuncTail FunctionCall
+%type <ast> Program FuncDeclList FuncDecl MainFunc ParamList ParamDecl Body VarDeclList VarDecl StmtList Stmt Expr HighExpr BinOp HighBinOp CallParamList FuncTail FunctionCall
 
 %%
 
@@ -217,11 +217,40 @@ Stmt: ID EQ Expr SEMICOLON {
 ; 
 
 Expr: Expr BinOp Expr { printf("PARSER: Recognized expression\n");
-						$$ = createNode(NodeType_Expression);
-						$$->value.Expression.left = $1;
-						$$->value.Expression.right = $3;
-						$$->value.Expression.op = $2->value.binaryOp.op;
-					  }
+		        $$ = createNode(NodeType_Expression);
+				$$->value.Expression.left = $1;
+				$$->value.Expression.right = $3;
+				$$->value.Expression.op = $2->value.binaryOp.op;
+			 }
+    | HighExpr BinOp Expr { printf("PARSER: Recognized expression\n");
+				$$ = createNode(NodeType_Expression);
+				$$->value.Expression.left = $1;
+				$$->value.Expression.right = $3;
+				$$->value.Expression.op = $2->value.binaryOp.op;
+			 }
+	| NUMBER { 
+				printf("PARSER: Recognized number\n");
+				$$ = createNode(NodeType_Number);
+				$$->value.Number.number = $1;
+			 }		
+	| ID {
+			$$ = createNode(NodeType_Identifier);
+			$$->value.identifier.name = $1;
+		}
+    | ID LPAREN CallParamList RPAREN {
+        printf("PARSER: Recognized function call\n");
+        $$ = createNode(NodeType_FunctionCall);
+        $$->value.FunctionCall.funcName = $1;
+        $$->value.FunctionCall.CallParamList = $3;
+    }
+;
+
+HighExpr: HighExpr HighBinOp HighExpr { printf("PARSER: Recognized high expression\n");
+		        $$ = createNode(NodeType_Expression);
+		        $$->value.Expression.left = $1;
+	            $$->value.Expression.right = $3;
+		        $$->value.Expression.op = $2->value.binaryOp.op;
+	        }
 	| NUMBER { 
 				printf("PARSER: Recognized number\n");
 				$$ = createNode(NodeType_Number);
@@ -265,28 +294,28 @@ CallParamList:
         }
 ;
 
-
 BinOp: ADD {
-				printf("PARSER: Recognized addition operator\n");
-				$$ = createNode(NodeType_BinaryOp);
-				$$->value.binaryOp.op = $1;
+			printf("PARSER: Recognized addition operator\n");
+			$$ = createNode(NodeType_BinaryOp);
+			$$->value.binaryOp.op = $1;
             }
         | SUB {
             printf("Recognized subtraction operator\n");
             $$ = createNode(NodeType_BinaryOp);
             $$->value.binaryOp.op = $1;
         }
-        | MUL {
+;
+
+HighBinOp: MUL {
             printf("Recognized multiplication operator\n");
             $$ = createNode(NodeType_BinaryOp);
-            $$->value.binaryOp.op = $1;
+			$$->value.binaryOp.op = $1;
         }
         | DIV {
             printf("Recognized division operator\n");
             $$ = createNode(NodeType_BinaryOp);
             $$->value.binaryOp.op = $1;
-        }
-        
+        }   
 ;
 
 %%

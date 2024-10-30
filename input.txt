@@ -1,19 +1,4 @@
-int addOne(int a, int b) {
-    b = a + 90;
-    return b;
-}
-
-int addTwo() {
-    return 27;
-}
-
-
 void main() {
     int a;
-    int b;
-    a = 1;
-    a = 2 + addOne(a, 3 + 4) + 5;
-    b = addTwo();
-    print(a);
-    print(b);
+    a = 1 + 2 * 3 + 4;
 }
