@@ -34,6 +34,7 @@ char* createOperand(ASTNode* node);
 void appendTAC(TAC** head, TAC* newInstruction);
 void printTAC(TAC* tac);
 void printTACToFile(const char* filename, TAC* tac);
+void moveRegisters(char* from, char* to);
 
 
 #endif // SEMANTIC_H

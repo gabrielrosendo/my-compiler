@@ -61,9 +61,7 @@ ArraySymbolTable* arraySymTab = NULL;
 %token <string> RETURN
 %token <keyword> MAIN
 
-%left ADD SUB
-%left MUL DIV
-
+%left ADD SUB MUL DIV
 
 %type <ast> Program FuncDeclList FuncDecl MainFunc ParamList ParamDecl Body VarDeclList VarDecl StmtList Stmt Expr HighExpr BinOp HighBinOp CallParamList FuncTail FunctionCall
 
@@ -228,16 +226,17 @@ Stmt: ID EQ Expr SEMICOLON {
 
 Expr: Expr BinOp Expr { printf("PARSER: Recognized expression\n");
 		        $$ = createNode(NodeType_Expression);
-				$$->value.Expression.left = $1;
-				$$->value.Expression.right = $3;
+				$$->value.Expression.left = $3;
+				$$->value.Expression.right = $1;
 				$$->value.Expression.op = $2->value.binaryOp.op;
 			 }
     | HighExpr BinOp Expr { printf("PARSER: Recognized expression\n");
 				$$ = createNode(NodeType_Expression);
-				$$->value.Expression.left = $1;
-				$$->value.Expression.right = $3;
+				$$->value.Expression.left = $3;
+				$$->value.Expression.right = $1;
 				$$->value.Expression.op = $2->value.binaryOp.op;
 			 }
+    | HighExpr { printf("PARSER: Recognized expression\n");	}
 	| NUMBER { 
 				printf("PARSER: Recognized number\n");
 				$$ = createNode(NodeType_Number);
@@ -323,6 +322,7 @@ BinOp: ADD {
 
 HighBinOp: MUL {
             printf("Recognized multiplication operator\n");
+            printf("operator = %s\n", $1);
             $$ = createNode(NodeType_BinaryOp);
 			$$->value.binaryOp.op = $1;
         }
