@@ -63,7 +63,7 @@ ArraySymbolTable* arraySymTab = NULL;
 
 %left ADD SUB MUL DIV
 
-%type <ast> Program FuncDeclList FuncDecl MainFunc ParamList ParamDecl Body VarDeclList VarDecl StmtList Stmt Expr HighExpr BinOp HighBinOp CallParamList FuncTail FunctionCall
+%type <ast> Program FuncDeclList FuncDecl MainFunc ParamList ParamDecl Body VarDeclList VarDecl ArrayDecl StmtList Stmt Expr HighExpr BinOp HighBinOp CallParamList FuncTail FunctionCall
 
 %%
 
@@ -170,14 +170,30 @@ VarDecl: TYPE ID SEMICOLON {
             $$->value.VarDecl.varName = $2;
             $$->value.VarDecl.initExpr = $4; 
             printf("Parsed variable declaration with initialization: %s\n", $2);
-        }   		
+        } 		
         | TYPE ID {
                   printf ("Missing semicolon after declaring variable: %s\n", $2);
                   // stop compilation
                     exit(1);
-
-             }        
+        }  | TYPE ID EQ Expr {
+                  printf ("Missing semicolon after declaring variable: %s\n", $2);
+                  // stop compilation
+                    exit(1);
+        }  | TYPE ID LBRACE NUMBER RBRACE {
+            printf ("Missing semicolon after declaring array: %s\n", $2);
+                  // stop compilation
+                    exit(1);
+        }    
 ;
+
+ArrayDecl:  TYPE ID LBRACE NUMBER RBRACE SEMICOLON {
+            printf("PARSER: Recognized array declaration\n");
+            printf("Type: %s, ID: %s, Size: \n", $1, $2, $4);
+            $$ = createNode(NodeType_ArrayDecl); 
+            $$->value.ArrayDecl.arrayType = $1; 
+            $$->value.ArrayDecl.arrayName = $2;
+            $$->value.ArrayDecl.arraySize = $4; 
+        } 
 
 StmtList: {$$ = NULL;}
         | Stmt StmtList {
@@ -404,22 +420,6 @@ int main(int argc, char **argv) {
         printf("Writing optimized TAC to file...\n");
         printTACToFile("optimizedTAC.ir", tacHead);
         fclose(optimizedTacFile);
-    }
-
-    if(enableTesting) {
-        printf("\n\n---------------------------------------------------------");
-        printf("\n\nTESTING\n\n");
-        printf("---------------------------------------------------------\n\n");
-
-        // Testing the symbolBST
-        symbolBST_TestCreation();
-        symbolBST_Test_AddSymbol_SingleIntegerInput();
-        symbolBST_Test_AddSymbol_MultipleIntegerInputs();
-        symbolBST_Test_GetSymbol_EmptySymbolBST();
-        symbolBST_Test_GetSymbol_FoundAll();
-        symbolBST_Test_freeSymbolTable_freesSymbolTable();
-        symbolBST_Test_AddSymbol_DoublicateSymboleError1();
-        symbolBST_Test_AddSymbol_DoublicateSymboleError2();
     }
 
     return 0;
