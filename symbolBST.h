@@ -10,6 +10,7 @@
 typedef struct Symbol {
     char* name;
     char* type;
+    int size;
 } Symbol;
 
 // Define the SymbolTable struct
@@ -23,7 +24,7 @@ typedef struct SymbolBST {
 
 // Function declarations
 SymbolBST* createSymbolBST();
-void addSymbol(SymbolBST* head, char* name, char* type);
+void addSymbol(SymbolBST* head, char* name, char* type, unsigned int size);
 Symbol* lookupSymbol(SymbolBST* head, char* name);
 void freeSymbolTable(SymbolBST* head);
 void printSymbolTable(SymbolBST* node);  // For debugging

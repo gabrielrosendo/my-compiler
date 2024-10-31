@@ -10,7 +10,7 @@ lex.yy.c: lexer.l parser.tab.h
 
 # Compile everything directly into the final executable
 parser: lex.yy.c parser.tab.c AST.c parser.tab.h symbolBST.c functionSymbolBST.c semantic.c optimizer.c codeGenerator.c arraySymbolTable.c
-	@gcc -o parser parser.tab.c AST.c lex.yy.c symbolBST.c functionSymbolBST.c semantic.c optimizer.c codeGenerator.c arraySymbolTable.c symbolBST_Test.c
+	@gcc -o parser parser.tab.c AST.c lex.yy.c symbolBST.c functionSymbolBST.c semantic.c optimizer.c codeGenerator.c arraySymbolTable.c
 	@./parser input.txt
 
 # Clean up all generated files

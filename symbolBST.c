@@ -42,11 +42,12 @@ SymbolBST* addSymbolPrivate(SymbolBST* curNode, Symbol* newSymbol, unsigned int 
     return curNode;
 }
 
-void addSymbol(SymbolBST* head, char* name, char* type) {
+void addSymbol(SymbolBST* head, char* name, char* type, unsigned int size) {
     Symbol* newSymbol = (Symbol*)malloc(sizeof(Symbol));
     if (!newSymbol) return;
     newSymbol->name = strdup(name);
     newSymbol->type = strdup(type);
+    newSymbol->size = size;
 
     unsigned int curHash = hash(name);
 

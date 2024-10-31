@@ -91,7 +91,7 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
             addParameter(functionBST, currentFunctionName, node->value.ParamDecl.paramName, node->value.ParamDecl.paramType);
 
             // Add the parameters the the symbolBST to be able to check for overlapping delcarations
-            addSymbol(symTab, node->value.ParamDecl.paramName, node->value.ParamDecl.paramType);
+            addSymbol(symTab, node->value.ParamDecl.paramName, node->value.ParamDecl.paramType, 0);
             printSymbolTable(symTab);
             break;
 
@@ -118,7 +118,7 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
             printf("Semantic Analysis running on node of type: NodeType_VarDecl\n");
             printf("VarDecl Name: %s\n", node->value.VarDecl.varName);
             printf("VarDecl Type: %s\n", node->value.VarDecl.varType);
-            addSymbol(symTab, node->value.VarDecl.varName, node->value.VarDecl.varType);
+            addSymbol(symTab, node->value.VarDecl.varName, node->value.VarDecl.varType, 0);
             if (node->value.VarDecl.isArray) {
                 printf("Array Size: %d\n", node->value.VarDecl.arraySize);
                 addArray(arraySymTab, node->value.VarDecl.varName, node->value.VarDecl.varType, node->value.VarDecl.arraySize);
