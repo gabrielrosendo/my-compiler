@@ -34,6 +34,11 @@ struct ASTNode* createNode(NodeType type) {
             newNode->value.ParamDecl.paramType = NULL;
             newNode->value.ParamDecl.paramName = NULL;
             break;
+        case NodeType_ParamArrayDecl:
+            newNode->value.ParamArrayDecl.paramType = NULL;
+            newNode->value.ParamArrayDecl.paramName = NULL;
+            newNode->value.ParamArrayDecl.size = 0;
+            break;
         case NodeType_Body:
             newNode->value.Body.VarDeclList = NULL;
             newNode->value.Body.StmtList = NULL;
@@ -135,6 +140,10 @@ void freeAST(struct ASTNode* node) {
         case NodeType_ParamDecl:
             free(node->value.ParamDecl.paramType);
             free(node->value.ParamDecl.paramName);
+            break;
+        case NodeType_ParamArrayDecl:
+            free(node->value.ParamArrayDecl.paramType);
+            free(node->value.ParamArrayDecl.paramName);
             break;
         case NodeType_Body:
             freeAST(node->value.Body.VarDeclList);
@@ -253,6 +262,16 @@ void printAST(struct ASTNode* node, int indent) {
             spaceOut(indent);
             printf("AST Print: paramName = %s\n", node->value.ParamDecl.paramName);
             break;
+        case NodeType_ParamArrayDecl:
+            spaceOut(indent);
+            printf("AST Print: NodeType_ParamArrayDecl\n");
+            spaceOut(indent);
+            printf("AST Print: arrayType = %s\n", node->value.ArrayDecl.arrayType);
+            spaceOut(indent);
+            printf("AST Print: arrayName = %s\n", node->value.ArrayDecl.arrayName);
+            spaceOut(indent);
+            printf("AST Print: size = %d\n", node->value.ArrayDecl.arraySize);
+            break;
         case NodeType_Body:
             spaceOut(indent);
             printf("AST Print: NodeType_Body\n");
@@ -289,7 +308,7 @@ void printAST(struct ASTNode* node, int indent) {
             spaceOut(indent);
             printf("AST Print: arrayName = %s\n", node->value.ArrayDecl.arrayName);
             spaceOut(indent);
-            printf("AST Print: arraySize = %d\n", node->value.ArrayDecl.arraySize);
+            printf("AST Print: size = %d\n", node->value.ArrayDecl.arraySize);
             break;
         case NodeType_StmtList:
             spaceOut(indent);

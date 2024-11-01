@@ -64,7 +64,7 @@ ArraySymbolTable* arraySymTab = NULL;
 
 %left ADD SUB MUL DIV
 
-%type <ast> Program FuncDeclList FuncDecl MainFunc ParamList ParamDecl Body VarDeclList VarDecl ArrayDecl StmtList Stmt Expr HighExpr BinOp HighBinOp CallParamList FuncTail FunctionCall
+%type <ast> Program FuncDeclList FuncDecl MainFunc ParamList ParamDecl ParamArrayDecl Body VarDeclList VarDecl ArrayDecl StmtList Stmt Expr HighExpr BinOp HighBinOp CallParamList FuncTail FunctionCall
 
 %%
 
@@ -101,28 +101,48 @@ MainFunc: VOID MAIN LPAREN RPAREN LBRACE Body RBRACE {
 
 ParamList: /* empty */ {
     $$ = NULL;  /* Empty parameter list */
-}
-
-| ParamDecl {
-    $$ = createNode(NodeType_ParamList);
-    $$->value.ParamList.ParamDecl = $1;
-    $$->value.ParamList.nextParamDecl = NULL;
-    printf("One parameter\n");
-}
-| ParamDecl COMMA ParamList {
-    $$ = createNode(NodeType_ParamList);
-    $$->value.ParamList.ParamDecl = $1;
-    $$->value.ParamList.nextParamDecl = $3;
-    printf("PARSER: Recognized parameter list\n");
-}
+    } 
+    | ParamDecl {
+        $$ = createNode(NodeType_ParamList);
+        $$->value.ParamList.ParamDecl = $1;
+        $$->value.ParamList.nextParamDecl = NULL;
+        printf("One parameter\n");
+    }
+    | ParamArrayDecl {
+        $$ = createNode(NodeType_ParamList);
+        $$->value.ParamList.ParamDecl = $1;
+        $$->value.ParamList.nextParamDecl = NULL;
+        printf("One parameter array\n");
+    }
+    | ParamDecl COMMA ParamList {
+        $$ = createNode(NodeType_ParamList);
+        $$->value.ParamList.ParamDecl = $1;
+        $$->value.ParamList.nextParamDecl = $3;
+        printf("PARSER: Recognized parameter list\n");
+    }
+    | ParamArrayDecl COMMA ParamList {
+        $$ = createNode(NodeType_ParamList);
+        $$->value.ParamList.ParamDecl = $1;
+        $$->value.ParamList.nextParamDecl = $3;
+        printf("PARSER: Recognized parameter array list\n");
+    }
 ;
 
 ParamDecl: TYPE ID {
-    $$ = createNode(NodeType_ParamDecl);
-    $$->value.ParamDecl.paramType = $1;
-    $$->value.ParamDecl.paramName = $2;
-    printf("PARSER: Recognized parameter declaration\n");
-}
+        printf("PARSER: Recognized parameter declaration\n");
+        $$ = createNode(NodeType_ParamDecl);
+        $$->value.ParamDecl.paramType = $1;
+        $$->value.ParamDecl.paramName = $2;
+    }
+;
+
+ParamArrayDecl: TYPE ID LBRACKET NUMBER RBRACKET {
+        printf("PARSER: Recognized parameter array declaration\n"); 
+        $$ = createNode(NodeType_ParamArrayDecl);
+        $$->value.ParamArrayDecl.paramType = $1;
+        $$->value.ParamArrayDecl.paramName = $2;
+        $$->value.ParamArrayDecl.size = $4;
+    }
 ;
 
 Body: VarDeclList StmtList FuncTail { 
@@ -147,6 +167,7 @@ FuncTail: /* no return statement, if a void function was defined */
         $$->value.FuncTail.type = strdup("unknown");
     }
 ;
+
 VarDeclList: {$$ = NULL;}
            | VarDecl VarDeclList {
                 $$ = createNode(NodeType_VarDeclList); 
@@ -205,7 +226,7 @@ Stmt: ID EQ Expr SEMICOLON {
 								$$->value.assignment.varName = $1;
 								$$->value.assignment.op = $2;
 								$$->value.assignment.expr = $3;
- }
+    }
 	| PRINT LPAREN ID RPAREN SEMICOLON { 
                                             printf("PARSER: Recognized print statement\n"); 
                                             $$ = createNode(NodeType_Print);
