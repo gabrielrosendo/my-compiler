@@ -310,6 +310,12 @@ HighExpr: HighExpr HighBinOp HighExpr { printf("PARSER: Recognized high expressi
 			$$ = createNode(NodeType_Identifier);
 			$$->value.identifier.name = $1;
 		}
+    | ID LBRACKET NUMBER RBRACKET {
+            printf("PARSER: Recognized Array Access\n");
+            $$ = createNode(NodeType_ArrayAccess);
+            $$->value.ArrayAccess.name = $1;
+            $$->value.ArrayAccess.index = $3;
+        }
     | ID LPAREN CallParamList RPAREN {
         printf("PARSER: Recognized function call\n");
         $$ = createNode(NodeType_FunctionCall);
