@@ -12,17 +12,21 @@ void main() {
 	int result;
 	int result2;
 	int result3;
+	int result4;
 
 	x = 10;
 	y = 5;
 
 	result = addfunc(x, y);
 	print(result);
-
+	
 	result2 = addfunc(5,5);
 	print(result2);
 
 	result3 = addfunc(5,1);
 	print(result3);
+
+	result4 = divide(6,3);
+	print(result4);
 
 }

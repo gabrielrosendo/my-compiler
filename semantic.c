@@ -420,6 +420,7 @@ TAC* generateTACForExpr(ASTNode* expr) {
             instruction->arg2 = NULL;
             instruction->op = strdup("Print");
             instruction->result = NULL;
+            isRight = true;
             break;
         }
 
