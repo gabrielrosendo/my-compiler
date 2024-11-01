@@ -9,6 +9,7 @@ int y ==> mainy
 int result ==> mainresult
 int result2 ==> mainresult2
 int result3 ==> mainresult3
+int result4 ==> mainresult4
 $t1 = 10
 mainx (x) = $t1
 $t1 = 5
@@ -27,4 +28,9 @@ $t1 = 5
 $t1 = 1
 mainresult3 (result3) = $t1
 $t1 = mainresult3 (result3)
+Print((null) ($t1))
+$t1 = 6
+$t1 = 3
+mainresult4 (result4) = $t1
+$t1 = mainresult4 (result4)
 Print((null) ($t1))
