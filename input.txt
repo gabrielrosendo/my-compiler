@@ -1,7 +1,28 @@
-void main() {
-	int a[10];
-	
-	a[5] = 1 + 2;
+int addfunc(int x, int y) {
+    return x + y;
+}
 
-	print(a[5]);
+int divide(int x, int y) {
+    return x / y;
+}
+
+void main() {
+    int x;
+    int y;
+    int result;
+	int result2;
+	int result3;
+
+    x = 10;
+    y = 5;
+
+    result = addfunc(x, y);
+    print(result);
+
+    result2 = addfunc(5, 5);
+    print(result2);
+	
+	result3 = addfunc(5, 1);
+    print(result3);
+
 }
