@@ -1,2 +1,4 @@
-int x ==> mainx
-mainx (x) = $t1
+$t1 = 1
+$t0 = 2
+$t1 = $t0 + $t1
+Print((null) ($t1))

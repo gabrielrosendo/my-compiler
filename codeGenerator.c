@@ -110,9 +110,7 @@ void generateMIPS(TAC* tacInstructions) {
 
         } else if (strcmp(tac->op, "Print") == 0) {
             printf("Generating MIPS for Print operation\n");
-            printf("Print(%s (%s))\n", tac->result, tac->arg1);
-            fprintf(outputFile, "\tla $t2, %s\t\t# Load %s into $t2\n", tac->result, tac->result);
-            fprintf(outputFile, "\tlw $a0, 0($t2)\t\t# Move $t2 to $a0 for print output\n");
+            fprintf(outputFile, "\tmove $a0, %s\t\t# Move %s to $a0 for print output\n", tac->arg1, tac->arg1);
             fprintf(outputFile, "\tli $v0, 1\t\t# Load print int system function\n");
             fprintf(outputFile, "\tsyscall\t\t# Syscall to print int\n\n");
 

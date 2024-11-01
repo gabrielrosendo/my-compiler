@@ -121,7 +121,7 @@ typedef struct ASTNode {
         } arrayAssignment;
 
         struct{
-            char* name;
+            struct ASTNode* expr;
         } print;
 
         struct {
