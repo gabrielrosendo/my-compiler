@@ -236,27 +236,27 @@ Stmt: ID EQ Expr SEMICOLON {
 		$$->value.arrayAssignment.op = $5;
 		$$->value.arrayAssignment.expr = $6;
     }
-	| PRINT LPAREN ID RPAREN SEMICOLON { 
+	| PRINT LPAREN Expr RPAREN SEMICOLON { 
         printf("PARSER: Recognized print statement\n"); 
         $$ = createNode(NodeType_Print);
-        $$->value.print.name = $3;
+        $$->value.print.expr = $3;
     }
     // Handle missng semicolon  
-    | PRINT LPAREN ID RPAREN { 
-                                printf ("Missing semicolon after print statement: %s\n", $3);
-                                // stop compilation
-                                exit(1);
-                             }
+    | PRINT LPAREN Expr RPAREN { 
+        printf ("Missing semicolon after print statement: %s\n", $3);
+        // stop compilation
+        exit(1);
+    }
     | ID EQ Expr { 
-                    printf ("Missing semicolon after assignment statement: %s\n", $1);
-                    // stop compilation
-                    exit(1);
-                 }
+        printf ("Missing semicolon after assignment statement: %s\n", $1);
+        // stop compilation
+        exit(1);
+    }
     | ID LBRACKET NUMBER RBRACKET EQ Expr {
-                    printf ("Missing semicolon after assignment statement: %s\n", $1);
-                    // stop compilation
-                    exit(1);
-                }
+        printf ("Missing semicolon after assignment statement: %s\n", $1);
+        // stop compilation
+        exit(1);
+    }
 ; 
 
 Expr: Expr BinOp Expr { printf("PARSER: Recognized expression\n");

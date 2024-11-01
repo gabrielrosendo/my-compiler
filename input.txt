@@ -1,5 +1,7 @@
 void main() {
 	int a[10];
-	int x;
-	x = a[1];
+	
+	a[5] = 1 + 2;
+
+	print(a[5]);
 }
