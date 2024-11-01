@@ -102,6 +102,12 @@ void generateMIPS(TAC* tacInstructions) {
             fprintf(outputFile, "\tla $t2, %s\t\t# Load address of %s into $t2\n", tac->result, tac->result);
             fprintf(outputFile, "\tsw $t1, 0($t2)\t\t# Save $t1 into variable\n\n");
 
+        } else if (strcmp(tac->op, "ArrayAssingment") == 0) {
+            printf("Generating MIPS for Array Assignment operation\n");
+            printf("\t%s (%s[%d]) = %s\n", tac->result, tac->arg1, tac->arg3, tac->arg2);
+            fprintf(outputFile, "\tla $t2, %s\t\t# Load address of %s into $t2\n", tac->result, tac->result);
+            fprintf(outputFile, "\tsw $t1, %d($t2)\t\t# Save $t1 into array with the offset calculated with the index\n\n", tac->arg3 * 4);
+
         } else if (strcmp(tac->op, "Print") == 0) {
             printf("Generating MIPS for Print operation\n");
             printf("Print(%s (%s))\n", tac->result, tac->arg1);

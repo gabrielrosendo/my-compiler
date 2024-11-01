@@ -1,6 +1,8 @@
 #ifndef AST_H
 #define AST_H
 
+#include <stdbool.h>
+
 
 // Define Node Types
 typedef enum {
@@ -19,6 +21,7 @@ typedef enum {
     NodeType_StmtList,
     NodeType_Stmt,
     NodeType_Assignment,
+    NodeType_ArrayAssignment,
     NodeType_Print,
     NodeType_Expression,
     NodeType_Number,
@@ -109,6 +112,13 @@ typedef struct ASTNode {
             char* op;
             struct ASTNode* expr;
         } assignment;
+
+        struct {
+            char* varName;
+            unsigned int index;
+            char* op;
+            struct ASTNode* expr;
+        } arrayAssignment;
 
         struct{
             char* name;

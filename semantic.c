@@ -149,6 +149,19 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
             semanticAnalysis(node->value.assignment.expr, symTab, functionBST, arraySymTab);
             break;
 
+        case NodeType_ArrayAssignment:
+            printf("Semantic Analysis running on node of type: NodeType_ArrayAssignment\n");
+
+            Symbol* tempSymbol = lookupSymbol(symTab, node->value.arrayAssignment.varName);
+            unsigned int index = node->value.arrayAssignment.index;
+            if(index < 0 || index >= tempSymbol->size) {
+                printf("Index out of bounds on array %s\n", node->value.arrayAssignment.varName);
+                exit(0);
+            }
+
+            semanticAnalysis(node->value.arrayAssignment.expr, symTab, functionBST, arraySymTab);
+            break;
+
         case NodeType_Print:
             printf("Semantic Analysis running on node of type: NodeType_Print\n");
             lookupSymbol(symTab, node->value.print.name);
@@ -293,6 +306,7 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
         node->type == NodeType_VarDecl || 
         node->type == NodeType_ArrayDecl ||
         node->type == NodeType_Assignment || 
+        node->type == NodeType_ArrayAssignment ||
         node->type == NodeType_Number || 
         node->type == NodeType_Print || 
         node->type == NodeType_Identifier
@@ -374,6 +388,17 @@ TAC* generateTACForExpr(ASTNode* expr) {
             instruction->arg2 = strdup("$t1");
             instruction->op = strdup("=");
             instruction->result = getVariableReference(expr->value.assignment.varName);
+            isRight = true;
+            break;
+        }
+
+        case NodeType_ArrayAssignment: {
+            printf("Generating TAC for Array Assignment\n");
+            instruction->arg1 = strdup(expr->value.arrayAssignment.varName);
+            instruction->arg2 = strdup("$t1");
+            instruction->arg3 = expr->value.arrayAssignment.index;
+            instruction->op = strdup("ArrayAssingment");
+            instruction->result = getVariableReference(expr->value.arrayAssignment.varName);
             isRight = true;
             break;
         }
@@ -505,6 +530,8 @@ void printTAC(TAC* tac) {
         printf("\tArray: %s %s[%d] ==> %s[%d]\n", tac->arg1, tac->arg2,  tac->arg3, tac->result, tac->arg3);
     } else if (strcmp(tac->op, "=") == 0) {
         printf("\t%s (%s) = %s\n", tac->result, tac->arg1, tac->arg2);
+    } else if (strcmp(tac->op, "ArrayAssingment") == 0) {
+        printf("\t%s (%s[%d]) = %s\n", tac->result, tac->arg1, tac->arg3, tac->arg2);
     } else if (strcmp(tac->op, "Print") == 0) {
         printf("\tPrint(%s (%s))\n", tac->result, tac->arg1);
     } else if (strcmp(tac->op, "+") == 0) {
