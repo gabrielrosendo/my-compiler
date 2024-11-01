@@ -45,18 +45,19 @@ ArraySymbolTable* arraySymTab = NULL;
 %token <string> ID
 %token <string> TYPE
 %token <keyword> VOID
-%token <string> LBRACKET RBRACKET
 %token <string> PRINT
 %token <op> EQ
 %token <op> ADD
 %token <op> SUB
 %token <op> MUL
 %token <op> DIV
+%token <string> SEMICOLON
 %token <string> LPAREN
 %token <string> RPAREN
-%token <string> SEMICOLON
 %token <string> LBRACE
 %token <string> RBRACE
+%token <string> LBRACKET
+%token <string> RBRACKET
 %token <string> COMMA
 %token <string> RETURN
 %token <keyword> MAIN
@@ -152,6 +153,11 @@ VarDeclList: {$$ = NULL;}
                 $$->value.VarDeclList.VarDecl = $1;
                 $$->value.VarDeclList.nextVarDecl = $2;
            }
+           | ArrayDecl VarDeclList {
+                $$ = createNode(NodeType_VarDeclList); 
+                $$->value.VarDeclList.VarDecl = $1;
+                $$->value.VarDeclList.nextVarDecl = $2;
+           }
 ;
 
 VarDecl: TYPE ID SEMICOLON { 
@@ -162,38 +168,26 @@ VarDecl: TYPE ID SEMICOLON {
             $$->value.VarDecl.varName = $2;
             printf("Parsed variable declaration: %s\n", $2);
         }    
-        | TYPE ID EQ Expr SEMICOLON {
-            printf("PARSER: Recognized variable declaration\n");
-            printf("Type: %s, ID: %s\n", $1, $2);
-            $$ = createNode(NodeType_VarDecl); 
-            $$->value.VarDecl.varType = $1; 
-            $$->value.VarDecl.varName = $2;
-            $$->value.VarDecl.initExpr = $4; 
-            printf("Parsed variable declaration with initialization: %s\n", $2);
-        } 		
         | TYPE ID {
                   printf ("Missing semicolon after declaring variable: %s\n", $2);
                   // stop compilation
                     exit(1);
-        }  | TYPE ID EQ Expr {
-                  printf ("Missing semicolon after declaring variable: %s\n", $2);
-                  // stop compilation
-                    exit(1);
-        }  | TYPE ID LBRACE NUMBER RBRACE {
-            printf ("Missing semicolon after declaring array: %s\n", $2);
-                  // stop compilation
-                    exit(1);
-        }    
+        }  
 ;
 
-ArrayDecl:  TYPE ID LBRACE NUMBER RBRACE SEMICOLON {
+ArrayDecl:  TYPE ID LBRACKET NUMBER RBRACKET SEMICOLON {
             printf("PARSER: Recognized array declaration\n");
-            printf("Type: %s, ID: %s, Size: \n", $1, $2, $4);
+            printf("Type: %s, ID: %s, Size: %d\n", $1, $2, $4);
             $$ = createNode(NodeType_ArrayDecl); 
             $$->value.ArrayDecl.arrayType = $1; 
             $$->value.ArrayDecl.arrayName = $2;
             $$->value.ArrayDecl.arraySize = $4; 
         } 
+        | TYPE ID LBRACKET NUMBER RBRACKET {
+            printf ("Missing semicolon after declaring array: %s\n", $2);
+            exit(1);
+        }
+;
 
 StmtList: {$$ = NULL;}
         | Stmt StmtList {

@@ -84,15 +84,6 @@ BAD_ID {NUMBER}{ID}
     yylval.number = atoi(yytext);
     return NUMBER;
 }
-"["         { 
-    words++; chars += strlen(yytext);
-    printf("%-10s | %-10s\n", yytext, "LBRACKET");
-    return LBRACKET; }
-
-"]"         { 
-    words++; chars += strlen(yytext);
-    printf("%-10s | %-10s\n", yytext, "RBRACKET");
-    return RBRACKET; }
 
 "+" {
     words++; chars += strlen(yytext);
@@ -135,6 +126,30 @@ BAD_ID {NUMBER}{ID}
     return COMMA;
 }
 
+"(" { 
+    chars++;
+    printf("%-10s | %-10s\n", yytext, "LPAREN");
+    return LPAREN; 
+}
+
+")" { 
+    chars++;
+    printf("%-10s | %-10s\n", yytext, "RPAREN");
+    return RPAREN; 
+}
+
+"[" { 
+    chars++;
+    printf("%-10s | %-10s\n", yytext, "LBRACKET");
+    return LBRACKET; 
+}
+
+"]"         { 
+    chars++;
+    printf("%-10s | %-10s\n", yytext, "RBRACKET");
+    return RBRACKET; 
+}
+
 "{" { 
     chars++;
     printf("%-10s | %-10s\n", yytext, "LBRACE");
@@ -145,17 +160,6 @@ BAD_ID {NUMBER}{ID}
     chars++;
     printf("%-10s | %-10s\n", yytext, "RBRACE");
     return RBRACE;
-}
-
-"(" { 
-    chars++;
-    printf("%-10s | %-10s\n", yytext, "LPAREN");
-    return LPAREN; 
-}
-")" { 
-    chars++;
-    printf("%-10s | %-10s\n", yytext, "RPAREN");
-    return RPAREN; 
 }
 
 {BAD_ID} {
