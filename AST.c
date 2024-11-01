@@ -70,6 +70,11 @@ struct ASTNode* createNode(NodeType type) {
             newNode->value.assignment.varName = NULL;
             newNode->value.assignment.expr = NULL;
             break;
+        case NodeType_ArrayAssignment:
+            newNode->value.arrayAssignment.varName = NULL;
+            newNode->value.arrayAssignment.index = 0;
+            newNode->value.arrayAssignment.op = NULL;
+            newNode->value.arrayAssignment.expr = NULL;
         case NodeType_Print:
             newNode->value.print.name = NULL;
             break;
@@ -169,6 +174,11 @@ void freeAST(struct ASTNode* node) {
             free(node->value.assignment.op);
             free(node->value.assignment.varName);
             freeAST(node->value.assignment.expr);
+            break;
+        case NodeType_ArrayAssignment:
+            free(node->value.arrayAssignment.op);
+            free(node->value.arrayAssignment.varName);
+            freeAST(node->value.arrayAssignment.expr);
             break;
         case NodeType_Print:
             free(node->value.print.name);
@@ -313,25 +323,28 @@ void printAST(struct ASTNode* node, int indent) {
         case NodeType_StmtList:
             spaceOut(indent);
             printf("AST Print: NodeType_StmtList\n");
-            printf("DEBUG: stmt pointer = %p\n", (void*)node->value.StmtList.stmt);
-            printf("DEBUG: nextStmt pointer = %p\n", (void*)node->value.StmtList.nextStmt);
             printAST(node->value.StmtList.stmt, indent);
             printAST(node->value.StmtList.nextStmt, indent);
             break;
         case NodeType_Assignment:
             spaceOut(indent);
             printf("AST Print: NodeType_Assignment\n");
-            if (node->value.assignment.varName) {
-                spaceOut(indent);
-                printf("AST Print: Array Name = %s\n", node->value.assignment.varName);
-            }
             spaceOut(indent);
-            printf("AST Print: op = %s\n", node->value.assignment.op);
-            if (node->value.assignment.expr) {
-                spaceOut(indent);
-                printf("AST Print: Assigned Expression:\n");
-                printAST(node->value.assignment.expr, indent + 1);
-            }
+            printf("AST Print: Name = %s\n", node->value.assignment.varName);
+            spaceOut(indent);
+            printf("AST Print: op = %s\n", node->value.assignment.op); 
+            printAST(node->value.assignment.expr, indent + 1);
+            break;
+        case NodeType_ArrayAssignment:
+            spaceOut(indent);
+            printf("AST Print: NodeType_ArrayAssignment\n");
+            spaceOut(indent);
+            printf("AST Print: Name = %s\n", node->value.arrayAssignment.varName);
+            spaceOut(indent);
+            printf("AST Print: op = %s\n", node->value.arrayAssignment.op); 
+            spaceOut(indent);
+            printf("AST Print: index = %d\n", node->value.arrayAssignment.index); 
+            printAST(node->value.assignment.expr, indent + 1);
             break;
         case NodeType_ArrayAccess:
             spaceOut(indent);

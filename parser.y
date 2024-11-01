@@ -239,18 +239,27 @@ StmtList: {$$ = NULL;}
 ;
 
 Stmt: ID EQ Expr SEMICOLON { 
-								printf("PARSER: Recognized assignment statement\n");
-                                printf("ID: %s, EQ: %s, Expr: %p\n", $1, $2, $3);
-                                $$ = createNode(NodeType_Assignment);
-								$$->value.assignment.varName = $1;
-								$$->value.assignment.op = $2;
-								$$->value.assignment.expr = $3;
+		printf("PARSER: Recognized assignment statement\n");
+        printf("ID: %s, EQ: %s, Expr: %p\n", $1, $2, $3);
+        $$ = createNode(NodeType_Assignment);
+		$$->value.assignment.varName = $1;
+		$$->value.assignment.op = $2;
+		$$->value.assignment.expr = $3;
+    }
+    | ID LBRACKET NUMBER RBRACKET EQ Expr SEMICOLON {
+        printf("PARSER: identified array assignment\n");
+        printf("ID: %s, EQ: %s, Expr: %p, arraySize: %d\n", $1, $5, $6, $3);
+        $$ = createNode(NodeType_ArrayAssignment);
+        $$->value.arrayAssignment.varName = $1;
+        $$->value.arrayAssignment.index = $3;
+		$$->value.arrayAssignment.op = $5;
+		$$->value.arrayAssignment.expr = $6;
     }
 	| PRINT LPAREN ID RPAREN SEMICOLON { 
-                                            printf("PARSER: Recognized print statement\n"); 
-                                            $$ = createNode(NodeType_Print);
-                                            $$->value.print.name = $3;
-                                         }
+        printf("PARSER: Recognized print statement\n"); 
+        $$ = createNode(NodeType_Print);
+        $$->value.print.name = $3;
+    }
     // Handle missng semicolon  
     | PRINT LPAREN ID RPAREN { 
                                 printf ("Missing semicolon after print statement: %s\n", $3);
@@ -262,6 +271,11 @@ Stmt: ID EQ Expr SEMICOLON {
                     // stop compilation
                     exit(1);
                  }
+    | ID LBRACKET NUMBER RBRACKET EQ Expr {
+                    printf ("Missing semicolon after assignment statement: %s\n", $1);
+                    // stop compilation
+                    exit(1);
+                }
 ; 
 
 Expr: Expr BinOp Expr { printf("PARSER: Recognized expression\n");
