@@ -144,7 +144,6 @@ void generateMIPS(TAC* tacInstructions) {
             printf("\tdiv %s, %s\n\tmflo %s\n", tac->arg1, tac->arg2, tac->result);
             fprintf(outputFile, "\tdiv %s, %s\n\tmflo %s\n", tac->arg1, tac->arg2, tac->result);
             
-
         } else if (strcmp(tac->op, "move") == 0) {
             printf("Generating MIPS for move\n");
             printf("\t%s --> %s\n", tac->arg1, tac->result);
@@ -163,6 +162,12 @@ void generateMIPS(TAC* tacInstructions) {
             printf("\tla %s, %s\n", tac->result, tac->arg2);
             fprintf(outputFile, "\tla $t2, %s\n", tac->arg2);
             fprintf(outputFile, "\tlw %s, 0($t2)\n", tac->result);
+
+        } else if (strcmp(tac->op, "ArrayAccess") == 0) {
+            printf("Generating MIPS for ArrayAccess\n");
+             printf("\t%s = %s (%s[%d])\n", tac->result, tac->arg2, tac->arg1, tac->arg3);
+            fprintf(outputFile, "\tla $t2, %s\n", tac->arg2);
+            fprintf(outputFile, "\tlw %s, %d($t2)\n", tac->result, 4 * tac->arg3);
 
         } else if (strcmp(tac->op, "FuncCall") == 0) {
             printf("Generating MIPS for Function Call\n");

@@ -146,12 +146,19 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
 
         case NodeType_Assignment:
             printf("Semantic Analysis running on node of type: NodeType_Assignment\n");
+            if (!lookupSymbol(symTab, node->value.assignment.varName)) {
+                fprintf(stderr, "Error: Variable %s not declared\n", node->value.assignment.varName);
+                exit(1);
+            }
             semanticAnalysis(node->value.assignment.expr, symTab, functionBST, arraySymTab);
             break;
 
         case NodeType_ArrayAssignment:
             printf("Semantic Analysis running on node of type: NodeType_ArrayAssignment\n");
-
+            if (!lookupSymbol(symTab, node->value.arrayAssignment.varName)) {
+                fprintf(stderr, "Error: array %s not declared\n", node->value.arrayAssignment.varName);
+                exit(1);
+            }
             Symbol* tempSymbol = lookupSymbol(symTab, node->value.arrayAssignment.varName);
             unsigned int index = node->value.arrayAssignment.index;
             if(index < 0 || index >= tempSymbol->size) {
@@ -200,6 +207,26 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
         case NodeType_Identifier:
             printf("Semantic Analysis running on node of type: NodeType_Identifier\n");
             lookupSymbol(symTab, node->value.identifier.name);
+            break;
+
+        case NodeType_ArrayAccess:
+            printf("Semantic Analysis running on node of type: NodeType_ArrayAccess\n");
+            // Check if the array exists
+            if (!lookupSymbol(symTab, node->value.ArrayAccess.name)) {
+                fprintf(stderr, "Error: Array %s not declared\n", node->value.ArrayAccess.name);
+                exit(1);
+            }
+            Symbol* tempSymbol2 = lookupSymbol(symTab, node->value.ArrayAccess.name);
+            unsigned int index2 = node->value.ArrayAccess.index;
+            if(index2 < 0 || index2 >= tempSymbol2->size) {
+                printf("Index out of bounds on array %s\n", node->value.ArrayAccess.name);
+                exit(0);
+            }
+
+            break;
+        default:
+            fprintf(stderr, "Unknown Node Type\n");
+            printf("%u\n", node->type);
             break;
 
         case NodeType_BinaryOp:
@@ -257,7 +284,6 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
                 exit(0);
             }
 
-
             // Generate custom TAC for end of function call
             TAC* instruction = (TAC*)malloc(sizeof(TAC));
             if (!instruction) {
@@ -283,22 +309,6 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
             appendTAC(&tacHead, instruction);
 
             break;
-
-        case NodeType_ArrayAccess:
-            printf("Semantic Analysis running on node of type: NodeType_ArrayAccess\n");
-            // Check if the array exists
-            if (!lookupSymbol(symTab, node->value.ArrayAccess.varName)) {
-                fprintf(stderr, "Error: Array %s not declared\n", node->value.ArrayAccess.varName);
-                exit(1);
-            }
-            // Analyze the index expression
-            semanticAnalysis(node->value.ArrayAccess.indexExpr, symTab, functionBST, arraySymTab);
-            break;
-        default:
-            fprintf(stderr, "Unknown Node Type\n");
-            printf("%u\n", node->type);
-            break;
-
     }
 
     if (node->type == NodeType_ParamDecl ||
@@ -309,7 +319,8 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
         node->type == NodeType_ArrayAssignment ||
         node->type == NodeType_Number || 
         node->type == NodeType_Print || 
-        node->type == NodeType_Identifier
+        node->type == NodeType_Identifier ||
+        node->type == NodeType_ArrayAccess
         ) {
         tac = generateTACForExpr(node);
     }
@@ -455,6 +466,21 @@ TAC* generateTACForExpr(ASTNode* expr) {
             break;
         }
 
+        case NodeType_ArrayAccess: {
+            printf("Generating TAC for array access\n");
+            instruction->arg1 = strdup(expr->value.ArrayAccess.name);
+            instruction->arg3 = expr->value.ArrayAccess.index;
+            instruction->arg2 = getVariableReference(expr->value.ArrayAccess.name);
+            instruction->op = strdup("ArrayAccess");
+            if (isRight) {
+                instruction->result = strdup("$t1");
+                isRight = false;
+            } else {
+                instruction->result = strdup("$t0");
+            }
+            break;
+        }
+
         case NodeType_FunctionCall: {
             printf("Generating TAC for Function Call\n");
             instruction->arg1 = strdup(expr->value.FunctionCall.funcName);
@@ -548,6 +574,8 @@ void printTAC(TAC* tac) {
         printf("\t%s = %s\n", tac->result, tac->arg1);
     } else if (strcmp(tac->op, "ID") == 0) {
         printf("\t%s = %s (%s)\n", tac->result, tac->arg2, tac->arg1);
+    } else if (strcmp(tac->op, "ArrayAccess") == 0) {
+        printf("\t%s = %s (%s[%d])\n", tac->result, tac->arg2, tac->arg1, tac->arg3);
     }  else if (strcmp(tac->op, "FuncCall") == 0) {
         printf("\tFunction Call: %s => %s\n", tac->arg1, tac->result);
     }  else if (strcmp(tac->op, "FuncCallEnd") == 0) {

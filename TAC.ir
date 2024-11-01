@@ -1,4 +1,2 @@
-int b ==> mainb
-$t1 = 1
-$t0 = 2
-$t1 = $t0 + $t1
+int x ==> mainx
+mainx (x) = $t1

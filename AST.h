@@ -26,10 +26,10 @@ typedef enum {
     NodeType_Expression,
     NodeType_Number,
     NodeType_Identifier,
+    NodeType_ArrayAccess,
     NodeType_BinaryOp,
     NodeType_FunctionCall,
     NodeType_CallParamList,
-    NodeType_ArrayAccess
 } NodeType;
 
 // Define AST Structure
@@ -139,6 +139,11 @@ typedef struct ASTNode {
         } identifier;
 
         struct {
+            char* name;
+            unsigned int index;
+        }ArrayAccess;
+
+        struct {
             char* op;
         } binaryOp;
 
@@ -151,12 +156,7 @@ typedef struct ASTNode {
             struct ASTNode* expr;
             struct ASTNode* nextParam;
         }CallParamList;
-        
-        // Array Access
-        struct {
-            char* varName;
-            struct ASTNode* indexExpr;
-        }ArrayAccess;
+
     } value;
 }ASTNode;
 

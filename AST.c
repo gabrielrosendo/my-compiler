@@ -89,6 +89,10 @@ struct ASTNode* createNode(NodeType type) {
         case NodeType_Identifier:
             newNode->value.identifier.name = NULL;
             break;
+        case NodeType_ArrayAccess:
+            newNode->value.ArrayAccess.name = NULL;
+            newNode->value.ArrayAccess.index = 0;
+            break;
         case NodeType_FunctionCall:
             newNode->value.FunctionCall.funcName = NULL;
             newNode->value.FunctionCall.CallParamList = NULL;
@@ -99,10 +103,6 @@ struct ASTNode* createNode(NodeType type) {
         case NodeType_FuncTail:
             newNode->value.FuncTail.expr = NULL;
             newNode->value.FuncTail.type = NULL;
-            break;
-        case NodeType_ArrayAccess:
-            newNode->value.ArrayAccess.varName = NULL;
-            newNode->value.ArrayAccess.indexExpr = NULL;
             break;
         default:
             fprintf(stderr, "ERROR: unknown AST node type AST.c->createNode()\n");
@@ -193,6 +193,9 @@ void freeAST(struct ASTNode* node) {
             break;
         case NodeType_Identifier:
             free(node->value.identifier.name);
+            break;
+        case NodeType_ArrayAccess:
+            free(node->value.ArrayAccess.name);
             break;
         case NodeType_BinaryOp:
             // No dynamic memory to free
@@ -346,16 +349,6 @@ void printAST(struct ASTNode* node, int indent) {
             printf("AST Print: index = %d\n", node->value.arrayAssignment.index); 
             printAST(node->value.assignment.expr, indent + 1);
             break;
-        case NodeType_ArrayAccess:
-            spaceOut(indent);
-            printf("AST Print: NodeType_ArrayAccess\n");
-            spaceOut(indent);
-            printf("AST Print: Array Name = %s\n", node->value.ArrayAccess.varName);
-            spaceOut(indent);
-            printf("AST Print: Index Expression:\n");
-            printAST(node->value.ArrayAccess.indexExpr, indent + 1);
-            break;
-
         case NodeType_Print:
             spaceOut(indent);
             printf("AST Print: NodeType_Print\n");
@@ -381,6 +374,14 @@ void printAST(struct ASTNode* node, int indent) {
             printf("AST Print: NodeType_Identifier\n");
             spaceOut(indent);
             printf("AST Print: name = %s\n", node->value.identifier.name);
+            break;
+        case NodeType_ArrayAccess:
+            spaceOut(indent);
+            printf("AST Print: NodeType_ArrayAccess\n");
+            spaceOut(indent);
+            printf("AST Print: Array Name = %s\n", node->value.ArrayAccess.name);
+            spaceOut(indent);
+            printf("AST Print: Array Index = %d\n", node->value.ArrayAccess.index);
             break;
         case NodeType_BinaryOp:
             spaceOut(indent);
