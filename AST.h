@@ -10,6 +10,7 @@ typedef enum {
     NodeType_MainFunc,
     NodeType_ParamList,
     NodeType_ParamDecl,
+    NodeType_ParamArrayDecl,
     NodeType_Body,
     NodeType_FuncTail,
     NodeType_VarDeclList,
@@ -62,6 +63,12 @@ typedef struct ASTNode {
             char* paramType;
             char* paramName;
         }ParamDecl;
+
+        struct {
+            char* paramType;
+            char* paramName;
+            unsigned int size;
+        }ParamArrayDecl;
 
         struct {
             struct ASTNode* VarDeclList;
