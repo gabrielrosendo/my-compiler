@@ -50,8 +50,11 @@ struct ASTNode* createNode(NodeType type) {
             newNode->value.VarDecl.varType = NULL;
             newNode->value.VarDecl.varName = NULL;
             newNode->value.VarDecl.initExpr = NULL;
-            newNode->value.VarDecl.isArray = 0;
-            newNode->value.VarDecl.arraySize = 0;
+            break;
+        case NodeType_ArrayDecl:
+            newNode->value.ArrayDecl.arrayType = NULL;
+            newNode->value.ArrayDecl.arrayName = NULL;
+            newNode->value.ArrayDecl.arraySize = 0;
             break;
         case NodeType_StmtList:
             newNode->value.StmtList.stmt = NULL;
@@ -86,11 +89,6 @@ struct ASTNode* createNode(NodeType type) {
         case NodeType_FuncTail:
             newNode->value.FuncTail.expr = NULL;
             newNode->value.FuncTail.type = NULL;
-            break;
-        case NodeType_ArrayDecl:
-            newNode->value.ArrayDecl.arrayType = NULL;
-            newNode->value.ArrayDecl.arrayName = NULL;
-            newNode->value.ArrayDecl.arraySize = 0;
             break;
         case NodeType_ArrayAccess:
             newNode->value.ArrayAccess.varName = NULL;
@@ -149,7 +147,10 @@ void freeAST(struct ASTNode* node) {
         case NodeType_VarDecl:
             free(node->value.VarDecl.varType);
             free(node->value.VarDecl.varName);
-            freeAST(node->value.VarDecl.initExpr);
+            break;
+        case NodeType_ArrayDecl:
+            free(node->value.ArrayDecl.arrayType);
+            free(node->value.ArrayDecl.arrayName);
             break;
         case NodeType_StmtList:
             freeAST(node->value.StmtList.stmt);
@@ -279,15 +280,16 @@ void printAST(struct ASTNode* node, int indent) {
             printf("AST Print: varType = %s\n", node->value.VarDecl.varType);
             spaceOut(indent);
             printf("AST Print: varName = %s\n", node->value.VarDecl.varName);
-            if (node->value.VarDecl.isArray) {
-                spaceOut(indent);
-                printf("AST Print: isArray = true\n");
-                spaceOut(indent);
-                printf("AST Print: arraySize = %d\n", node->value.VarDecl.arraySize);
-            }
-            if (node->value.VarDecl.initExpr) {
-                printAST(node->value.VarDecl.initExpr, indent);
-            }
+            break;
+         case NodeType_ArrayDecl:
+            spaceOut(indent);
+            printf("AST Print: NodeType_ArrayDecl\n");
+            spaceOut(indent);
+            printf("AST Print: arrayType = %s\n", node->value.ArrayDecl.arrayType);
+            spaceOut(indent);
+            printf("AST Print: arrayName = %s\n", node->value.ArrayDecl.arrayName);
+            spaceOut(indent);
+            printf("AST Print: arraySize = %d\n", node->value.ArrayDecl.arraySize);
             break;
         case NodeType_StmtList:
             spaceOut(indent);

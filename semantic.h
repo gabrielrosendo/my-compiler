@@ -11,6 +11,7 @@ typedef struct TAC {
     char *op;
     char *arg1;
     char *arg2;
+    unsigned int arg3;
     char *result;
     struct TAC *next;
 } TAC;

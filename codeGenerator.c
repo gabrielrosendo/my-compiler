@@ -22,6 +22,9 @@ void initCodeGenerator(const char* outputFilename, TAC* tacInstructions) {
         if (strcmp(tac->op, "VarDecl") == 0) {
             printf("\tParameter: %s %s ==> %s\n", tac->arg1, tac->arg2, tac->result);
             fprintf(outputFile, "%s: .word 0\n", tac->result);
+        } else if (strcmp(tac->op, "ArrayDecl") == 0) {
+            printf("\tArray: %s %s[%d] ==> %s[%d]\n", tac->arg1, tac->arg2,  tac->arg3, tac->result, tac->arg3);
+            fprintf(outputFile, "%s: .word 0:%d\n", tac->result, tac->arg3);
         } else if (strcmp(tac->op, "ParamDecl") == 0) {
             printf("\tVariable: %s %s ==> %s\n", tac->arg1, tac->arg2, tac->result);
             fprintf(outputFile, "%s: .word 0\n", tac->result);

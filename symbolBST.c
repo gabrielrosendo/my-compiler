@@ -150,6 +150,11 @@ void printSymbolTablePrivateRight(SymbolBST* curNode, int indent)  {
         for(int i = 0; i < indent; i++) printf("\t");
         printf("            { hash: %u }\n", curNode->right->hash);
 
+        if(curNode->right->symbol->size > 0) {
+            for(int i = 0; i < indent; i++) printf("\t");
+            printf("            { size: %d }\n", curNode->right->symbol->size); 
+        }
+
         //Print left nodes last
         printSymbolTablePrivateLeft(curNode->right, indent + indentMagnitude);  
     }
@@ -177,6 +182,11 @@ void printSymbolTablePrivateLeft(SymbolBST* curNode, int indent)  {
         for(int i = 0; i < indent; i++) printf("\t");
         printf("           { hash: %u }\n", curNode->left->hash);
 
+        if(curNode->left->symbol->size > 0) {
+            for(int i = 0; i < indent; i++) printf("\t");
+            printf("           { size: %d }\n", curNode->left->symbol->size); 
+        }
+
         //Print left nodes last
         printSymbolTablePrivateLeft(curNode->left, indent + indentMagnitude);
     }
@@ -197,6 +207,10 @@ void printSymbolTable(SymbolBST* head)  {
     printf("      { name: %s }\n", head->symbol->name);
     printf("Head: { type: %s }\n", head->symbol->type);
     printf("      { hash: %u }\n", head->hash);
+
+    if(head->symbol->size > 0) {
+       printf("      { size: %d }\n", head->symbol->size); 
+    }
 
     //Print left nodes last
     printSymbolTablePrivateLeft(head, indentMagnitude);

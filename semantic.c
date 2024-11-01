@@ -119,13 +119,23 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
             printf("VarDecl Name: %s\n", node->value.VarDecl.varName);
             printf("VarDecl Type: %s\n", node->value.VarDecl.varType);
             addSymbol(symTab, node->value.VarDecl.varName, node->value.VarDecl.varType, 0);
-            if (node->value.VarDecl.isArray) {
-                printf("Array Size: %d\n", node->value.VarDecl.arraySize);
-                addArray(arraySymTab, node->value.VarDecl.varName, node->value.VarDecl.varType, node->value.VarDecl.arraySize);
-                printArraySymbolTable(arraySymTab);
-            }
             printSymbolTable(symTab);
             semanticAnalysis(node->value.VarDecl.initExpr, symTab, functionBST, arraySymTab);
+            break;
+
+        case NodeType_ArrayDecl:
+            printf("Semantic Analysis running on node of type: NodeType_ArrayDecl\n");
+            printf("ArrayDecl Name: %s\n", node->value.ArrayDecl.arrayName);
+            printf("ArrayDecl Type: %s\n", node->value.ArrayDecl.arrayType);
+            printf("ArrayDecl Size: %d\n", node->value.ArrayDecl.arraySize);
+
+            if(node->value.ArrayDecl.arraySize < 1) {
+                printf("Size of array %s cannot be less than 1", node->value.ArrayDecl.arrayName);
+                exit(0);
+            }
+
+            addSymbol(symTab, node->value.ArrayDecl.arrayName, node->value.ArrayDecl.arrayType, node->value.ArrayDecl.arraySize);
+            printSymbolTable(symTab);
             break;
 
         case NodeType_StmtList:
@@ -281,6 +291,7 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
     if (node->type == NodeType_ParamDecl ||
         node->type == NodeType_FuncTail ||
         node->type == NodeType_VarDecl || 
+        node->type == NodeType_ArrayDecl ||
         node->type == NodeType_Assignment || 
         node->type == NodeType_Number || 
         node->type == NodeType_Print || 
@@ -344,6 +355,16 @@ TAC* generateTACForExpr(ASTNode* expr) {
             instruction->arg2 = strdup(expr->value.VarDecl.varName);
             instruction->op = strdup("VarDecl");
             instruction->result = getVariableReference(expr->value.VarDecl.varName);
+            break;
+        }
+
+        case NodeType_ArrayDecl: {
+            printf("Generating TAC for array declaration\n");
+            instruction->arg1 = strdup(expr->value.ArrayDecl.arrayType);
+            instruction->arg2 = strdup(expr->value.ArrayDecl.arrayName);
+            instruction->arg3 = expr->value.ArrayDecl.arraySize;
+            instruction->op = strdup("ArrayDecl");
+            instruction->result = getVariableReference(expr->value.ArrayDecl.arrayName);
             break;
         }
 
@@ -480,6 +501,8 @@ void printTAC(TAC* tac) {
         printf("\tReturn: %s %s\n\n", tac->arg1, tac->arg2);
     } else if (strcmp(tac->op, "VarDecl") == 0) {
         printf("\tVariable: %s %s ==> %s\n", tac->arg1, tac->arg2, tac->result);
+    } else if (strcmp(tac->op, "ArrayDecl") == 0) {
+        printf("\tArray: %s %s[%d] ==> %s[%d]\n", tac->arg1, tac->arg2,  tac->arg3, tac->result, tac->arg3);
     } else if (strcmp(tac->op, "=") == 0) {
         printf("\t%s (%s) = %s\n", tac->result, tac->arg1, tac->arg2);
     } else if (strcmp(tac->op, "Print") == 0) {
@@ -556,16 +579,16 @@ void appendTAC(TAC** head, TAC* newInstruction) {
 
 void moveRegisters(char* from, char* to) {
     TAC* instruction = (TAC*)malloc(sizeof(TAC));
-                        if (!instruction) {
-                            fprintf(stderr, "Failed to create custom tac instruction for function call: %s\n", currentFunctionCallName);
-                            exit(0);
-                        }
+    if (!instruction) {
+        fprintf(stderr, "Failed to create custom tac instruction for function call: %s\n", currentFunctionCallName);
+        exit(0);
+    }
 
-                        printf("Generating TAC for register move\n");
-                        instruction->arg1 = strdup(from);
-                        instruction->arg2 = strdup("");
-                        instruction->op = strdup("move");
-                        instruction->result = strdup(to);
-                        instruction->next = NULL; 
-                        appendTAC(&tacHead, instruction);
+    printf("Generating TAC for register move\n");
+    instruction->arg1 = strdup(from);
+    instruction->arg2 = strdup("");
+    instruction->op = strdup("move");
+    instruction->result = strdup(to);
+    instruction->next = NULL; 
+    appendTAC(&tacHead, instruction);
 }

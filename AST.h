@@ -14,6 +14,7 @@ typedef enum {
     NodeType_FuncTail,
     NodeType_VarDeclList,
     NodeType_VarDecl,
+    NodeType_ArrayDecl,
     NodeType_StmtList,
     NodeType_Stmt,
     NodeType_Assignment,
@@ -24,7 +25,6 @@ typedef enum {
     NodeType_BinaryOp,
     NodeType_FunctionCall,
     NodeType_CallParamList,
-    NodeType_ArrayDecl,
     NodeType_ArrayAccess
 } NodeType;
 
@@ -84,9 +84,13 @@ typedef struct ASTNode {
             char* varName;
             // initial value if provided numerical
             struct ASTNode* initExpr;
-            int isArray;
-            int arraySize;
         }VarDecl;
+
+        struct {
+            char* arrayType;
+            char* arrayName;
+            unsigned int arraySize;
+        }ArrayDecl;
         
         struct {
             struct ASTNode* stmt;
@@ -130,13 +134,6 @@ typedef struct ASTNode {
             struct ASTNode* expr;
             struct ASTNode* nextParam;
         }CallParamList;
-
-        // Array Declaration
-        struct {
-            char* arrayType;
-            char* arrayName;
-            int arraySize;
-        }ArrayDecl;
         
         // Array Access
         struct {
