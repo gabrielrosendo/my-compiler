@@ -21,7 +21,11 @@ void initCodeGenerator(const char* outputFilename, TAC* tacInstructions) {
     while (tac != NULL) {
         if (strcmp(tac->op, "VarDecl") == 0) {
             printf("\tParameter: %s %s ==> %s\n", tac->arg1, tac->arg2, tac->result);
-            fprintf(outputFile, "%s: .word 0\n", tac->result);
+            if (strcmp(tac->arg1, "int") == 0) {
+                fprintf(outputFile, "%s: .word 0\n", tac->result);
+            } else if (strcmp(tac->arg1, "float") == 0) {
+                fprintf(outputFile, "%s: .float 0\n", tac->result);
+            }
         } else if (strcmp(tac->op, "ArrayDecl") == 0) {
             printf("\tArray: %s %s[%d] ==> %s[%d]\n", tac->arg1, tac->arg2,  tac->arg3, tac->result, tac->arg3);
             fprintf(outputFile, "%s: .word 0:%d\n", tac->result, tac->arg3);
@@ -99,8 +103,12 @@ void generateMIPS(TAC* tacInstructions) {
             printf("Generating MIPS for Assignment operation\n");
             printf("%s (%s) = %s\n", tac->result, tac->arg1, tac->arg2);
             printf("\tmove %s, %s\n", tac->result, tac->arg2);
-            fprintf(outputFile, "\tla $t2, %s\t\t# Load address of %s into $t2\n", tac->result, tac->result);
-            fprintf(outputFile, "\tsw $t1, 0($t2)\t\t# Save $t1 into variable\n\n");
+            if (strcmp(tac->arg2, "$t1") == 0) {
+                fprintf(outputFile, "\tla $t2, %s\t\t# Load address of %s into $t2\n", tac->result, tac->result);
+                fprintf(outputFile, "\tsw $t1, 0($t2)\t\t# Save $t1 into variable\n\n");
+            } else if (strcmp(tac->arg2, "$f1") == 0) {
+                fprintf(outputFile, "\ts.s $f1, %s\n\n", tac->result);
+            }
 
         } else if (strcmp(tac->op, "ArrayAssingment") == 0) {
             printf("Generating MIPS for Array Assignment operation\n");
@@ -120,27 +128,41 @@ void generateMIPS(TAC* tacInstructions) {
 
         } else if (strcmp(tac->op, "+") == 0) {
             printf("Generating MIPS for Addition\n");
-            printf("%s = %s + %s\n", tac->result, tac->arg1, tac->arg2);
-            printf("\tadd %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
-            fprintf(outputFile, "\tadd %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
+            if (strcmp(tac->arg1, "$t0") == 0) {
+                fprintf(outputFile,"\tadd %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
+            } else if (strcmp(tac->arg1, "$f0") == 0) {
+                fprintf(outputFile,"\tadd.s %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
+            }
 
         } else if (strcmp(tac->op, "-") == 0) {
             printf("Generating MIPS for Subtraction\n");
             printf("%s = %s - %s\n", tac->result, tac->arg1, tac->arg2);
             printf("\tsub %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
-            fprintf(outputFile, "\tsub %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
+            if (strcmp(tac->arg1, "$t0") == 0) {
+                fprintf(outputFile, "\tsub %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
+            } else if (strcmp(tac->arg1, "$f0") == 0) {
+                fprintf(outputFile, "\tsub.s %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
+            }
 
         } else if (strcmp(tac->op, "*") == 0) {
             printf("Generating MIPS for Multiplication\n");
             printf("%s = %s * %s\n", tac->result, tac->arg1, tac->arg2);
             printf("\tmult %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
-            fprintf(outputFile, "\tmul %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
+            if (strcmp(tac->arg1, "$t0") == 0) {
+                fprintf(outputFile, "\tmul %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
+            } else if (strcmp(tac->arg1, "$f0") == 0) {
+                fprintf(outputFile, "\tmul.s %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
+            }
 
         } else if (strcmp(tac->op, "/") == 0) {
             printf("Generating MIPS for Division\n");
             printf("%s = %s / %s\n", tac->result, tac->arg1, tac->arg2);
             printf("\tdiv %s, %s\n\tmflo %s\n", tac->arg1, tac->arg2, tac->result);
-            fprintf(outputFile, "\tdiv %s, %s\n\tmflo %s\n", tac->arg1, tac->arg2, tac->result);
+            if (strcmp(tac->arg1, "$t0") == 0) {
+                fprintf(outputFile, "\tdiv %s, %s\n\tmflo %s\n", tac->arg1, tac->arg2, tac->result);
+            } else if (strcmp(tac->arg1, "$f0") == 0) {
+                fprintf(outputFile, "\tdiv.s %s, %s, %s\n", tac->result,tac->arg1, tac->arg2);
+            }
             
         } else if (strcmp(tac->op, "move") == 0) {
             printf("Generating MIPS for move\n");
@@ -158,8 +180,12 @@ void generateMIPS(TAC* tacInstructions) {
             printf("Generating MIPS for Identifier\n");
             printf("%s = %s (%s)\n", tac->result, tac->arg2, tac->arg1);
             printf("\tla %s, %s\n", tac->result, tac->arg2);
-            fprintf(outputFile, "\tla $t2, %s\n", tac->arg2);
-            fprintf(outputFile, "\tlw %s, 0($t2)\n", tac->result);
+            if (strcmp(tac->result, "$t0") == 0 || strcmp(tac->result, "$t1") == 0) {
+                fprintf(outputFile, "\tla $t2, %s\n", tac->arg2);
+                fprintf(outputFile, "\tlw %s, 0($t2)\n", tac->result);
+            } else if (strcmp(tac->result, "$f0") == 0 || strcmp(tac->result, "$f1") == 0) {
+                fprintf(outputFile, "\tl.s %s, %s\n", tac->result, tac->arg2);
+            }
 
         } else if (strcmp(tac->op, "ArrayAccess") == 0) {
             printf("Generating MIPS for ArrayAccess\n");

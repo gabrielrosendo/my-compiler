@@ -36,7 +36,9 @@ void appendTAC(TAC** head, TAC* newInstruction);
 void printTAC(TAC* tac);
 void printTACToFile(const char* filename, TAC* tac);
 void moveRegisters(char* from, char* to);
-
+char* processExpressionTypes(char* type1, char* type2);
+void TACConvertIntToFloat(char* curRegister);
+void TACConvertFloatToInt(char* curRegister);
 
 #endif // SEMANTIC_H
 

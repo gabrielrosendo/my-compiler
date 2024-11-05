@@ -1,36 +1,38 @@
-$t1 = addfuncx (x)
-$t0 = addfuncy (y)
-$t1 = $t0 + $t1
-$t1 = dividey (y)
-$t0 = dividex (x)
-$t1 = $t0 / $t1
-int x ==> mainx
+float x ==> mainx
 int y ==> mainy
-int result ==> mainresult
-int result2 ==> mainresult2
-int result3 ==> mainresult3
-int result4 ==> mainresult4
-$t1 = 10
-mainx (x) = $t1
-$t1 = 5
-mainy (y) = $t1
-$t1 = mainx (x)
-$t1 = mainy (y)
-mainresult (result) = $t1
-$t1 = mainresult (result)
-Print((null) ($t1))
-$t1 = 5
-$t1 = 5
-mainresult2 (result2) = $t1
-$t1 = mainresult2 (result2)
-Print((null) ($t1))
-$t1 = 5
+$f1 = 1.100000
+$f0 = 2.200000
+$f1 = $f0 + $f1
+mainx (x) = $f1
+$f1 = 1.100000
+$f0 = 2.200000
+$f1 = $f0 - $f1
+mainx (x) = $f1
+$f1 = 2.200000
+$f0 = 1.100000
+$f1 = $f0 * $f1
+mainx (x) = $f1
+$f1 = 2.200000
+$f0 = 1.100000
+$f1 = $f0 / $f1
+mainx (x) = $f1
+$f1 = mainx (x)
+mainx (x) = $f1
 $t1 = 1
-mainresult3 (result3) = $t1
-$t1 = mainresult3 (result3)
-Print((null) ($t1))
-$t1 = 6
-$t1 = 3
-mainresult4 (result4) = $t1
-$t1 = mainresult4 (result4)
-Print((null) ($t1))
+$t0 = 2
+$t1 = $t0 + $t1
+mainy (y) = $t1
+$t1 = 1
+$t0 = 2
+$t1 = $t0 - $t1
+mainy (y) = $t1
+$t1 = 2
+$t0 = 1
+$t1 = $t0 * $t1
+mainy (y) = $t1
+$t1 = 2
+$t0 = 1
+$t1 = $t0 / $t1
+mainy (y) = $t1
+$t1 = mainy (y)
+mainy (y) = $t1

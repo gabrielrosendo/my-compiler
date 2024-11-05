@@ -34,6 +34,7 @@ ArraySymbolTable* arraySymTab = NULL;
 
 %union {
     int number;
+    float floatnumber;
     char character;
     char* string;
     char* keyword;
@@ -42,6 +43,7 @@ ArraySymbolTable* arraySymTab = NULL;
 }
 
 %token <number> NUMBER
+%token <floatnumber> FLOATNUMBER
 %token <string> ID
 %token <string> TYPE
 %token <keyword> VOID
@@ -278,13 +280,15 @@ Stmt: ID EQ Expr SEMICOLON {
     }
 ; 
 
-Expr: Expr BinOp Expr { printf("PARSER: Recognized expression\n");
+Expr: Expr BinOp Expr { 
+                printf("PARSER: Recognized expression\n");
 		        $$ = createNode(NodeType_Expression);
 				$$->value.Expression.left = $3;
 				$$->value.Expression.right = $1;
 				$$->value.Expression.op = $2->value.binaryOp.op;
 			 }
-    | HighExpr BinOp Expr { printf("PARSER: Recognized expression\n");
+    | HighExpr BinOp Expr { 
+                printf("PARSER: Recognized expression\n");
 				$$ = createNode(NodeType_Expression);
 				$$->value.Expression.left = $3;
 				$$->value.Expression.right = $1;
@@ -295,7 +299,12 @@ Expr: Expr BinOp Expr { printf("PARSER: Recognized expression\n");
 				printf("PARSER: Recognized number\n");
 				$$ = createNode(NodeType_Number);
 				$$->value.Number.number = $1;
-			 }		
+			 }
+    | FLOATNUMBER { 
+				printf("PARSER: Recognized floatnumber\n");
+				$$ = createNode(NodeType_FloatNumber);
+				$$->value.FloatNumber.value = $1;
+			 }	
 	| ID {
 			$$ = createNode(NodeType_Identifier);
 			$$->value.identifier.name = $1;
@@ -314,7 +323,8 @@ Expr: Expr BinOp Expr { printf("PARSER: Recognized expression\n");
     }
 ;
 
-HighExpr: HighExpr HighBinOp HighExpr { printf("PARSER: Recognized high expression\n");
+HighExpr: HighExpr HighBinOp HighExpr { 
+                printf("PARSER: Recognized high expression\n");
 		        $$ = createNode(NodeType_Expression);
 		        $$->value.Expression.left = $1;
 	            $$->value.Expression.right = $3;
@@ -324,7 +334,12 @@ HighExpr: HighExpr HighBinOp HighExpr { printf("PARSER: Recognized high expressi
 				printf("PARSER: Recognized number\n");
 				$$ = createNode(NodeType_Number);
 				$$->value.Number.number = $1;
-			 }		
+			 }	
+    | FLOATNUMBER { 
+				printf("PARSER: Recognized floatnumber\n");
+				$$ = createNode(NodeType_FloatNumber);
+				$$->value.FloatNumber.value = $1;
+	        }	
 	| ID {
 			$$ = createNode(NodeType_Identifier);
 			$$->value.identifier.name = $1;

@@ -86,6 +86,9 @@ struct ASTNode* createNode(NodeType type) {
         case NodeType_Number:
             newNode->value.Number.number = 0;
             break;
+        case NodeType_FloatNumber:
+            newNode->value.FloatNumber.value = 0;
+            break;
         case NodeType_Identifier:
             newNode->value.identifier.name = NULL;
             break;
@@ -189,6 +192,9 @@ void freeAST(struct ASTNode* node) {
             free(node->value.Expression.op);
             break;
         case NodeType_Number:
+            // No dynamic memory to free
+            break;
+        case NodeType_FloatNumber:
             // No dynamic memory to free
             break;
         case NodeType_Identifier:
@@ -366,6 +372,12 @@ void printAST(struct ASTNode* node, int indent) {
             printf("AST Print: NodeType_Number\n");
             spaceOut(indent);
             printf("AST Print: number = %d\n", node->value.Number.number);
+            break;
+        case NodeType_FloatNumber:
+            spaceOut(indent);
+            printf("AST Print: NodeType_FloatNumber\n");
+            spaceOut(indent);
+            printf("AST Print: value = %d\n", node->value.FloatNumber.value);
             break;
         case NodeType_Identifier:
             spaceOut(indent);
