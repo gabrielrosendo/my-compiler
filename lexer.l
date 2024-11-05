@@ -2,6 +2,7 @@
 %{
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "parser.tab.h"
 
 int words = 0;
@@ -13,7 +14,7 @@ letter [a-zA-Z]
 digit [0-9]
 ID {letter}({letter}|{digit})*
 delim [ \t\n]
-NUMBER {digit}+(\.{digit}+)?(E[+\-]?(digit)+)?
+NUMBER {digit}+(\.{digit}+)?
 ws {delim}+
 BAD_ID {NUMBER}{ID}
 
@@ -44,10 +45,12 @@ BAD_ID {NUMBER}{ID}
     yylval.string = strdup(yytext);
     return TYPE;
 }
-"void"      { 
+
+"void" { 
     words++; chars += strlen(yytext);
     printf("%-10s | %-10s\n", yytext, "VOID");
-    return VOID; }
+    return VOID; 
+}
 
 "main"      { 
     words++; chars += strlen(yytext);
@@ -80,9 +83,18 @@ BAD_ID {NUMBER}{ID}
 
 {NUMBER} {
     words++; chars += strlen(yytext);
-    printf("%-10s | %-10s\n", yytext, "NUMBER");
-    yylval.number = atoi(yytext);
-    return NUMBER;
+    char *endptr;
+    float value = strtof(yytext, &endptr);
+    printf("Value: %f\n", value);
+    if(value == (int)value) {
+        printf("%-10s | %-10s\n", yytext, "NUMBER");
+        yylval.number = atoi(yytext);
+        return NUMBER;
+    } else {
+        printf("%-10s | %-10s\n", yytext, "FLOATNUMBER");
+        yylval.floatnumber = value;
+        return FLOATNUMBER;
+    }
 }
 
 "+" {

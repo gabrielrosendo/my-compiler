@@ -25,6 +25,7 @@ typedef enum {
     NodeType_Print,
     NodeType_Expression,
     NodeType_Number,
+    NodeType_FloatNumber,
     NodeType_Identifier,
     NodeType_ArrayAccess,
     NodeType_BinaryOp,
@@ -133,6 +134,10 @@ typedef struct ASTNode {
         struct {
            int number;
        } Number;
+
+       struct {
+           float value;
+       } FloatNumber;
 
         struct {
             char* name;

@@ -12,6 +12,7 @@ int count = 2;
 bool isRight = true;
 char* currentFunctionName = NULL;
 char* currentFunctionCallName = NULL;
+char* currentExpressionType = NULL;
 
 void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* functionBST, ArraySymbolTable* arraySymTab) {
 
@@ -150,7 +151,16 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
                 fprintf(stderr, "Error: Variable %s not declared\n", node->value.assignment.varName);
                 exit(1);
             }
+
             semanticAnalysis(node->value.assignment.expr, symTab, functionBST, arraySymTab);
+
+            char* savedType2 = currentExpressionType;
+            currentExpressionType = lookupSymbol(symTab, node->value.assignment.varName)->type;
+            if(strcmp(savedType2, "int") == 0 && strcmp(currentExpressionType, "float") == 0) {
+                TACConvertIntToFloat(strdup("$t1"));
+            } else if(strcmp(savedType2, "float") == 0 && strcmp(currentExpressionType, "int") == 0) {
+                TACConvertFloatToInt(strdup("$f1"));
+            }
             break;
 
         case NodeType_ArrayAssignment:
@@ -176,24 +186,44 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
 
         case NodeType_Expression:
             printf("Semantic Analysis running on node of type: NodeType_Expression\n");
+            char* savedType = NULL;
             if (strcmp(node->value.Expression.op, "*") == 0 || strcmp(node->value.Expression.op, "*") == 0) {
                 semanticAnalysis(node->value.Expression.right, symTab, functionBST, arraySymTab);
+                savedType = currentExpressionType;
                 semanticAnalysis(node->value.Expression.left, symTab, functionBST, arraySymTab);
+                currentExpressionType = processExpressionTypes(savedType, currentExpressionType);
             } else { 
                 if(node->value.Expression.left->type != NodeType_Expression) {
                     semanticAnalysis(node->value.Expression.right, symTab, functionBST, arraySymTab);
+                    savedType = currentExpressionType;
                     semanticAnalysis(node->value.Expression.left, symTab, functionBST, arraySymTab);
+                    currentExpressionType = processExpressionTypes(savedType, currentExpressionType);
                 } else {
                     semanticAnalysis(node->value.Expression.left, symTab, functionBST, arraySymTab);
                     if (node->value.Expression.right->type == NodeType_Expression) {
-                        moveRegisters(strdup("$t1"), strdup("$t4"));
+                        if (strcmp(currentExpressionType, "int") == 0) {
+                            moveRegisters(strdup("$t1"), strdup("$t4"));
+                        } else if (strcmp(currentExpressionType, "float") == 0) {
+                            moveRegisters(strdup("$f1"), strdup("$f4"));
+                        }
                         isRight = true;
                     }
+                    savedType = currentExpressionType;
                     semanticAnalysis(node->value.Expression.right, symTab, functionBST, arraySymTab);
                     if (node->value.Expression.right->type == NodeType_Expression) {
-                        moveRegisters(strdup("$t1"), strdup("$t0"));
-                        moveRegisters(strdup("$t4"), strdup("$t1"));
+                        if (strcmp(currentExpressionType, "int") == 0) {
+                            moveRegisters(strdup("$t1"), strdup("$t0"));
+                        } else if (strcmp(currentExpressionType, "float") == 0) {
+                            moveRegisters(strdup("$f1"), strdup("$f0"));
+                        }
+
+                        if (strcmp(savedType, "int") == 0) {
+                            moveRegisters(strdup("$t4"), strdup("$t1"));
+                        } else if (strcmp(savedType, "float") == 0) {
+                            moveRegisters(strdup("$f4"), strdup("$f1"));
+                        }
                     }
+                    currentExpressionType = processExpressionTypes(savedType, currentExpressionType);
                 }
             }
             
@@ -202,11 +232,24 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
 
         case NodeType_Number:
             printf("Semantic Analysis running on node of type: NodeType_Number\n");
+            currentExpressionType = strdup("int");
+            break;
+
+        case NodeType_FloatNumber:
+            printf("Semantic Analysis running on node of type: NodeType_Number\n");
+            currentExpressionType = strdup("float");
             break;
 
         case NodeType_Identifier:
             printf("Semantic Analysis running on node of type: NodeType_Identifier\n");
-            lookupSymbol(symTab, node->value.identifier.name);
+
+            if(!lookupSymbol(symTab, node->value.identifier.name)) {
+                fprintf(stderr, "Error: Var %s not declared\n", node->value.identifier.name);
+                exit(1);
+            }
+
+            currentExpressionType = strdup(lookupSymbol(symTab, node->value.identifier.name)->type);
+
             break;
 
         case NodeType_ArrayAccess:
@@ -216,12 +259,16 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
                 fprintf(stderr, "Error: Array %s not declared\n", node->value.ArrayAccess.name);
                 exit(1);
             }
+
             Symbol* tempSymbol2 = lookupSymbol(symTab, node->value.ArrayAccess.name);
             unsigned int index2 = node->value.ArrayAccess.index;
+
             if(index2 < 0 || index2 >= tempSymbol2->size) {
                 printf("Index out of bounds on array %s\n", node->value.ArrayAccess.name);
                 exit(0);
             }
+
+            currentExpressionType = strdup(tempSymbol2->type);
 
             break;
         default:
@@ -291,15 +338,26 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
                 exit(0);
             }
 
+            currentExpressionType = strdup(lookupFunctionNode(functionBST, node->value.FunctionCall.funcName)->symbol->type); 
+
             printf("Generating TAC for function call end\n");
             instruction->arg1 = strdup(node->value.FunctionCall.funcName);
             instruction->arg2 = strdup("");
             instruction->op = strdup("FuncCallEnd");
             instruction->result = "";
+
             if (tempIsRight) {
-                instruction->result = strdup("$t1");;
+                if(strcmp(currentExpressionType, "int") == 0) {
+                    instruction->result = strdup("$t1");
+                } else if (strcmp(currentExpressionType, "float") == 0) {
+                    instruction->result = strdup("$f1");
+                }
             } else {
-                instruction->result = strdup("$t0");
+                if(strcmp(currentExpressionType, "int") == 0) {
+                    instruction->result = strdup("$t0");
+                } else if (strcmp(currentExpressionType, "float") == 0) {
+                    instruction->result = strdup("$f0");
+                }
             }
             isRight = false;
 
@@ -318,6 +376,7 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
         node->type == NodeType_Assignment || 
         node->type == NodeType_ArrayAssignment ||
         node->type == NodeType_Number || 
+        node->type == NodeType_FloatNumber ||
         node->type == NodeType_Print || 
         node->type == NodeType_Identifier ||
         node->type == NodeType_ArrayAccess
@@ -396,7 +455,11 @@ TAC* generateTACForExpr(ASTNode* expr) {
         case NodeType_Assignment: {
             printf("Generating TAC for Assignment\n");
             instruction->arg1 = strdup(expr->value.assignment.varName);
-            instruction->arg2 = strdup("$t1");
+            if (strcmp(currentExpressionType, "int") == 0) {
+                instruction->arg2 = strdup("$t1");
+            } else if (strcmp(currentExpressionType, "float") == 0) {
+                instruction->arg2 = strdup("$f1");
+            } 
             instruction->op = strdup("=");
             instruction->result = getVariableReference(expr->value.assignment.varName);
             isRight = true;
@@ -416,7 +479,11 @@ TAC* generateTACForExpr(ASTNode* expr) {
 
         case NodeType_Print: {
             printf("Generating TAC for print\n");
-            instruction->arg1 = strdup("$t1");
+            if (strcmp(currentExpressionType, "int") == 0) {
+                instruction->arg1 = strdup("$t1");
+            } else if (strcmp(currentExpressionType, "float") == 0) {
+                instruction->arg1 = strdup("$f1");
+            }
             instruction->arg2 = NULL;
             instruction->op = strdup("Print");
             instruction->result = NULL;
@@ -427,10 +494,19 @@ TAC* generateTACForExpr(ASTNode* expr) {
         case NodeType_Expression: {
             printf("Generating TAC for expression\n");
             char* op = strdup(expr->value.Expression.op);
-            instruction->arg1 = strdup("$t0");
-            instruction->arg2 = strdup("$t1");
+            if(strcmp(currentExpressionType, "int") == 0) {
+                instruction->arg1 = strdup("$t0");
+                instruction->arg2 = strdup("$t1");
+            } else if(strcmp(currentExpressionType, "float") == 0) {
+                instruction->arg1 = strdup("$f0");
+                instruction->arg2 = strdup("$f1");
+            }
             instruction->op = op;
-            instruction->result = strdup("$t1");
+            if(strcmp(currentExpressionType, "int") == 0) {
+                instruction->result = strdup("$t1");
+            } else if (strcmp(currentExpressionType, "float") == 0) {
+                instruction->result = strdup("$f1");
+            }
             break;
         }
 
@@ -450,6 +526,22 @@ TAC* generateTACForExpr(ASTNode* expr) {
             break;
         }
 
+        case NodeType_FloatNumber: {
+            printf("Generating TAC for float number\n");
+            char buffer[20];
+            snprintf(buffer, 20, "%f", expr->value.FloatNumber.value);
+            instruction->arg1 = strdup(buffer);
+            instruction->arg2 = NULL;
+            instruction->op = strdup("Num");
+            if (isRight) {
+                instruction->result = strdup("$f1");
+                isRight = false;
+            } else {
+                instruction->result = strdup("$f0");
+            }
+            break;
+        }
+
         case NodeType_Identifier: {
             printf("Generating TAC for identifier\n");
             printf("Identifier: %s\n", expr->value.identifier.name);
@@ -459,10 +551,18 @@ TAC* generateTACForExpr(ASTNode* expr) {
             instruction->op = strdup("ID");
 
             if (isRight) {
-                instruction->result = strdup("$t1");
+                if(strcmp(currentExpressionType, "int") == 0) {
+                    instruction->result = strdup("$t1");
+                } else if (strcmp(currentExpressionType, "float") == 0) {
+                    instruction->result = strdup("$f1");
+                }
                 isRight = false;
             } else {
-                instruction->result = strdup("$t0");
+                if(strcmp(currentExpressionType, "int") == 0) {
+                    instruction->result = strdup("$t0");
+                } else if (strcmp(currentExpressionType, "float") == 0) {
+                    instruction->result = strdup("$f0");
+                }
             }
             break;
         }
@@ -474,10 +574,18 @@ TAC* generateTACForExpr(ASTNode* expr) {
             instruction->arg2 = getVariableReference(expr->value.ArrayAccess.name);
             instruction->op = strdup("ArrayAccess");
             if (isRight) {
-                instruction->result = strdup("$t1");
+                if(strcmp(currentExpressionType, "int") == 0) {
+                    instruction->result = strdup("$t1");
+                } else if (strcmp(currentExpressionType, "float") == 0) {
+                    instruction->result = strdup("$f1");
+                }
                 isRight = false;
             } else {
-                instruction->result = strdup("$t0");
+                if(strcmp(currentExpressionType, "int") == 0) {
+                    instruction->result = strdup("$t0");
+                } else if (strcmp(currentExpressionType, "float") == 0) {
+                    instruction->result = strdup("$f0");
+                }
             }
             break;
         }
@@ -583,6 +691,10 @@ void printTAC(TAC* tac) {
         printf("\tFunction Call End: %s => %s\n", tac->arg1, tac->result);
     }else if (strcmp(tac->op, "ParamCall") == 0) {
         printf("\tParameter Call: %s\n", tac->arg1);
+    } else if (strcmp(tac->op, "IntToFloat") == 0) {
+        printf("\tInt to float: %s ==> %s\n", tac->arg1, tac->result);
+    } else if (strcmp(tac->op, "FloatToInt") == 0) {
+        printf("\tFloat to int: %s ==> %s\n", tac->arg1, tac->result);
     }
 }
 
@@ -645,6 +757,63 @@ void moveRegisters(char* from, char* to) {
     instruction->arg2 = strdup("");
     instruction->op = strdup("move");
     instruction->result = strdup(to);
+    instruction->next = NULL; 
+    appendTAC(&tacHead, instruction);
+}
+
+char* processExpressionTypes(char* type1, char* type2) {
+    if(strcmp(type1, "char") == 0 || strcmp(type2, "char") == 0) {
+        printf("combining chars in expressions is not allowed, now everything is broken, good job programmer\n");
+        exit(0);
+    }
+
+    if(strcmp(type1, type2) == 0) {
+        return(strdup(type1));
+    } else if (strcmp(type1,"int") == 0 && strcmp(type2, "float") == 0) {
+        TACConvertIntToFloat("$t1");
+        return(strdup("float"));
+    } else if (strcmp(type1,"float") == 0 && strcmp(type2, "int") == 0) {
+        TACConvertIntToFloat("$t0");
+        return(strdup("float"));
+    }
+}
+
+void TACConvertIntToFloat(char* curRegister) {
+    TAC* instruction = (TAC*)malloc(sizeof(TAC));
+    if (!instruction) {
+        fprintf(stderr, "Failed to create custom tac instruction Error 31563 (ctrl + f to seach for this in semantic.c)");
+        exit(0);
+    }
+
+    printf("Generating TAC for int to float conversion\n");
+    instruction->arg1 = strdup(curRegister);
+    instruction->arg2 = strdup("");
+    instruction->op = strdup("IntToFloat");
+    if (strcmp(curRegister, "$t0") == 0) {
+        instruction->result = strdup("$f0");
+    } else if (strcmp(curRegister, "$t1") == 0) {
+        instruction->result = strdup("$f1");
+    }
+    instruction->next = NULL; 
+    appendTAC(&tacHead, instruction);
+}
+
+void TACConvertFloatToInt(char* curRegister) {
+    TAC* instruction = (TAC*)malloc(sizeof(TAC));
+    if (!instruction) {
+        fprintf(stderr, "Failed to create custom tac instruction Error 31563 (ctrl + f to seach for this in semantic.c)");
+        exit(0);
+    }
+
+    printf("Generating TAC for float to int conversion\n");
+    instruction->arg1 = strdup(curRegister);
+    instruction->arg2 = strdup("");
+    instruction->op = strdup("FloatToInt");
+    if (strcmp(curRegister, "$f0") == 0) {
+        instruction->result = strdup("$t0");
+    } else if (strcmp(curRegister, "$f1") == 0) {
+        instruction->result = strdup("$t1");
+    }
     instruction->next = NULL; 
     appendTAC(&tacHead, instruction);
 }
