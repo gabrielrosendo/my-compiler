@@ -3,16 +3,24 @@ void main() {
 	int y;
 
 	x = 1.1 + 2.2;
+	print(x);
 	x = 1.1 - 2.2;
+	print(x);
 	x = 1.1 * 2.2;
+	print(x);
 	x = 1.1 / 2.2;
+	print(x);
 
 	x = x;
 
 	y = 1 + 2;
+	print(y);
 	y = 1 - 2;
+	print(y);	
 	y = 1 * 2;
+	print(y);
 	y = 1 / 2;
+	print(y);
 
 	y = y;
 
