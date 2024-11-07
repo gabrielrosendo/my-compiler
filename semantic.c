@@ -305,18 +305,29 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
                     exit(0);
                 }
 
-                if (currentParameter->next == NULL) {
-                    currentParameter = NULL;
-                } else {
-                    currentParameter = currentParameter->next;
+                semanticAnalysis(node2->value.CallParamList.expr, symTab, functionBST, arraySymTab);                
+                if (strcmp(currentParameter->type, currentExpressionType) != 0) {
+                    if (strcmp(currentParameter->type, "int") == 0 && strcmp(currentExpressionType, "float") == 0) {
+                        TACConvertFloatToInt(strdup("$f1"));
+                        currentExpressionType = strdup("int");
+                    } else if (strcmp(currentParameter->type, "float") == 0 && strcmp(currentExpressionType, "int") == 0) {
+                        // Do nothing
+                    } else {
+                        fprintf(stderr, "Error: function call parameter type doesnt match function declaration parameter Function name: %s Expected parameter: %s %s Given type: %s\n", currentFunctionCallName, currentParameter->type, currentParameter->name, currentExpressionType);
+                        exit(0);
+                    }
                 }
-
-                semanticAnalysis(node2->value.CallParamList.expr, symTab, functionBST, arraySymTab);
                 semanticAnalysis(node2->value.CallParamList.nextParam, symTab, functionBST, arraySymTab);
 
                 tac = generateTACForExpr(node2);
 
                 node2->value.CallParamList.nextParam == NULL;
+
+                if (currentParameter->next == NULL) {
+                    currentParameter = NULL;
+                } else {
+                    currentParameter = currentParameter->next;
+                }
 
                 if(node2->value.CallParamList.nextParam == NULL) {
                     node2 = NULL;
@@ -608,7 +619,11 @@ TAC* generateTACForExpr(ASTNode* expr) {
         case NodeType_CallParamList: {
             if(expr->value.CallParamList.expr != NULL) {
                 printf("Generating TAC for Call Parameter\n");
-                instruction->arg1 = strdup("$t1");
+                if(strcmp(currentExpressionType, "int") == 0) {
+                    instruction->arg1 = strdup("$t1");
+                } else if (strcmp(currentExpressionType, "float") == 0) {
+                    instruction->arg1 = strdup("$f1");
+                }
                 instruction->arg2 = strdup("");
                 instruction->op = strdup("ParamCall");
                 instruction->result = strdup("");
