@@ -1,25 +1,7 @@
-bool returnF(bool a, bool b) {
-	return a;
-}
-
-bool returnS(bool a, bool b) {
-	return b;
-}
-
 void main() {
-	bool a;
-	bool b;
+	char a;
 	
-	b = true;
-	a = returnS(a, b);
-	print(a);
-
-	b = false;
-	b = returnF(a, b);
-	print(b);
-
-	b = false;
-	a = returnS(a, b);
-	print(a);
+	a = 'a';
+	a = 'A';
 }
 

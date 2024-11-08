@@ -54,6 +54,7 @@ ArraySymbolTable* arraySymTab = NULL;
 %token <op> MUL
 %token <op> DIV
 %token <string> SEMICOLON
+%token <string> SINGLEQUOTE
 %token <string> LPAREN
 %token <string> RPAREN
 %token <string> LBRACE
@@ -64,6 +65,7 @@ ArraySymbolTable* arraySymTab = NULL;
 %token <string> RETURN
 %token <keyword> MAIN
 %token <string> BASECONDITIONAL
+%token <string> CHARACTER
 
 %left ADD SUB MUL DIV
 
