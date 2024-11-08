@@ -113,7 +113,10 @@ void generateMIPS(TAC* tacInstructions) {
                 fprintf(outputFile, "\tmfc1 $t1, $f1\n");
                 fprintf(outputFile, "\taddi $sp, $sp, -4\t\t# Add space on the stack\n");
                 fprintf(outputFile, "\tsw $t1, 0($sp)\t\t# Put $t1 on the stack to return\n\n");
-            }
+            } else if(strcmp(tac->arg1, "bool") == 0) {
+                fprintf(outputFile, "\taddi $sp, $sp, -4\t\t# Add space on the stack\n");
+                fprintf(outputFile, "\tsw $t5, 0($sp)\t\t# Put $t5 on the stack to return\n\n");
+            } 
 
             fprintf(outputFile, "\tjr $ra\t\t# Call return address to end function\n\n");
 
@@ -236,6 +239,9 @@ void generateMIPS(TAC* tacInstructions) {
                 fprintf(outputFile, "\tlw %s, 0($t2)\n", tac->result);
             } else if (strcmp(tac->result, "$f0") == 0 || strcmp(tac->result, "$f1") == 0) {
                 fprintf(outputFile, "\tl.s %s, %s\n", tac->result, tac->arg2);
+            } else if (strcmp(tac->result, "$t5") == 0) {
+                fprintf(outputFile, "\tla $t2, %s\n", tac->arg2);
+                fprintf(outputFile, "\tlw %s, 0($t2)\n", tac->result);
             }
 
         } else if (strcmp(tac->op, "ArrayAccess") == 0) {
@@ -270,6 +276,8 @@ void generateMIPS(TAC* tacInstructions) {
                 fprintf(outputFile, "\tmove %s, $t3\n\n", tac->result);
             } else if (strcmp(tac->result, "$f0") == 0 || strcmp(tac->result, "$f1") == 0) {
                 fprintf(outputFile, "\tmtc1 $t3, %s\n\n", tac->result);
+            } else if (strcmp(tac->result, "$t5") == 0) {
+                fprintf(outputFile, "\tmove %s, $t3\n\n", tac->result);
             }
 
         } else if (strcmp(tac->op, "ParamCall") == 0) {
@@ -282,6 +290,9 @@ void generateMIPS(TAC* tacInstructions) {
                 fprintf(outputFile, "\tmfc1 $t1, $f1\n");
                 fprintf(outputFile, "\taddi $sp, $sp, -4\n");
                 fprintf(outputFile, "\tsw $t1, 0($sp)\n\n");
+            } else if (strcmp(tac->arg1, "$t5") == 0) {
+                fprintf(outputFile, "\taddi $sp, $sp, -4\n");
+                fprintf(outputFile, "\tsw $t5, 0($sp)\n\n");
             }
         
         } else if (strcmp(tac->op, "IntToFloat") == 0) {
@@ -320,6 +331,11 @@ void unstackParameters(TAC* tac) {
         fprintf(outputFile, "\tmtc1 $t1, $f1\n");
         fprintf(outputFile, "\ts.s $f1, %s\n", tac->result);
         fprintf(outputFile, "\taddi $sp, $sp, 4\n\n");
+    } else if (strcmp(tac->arg1, "bool") == 0) {
+        fprintf(outputFile, "\tlw $t1, 0($sp)\n");
+        fprintf(outputFile, "\tla $t2, %s\n", tac->result);
+        fprintf(outputFile, "\tsw $t1, 0($t2)\n");
+        fprintf(outputFile, "\taddi $sp, $sp, 4\n\n"); 
     }
 }
 
@@ -338,6 +354,11 @@ void stackAllVariable() {
             fprintf(outputFile, "\tmfc1 $t1, $f1\n");
             fprintf(outputFile, "\taddi $sp, $sp, -4\n");
             fprintf(outputFile, "\tsw $t1, 0($sp)\n\n"); 
+        } else if (strcmp(tac->arg1, "bool") == 0) {
+            fprintf(outputFile, "\tla $t2, %s\n", tac->result);
+            fprintf(outputFile, "\tlw $t1, 0($t2)\n");
+            fprintf(outputFile, "\taddi $sp, $sp, -4\n");
+            fprintf(outputFile, "\tsw $t1, 0($sp)\n\n");  
         }
         tac = tac->next;
     }
@@ -358,5 +379,10 @@ void unStackAllVariable(TAC* tac) {
         fprintf(outputFile, "\tmtc1 $t1, $f1\n");
         fprintf(outputFile, "\ts.s $f1, %s\n", tac->result);
         fprintf(outputFile, "\taddi $sp, $sp, 4\n\n");
+    } else if (strcmp(tac->arg1, "bool") == 0) {
+        fprintf(outputFile, "\tlw $t1, 0($sp)\n");
+        fprintf(outputFile, "\tla $t2, %s\n", tac->result);
+        fprintf(outputFile, "\tsw $t1, 0($t2)\n");
+        fprintf(outputFile, "\taddi $sp, $sp, 4\n\n"); 
     }
 }

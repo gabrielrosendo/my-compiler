@@ -1,10 +1,12 @@
-char x ==> mainx
-bool e ==> maine
-bool h ==> mainh
-int g ==> maing
-int r ==> mainr
-$t5 = mainh (h)
-maine (e) = $t5
-$t5 = maine (e)
+$t5 = returnFa (a)
+$t5 = returnSb (b)
+bool a ==> maina
+bool b ==> mainb
+$t5 = maina (a)
+$t5 = mainb (b)
+maina (a) = $t5
+$t5 = maina (a)
 Print((null) ($t5))
-Print((null) ($t5))
+$t5 = maina (a)
+$t5 = mainb (b)
+mainb (b) = $t5
