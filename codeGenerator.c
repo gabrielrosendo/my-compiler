@@ -31,7 +31,11 @@ void initCodeGenerator(const char* outputFilename, TAC* tacInstructions) {
             fprintf(outputFile, "%s: .word 0:%d\n", tac->result, tac->arg3);
         } else if (strcmp(tac->op, "ParamDecl") == 0) {
             printf("\tVariable: %s %s ==> %s\n", tac->arg1, tac->arg2, tac->result);
-            fprintf(outputFile, "%s: .word 0\n", tac->result);
+             if (strcmp(tac->arg1, "int") == 0) {
+                fprintf(outputFile, "%s: .word 0\n", tac->result);
+            } else if (strcmp(tac->arg1, "float") == 0) {
+                fprintf(outputFile, "%s: .float 0.0\n", tac->result);
+            }
         } 
         tac = tac->next;
     }
@@ -94,8 +98,14 @@ void generateMIPS(TAC* tacInstructions) {
             fprintf(outputFile, "\tlw $ra, 0($sp)\t\t# Get return address off stack\n");
             fprintf(outputFile, "\taddi $sp, $sp, 4\t\t# Dealloc stack\n\n");
 
-            fprintf(outputFile, "\taddi $sp, $sp, -4\t\t# Add space on the stack\n");
-            fprintf(outputFile, "\tsw $t1, 0($sp)\t\t# Put $t1 on the stack to return\n\n");
+            if(strcmp(tac->arg1, "int") == 0) {
+                fprintf(outputFile, "\taddi $sp, $sp, -4\t\t# Add space on the stack\n");
+                fprintf(outputFile, "\tsw $t1, 0($sp)\t\t# Put $t1 on the stack to return\n\n");
+            } else if(strcmp(tac->arg1, "float") == 0) {
+                fprintf(outputFile, "\tmfc1 $t1, $f1\n");
+                fprintf(outputFile, "\taddi $sp, $sp, -4\t\t# Add space on the stack\n");
+                fprintf(outputFile, "\tsw $t1, 0($sp)\t\t# Put $t1 on the stack to return\n\n");
+            }
 
             fprintf(outputFile, "\tjr $ra\t\t# Call return address to end function\n\n");
 
@@ -250,7 +260,7 @@ void generateMIPS(TAC* tacInstructions) {
         
         } else if (strcmp(tac->op, "FloatToInt") == 0) {
             printf("Generating MIPS for Float to Int register\n");
-            fprintf(outputFile, "\tcvt.s.w %s, %s\n", tac->arg1, tac->arg1);
+            fprintf(outputFile, "\tcvt.w.s %s, %s\n", tac->arg1, tac->arg1);
             fprintf(outputFile, "\tmfc1 %s, %s\n", tac->result, tac->arg1);
 
         } else {
@@ -269,10 +279,17 @@ void unstackParameters(TAC* tac) {
 
     unstackParameters(tac->next);
 
-    fprintf(outputFile, "\tlw $t1, 0($sp)\n");
-    fprintf(outputFile, "\tla $t2, %s\n", tac->result);
-    fprintf(outputFile, "\tsw $t1, 0($t2)\n");
-    fprintf(outputFile, "\taddi $sp, $sp, 4\n\n");
+    if (strcmp(tac->arg1, "int") == 0) {
+        fprintf(outputFile, "\tlw $t1, 0($sp)\n");
+        fprintf(outputFile, "\tla $t2, %s\n", tac->result);
+        fprintf(outputFile, "\tsw $t1, 0($t2)\n");
+        fprintf(outputFile, "\taddi $sp, $sp, 4\n\n"); 
+    } else if (strcmp(tac->arg1, "float") == 0) {
+        fprintf(outputFile, "\tlw $t1, 0($sp)\n");
+        fprintf(outputFile, "\tmtc1 $t1, $f1\n");
+        fprintf(outputFile, "\ts.s $f1, %s\n", tac->result);
+        fprintf(outputFile, "\taddi $sp, $sp, 4\n\n");
+    }
 }
 
 void stackAllVariable() {
