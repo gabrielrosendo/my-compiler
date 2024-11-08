@@ -16,5 +16,10 @@ void main() {
 
 	b = false;
 	b = returnF(a, b);
+	print(b);
+
+	b = false;
+	a = returnS(a, b);
+	print(a);
 }
 

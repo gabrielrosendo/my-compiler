@@ -10,3 +10,10 @@ Print((null) ($t5))
 $t5 = maina (a)
 $t5 = mainb (b)
 mainb (b) = $t5
+$t5 = mainb (b)
+Print((null) ($t5))
+$t5 = maina (a)
+$t5 = mainb (b)
+maina (a) = $t5
+$t5 = maina (a)
+Print((null) ($t5))
