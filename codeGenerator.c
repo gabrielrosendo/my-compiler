@@ -127,6 +127,9 @@ void generateMIPS(TAC* tacInstructions) {
                 fprintf(outputFile, "\tsw $t1, 0($t2)\t\t# Save $t1 into variable\n\n");
             } else if (strcmp(tac->arg2, "$f1") == 0) {
                 fprintf(outputFile, "\ts.s $f1, %s\n\n", tac->result);
+            } else if (strcmp(tac->arg2, "$t5") == 0) {
+                fprintf(outputFile, "\tla $t2, %s\t\t# Load address of %s into $t2\n", tac->result, tac->result);
+                fprintf(outputFile, "\tsw $t5, 0($t2)\t\t# Save $t1 into variable\n\n");
             }
 
         } else if (strcmp(tac->op, "ConditionalAssignment") == 0) {
