@@ -1,7 +1,13 @@
+bool value() {
+	bool x;
+	x = true;
+	return x;
+}
+
 void main() {
-	char a;
-	
-	a = 'a';
-	a = 'A';
+	bool x;
+
+	x = value();
+	print(x);
 }
 

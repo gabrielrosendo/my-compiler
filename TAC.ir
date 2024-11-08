@@ -1,0 +1,6 @@
+bool x ==> valuex
+$t5 = valuex (x)
+bool x ==> mainx
+mainx (x) = $t5
+$t5 = mainx (x)
+Print((null) ($t5))
