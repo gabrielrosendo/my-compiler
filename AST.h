@@ -21,8 +21,11 @@ typedef enum {
     NodeType_StmtList,
     NodeType_Stmt,
     NodeType_Assignment,
+    NodeType_ConditionalAssignment,
     NodeType_ArrayAssignment,
     NodeType_Print,
+    NodeType_BooleanExpression,
+    NodeType_BooleanValue,
     NodeType_Expression,
     NodeType_Number,
     NodeType_FloatNumber,
@@ -116,6 +119,12 @@ typedef struct ASTNode {
 
         struct {
             char* varName;
+            char* op;
+            struct ASTNode* expr;
+        } ConditionalAssignment;
+
+        struct {
+            char* varName;
             unsigned int index;
             char* op;
             struct ASTNode* expr;
@@ -124,6 +133,16 @@ typedef struct ASTNode {
         struct{
             struct ASTNode* expr;
         } print;
+
+        struct {
+            struct ASTNode* left;
+            struct ASTNode* right;
+            char* op;
+        } BooleanExpression;
+
+        struct {
+            char* value;
+        } booleanValue;
 
         struct {
             struct ASTNode* left;

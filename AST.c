@@ -70,6 +70,11 @@ struct ASTNode* createNode(NodeType type) {
             newNode->value.assignment.varName = NULL;
             newNode->value.assignment.expr = NULL;
             break;
+        case NodeType_ConditionalAssignment:
+            newNode->value.ConditionalAssignment.op = NULL;
+            newNode->value.ConditionalAssignment.varName = NULL;
+            newNode->value.ConditionalAssignment.expr = NULL;
+            break;
         case NodeType_ArrayAssignment:
             newNode->value.arrayAssignment.varName = NULL;
             newNode->value.arrayAssignment.index = 0;
@@ -77,6 +82,14 @@ struct ASTNode* createNode(NodeType type) {
             newNode->value.arrayAssignment.expr = NULL;
         case NodeType_Print:
             newNode->value.print.expr = NULL;
+            break;
+        case NodeType_BooleanExpression:
+            newNode->value.BooleanExpression.left = NULL;
+            newNode->value.BooleanExpression.right = NULL;
+            newNode->value.BooleanExpression.op = '\0';
+            break;
+        case NodeType_BooleanValue:
+            newNode->value.booleanValue.value = '\0';
             break;
         case NodeType_Expression:
             newNode->value.Expression.left = NULL;
@@ -178,6 +191,11 @@ void freeAST(struct ASTNode* node) {
             free(node->value.assignment.varName);
             freeAST(node->value.assignment.expr);
             break;
+        case NodeType_ConditionalAssignment:
+            free(node->value.ConditionalAssignment.op);
+            free(node->value.ConditionalAssignment.varName);
+            freeAST(node->value.ConditionalAssignment.expr);
+            break;
         case NodeType_ArrayAssignment:
             free(node->value.arrayAssignment.op);
             free(node->value.arrayAssignment.varName);
@@ -185,6 +203,14 @@ void freeAST(struct ASTNode* node) {
             break;
         case NodeType_Print:
             freeAST(node->value.print.expr);
+            break;
+        case NodeType_BooleanExpression:
+            freeAST(node->value.BooleanExpression.left);
+            freeAST(node->value.BooleanExpression.right);
+            free(node->value.BooleanExpression.op);
+            break;
+        case NodeType_BooleanValue:
+            free(node->value.booleanValue.value);
             break;
         case NodeType_Expression:
             freeAST(node->value.Expression.left);
@@ -344,6 +370,15 @@ void printAST(struct ASTNode* node, int indent) {
             printf("AST Print: op = %s\n", node->value.assignment.op); 
             printAST(node->value.assignment.expr, indent + 1);
             break;
+        case NodeType_ConditionalAssignment:
+            spaceOut(indent);
+            printf("AST Print: NodeType_ConditionalAssignment\n");
+            spaceOut(indent);
+            printf("AST Print: Name = %s\n", node->value.ConditionalAssignment.varName);
+            spaceOut(indent);
+            printf("AST Print: op = %s\n", node->value.ConditionalAssignment.op); 
+            printAST(node->value.ConditionalAssignment.expr, indent + 1);
+            break;
         case NodeType_ArrayAssignment:
             spaceOut(indent);
             printf("AST Print: NodeType_ArrayAssignment\n");
@@ -358,6 +393,20 @@ void printAST(struct ASTNode* node, int indent) {
         case NodeType_Print:
             spaceOut(indent);
             printf("AST Print: NodeType_Print\n");
+            break;
+        case NodeType_BooleanExpression:
+            spaceOut(indent);
+            printf("AST Print: NodeType_BooleanExpression\n");
+            spaceOut(indent);
+            printf("AST Print: op = %s\n", node->value.BooleanExpression.op);
+            printAST(node->value.BooleanExpression.left, indent);
+            printAST(node->value.BooleanExpression.right, indent);
+            break;
+        case NodeType_BooleanValue:
+            spaceOut(indent);
+            printf("AST Print: NodeType_BooleanValue\n");
+            spaceOut(indent);
+            printf("AST Print: value = %s\n", node->value.booleanValue.value);
             break;
         case NodeType_Expression:
             spaceOut(indent);

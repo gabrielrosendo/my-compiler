@@ -63,10 +63,11 @@ ArraySymbolTable* arraySymTab = NULL;
 %token <string> COMMA
 %token <string> RETURN
 %token <keyword> MAIN
+%token <string> BASECONDITIONAL
 
 %left ADD SUB MUL DIV
 
-%type <ast> Program FuncDeclList FuncDecl MainFunc ParamList ParamDecl ParamArrayDecl Body VarDeclList VarDecl ArrayDecl StmtList Stmt Expr HighExpr BinOp HighBinOp CallParamList FuncTail FunctionCall
+%type <ast> Program FuncDeclList FuncDecl MainFunc ParamList ParamDecl ParamArrayDecl Body VarDeclList VarDecl ArrayDecl StmtList Stmt ConditionalStmt Expr HighExpr BinOp HighBinOp CallParamList FuncTail FunctionCall
 
 %%
 
@@ -248,6 +249,14 @@ Stmt: ID EQ Expr SEMICOLON {
 		$$->value.assignment.op = $2;
 		$$->value.assignment.expr = $3;
     }
+    |ID EQ ConditionalStmt SEMICOLON { 
+		printf("PARSER: Recognized boolean assignment statement\n");
+        printf("ID: %s, EQ: %s, Expr: %p\n", $1, $2, $3);
+        $$ = createNode(NodeType_ConditionalAssignment);
+		$$->value.ConditionalAssignment.varName = $1;
+		$$->value.ConditionalAssignment.op = $2;
+		$$->value.ConditionalAssignment.expr = $3;
+    }
     | ID LBRACKET NUMBER RBRACKET EQ Expr SEMICOLON {
         printf("PARSER: identified array assignment\n");
         printf("ID: %s, EQ: %s, Expr: %p, arraySize: %d\n", $1, $5, $6, $3);
@@ -262,8 +271,18 @@ Stmt: ID EQ Expr SEMICOLON {
         $$ = createNode(NodeType_Print);
         $$->value.print.expr = $3;
     }
+    | PRINT LPAREN ConditionalStmt RPAREN SEMICOLON { 
+        printf("PARSER: Recognized print statement\n"); 
+        $$ = createNode(NodeType_Print);
+        $$->value.print.expr = $3;
+    }
     // Handle missng semicolon  
     | PRINT LPAREN Expr RPAREN { 
+        printf ("Missing semicolon after print statement: %s\n", $3);
+        // stop compilation
+        exit(1);
+    }
+    | PRINT LPAREN ConditionalStmt RPAREN SEMICOLON { 
         printf ("Missing semicolon after print statement: %s\n", $3);
         // stop compilation
         exit(1);
@@ -273,12 +292,24 @@ Stmt: ID EQ Expr SEMICOLON {
         // stop compilation
         exit(1);
     }
+    | ID EQ ConditionalStmt { 
+        printf ("Missing semicolon after assignment statement: %s\n", $1);
+        // stop compilation
+        exit(1);
+    }
     | ID LBRACKET NUMBER RBRACKET EQ Expr {
         printf ("Missing semicolon after assignment statement: %s\n", $1);
         // stop compilation
         exit(1);
     }
-; 
+;
+
+ConditionalStmt : BASECONDITIONAL {
+        printf("PARSER: Recognized Base conditional\n");
+        $$ = createNode(NodeType_BooleanValue);
+        $$->value.booleanValue.value = $1;
+    } 
+;
 
 Expr: Expr BinOp Expr { 
                 printf("PARSER: Recognized expression\n");
