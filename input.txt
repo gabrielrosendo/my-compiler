@@ -1,18 +1,14 @@
-float addOne(int x, float y) {
-	print(x);
-	print(y);
-	x = x + 1;
-	y = y + 3.32 + 1;
-	return x;
-}
-
 void main() {
-	int a;
-	float b;
-	a = 5;
-	b = 6.2;
-	b = addOne(b, a);
-	print(a);
-	print(b);
+	char x;
+	bool e;	
+	bool h;
+	int g;
+	int r;
+	
+	e = true;
+	e = false;
+	e = h;
+	print(e);
+	print(true);
 }
 

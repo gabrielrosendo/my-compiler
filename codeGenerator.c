@@ -14,7 +14,7 @@ void initCodeGenerator(const char* outputFilename, TAC* tacInstructions) {
     }
     // Write the data section header
     fprintf(outputFile, ".data\n");
-    fprintf(outputFile, "newline: .asciiz \"\\n\"  # Define a new line character\n");
+    fprintf(outputFile, "print: .asciiz \"\\n\"  # Define a new line character\n");
 
     TAC* tac = tacInstructions;
 
@@ -25,17 +25,25 @@ void initCodeGenerator(const char* outputFilename, TAC* tacInstructions) {
                 fprintf(outputFile, "%s: .word 0\n", tac->result);
             } else if (strcmp(tac->arg1, "float") == 0) {
                 fprintf(outputFile, "%s: .float 0.0\n", tac->result);
-            }
+            } else if (strcmp(tac->arg1, "char") == 0) {
+                fprintf(outputFile, "%s: .byte ' '\n", tac->result);
+            } else if (strcmp(tac->arg1, "bool") == 0) {
+                fprintf(outputFile, "%s: .word 0\n", tac->result);
+            } 
         } else if (strcmp(tac->op, "ArrayDecl") == 0) {
             printf("\tArray: %s %s[%d] ==> %s[%d]\n", tac->arg1, tac->arg2,  tac->arg3, tac->result, tac->arg3);
             fprintf(outputFile, "%s: .word 0:%d\n", tac->result, tac->arg3);
         } else if (strcmp(tac->op, "ParamDecl") == 0) {
             printf("\tVariable: %s %s ==> %s\n", tac->arg1, tac->arg2, tac->result);
-             if (strcmp(tac->arg1, "int") == 0) {
+            if (strcmp(tac->arg1, "int") == 0) {
                 fprintf(outputFile, "%s: .word 0\n", tac->result);
             } else if (strcmp(tac->arg1, "float") == 0) {
                 fprintf(outputFile, "%s: .float 0.0\n", tac->result);
-            }
+            } else if (strcmp(tac->arg1, "char") == 0) {
+                fprintf(outputFile, "%s: .byte ' '\n", tac->result);
+            } else if (strcmp(tac->arg1, "bool") == 0) {
+                fprintf(outputFile, "%s: .word 0\n", tac->result);
+            } 
         } 
         tac = tac->next;
     }
@@ -118,6 +126,11 @@ void generateMIPS(TAC* tacInstructions) {
                 fprintf(outputFile, "\ts.s $f1, %s\n\n", tac->result);
             }
 
+        } else if (strcmp(tac->op, "ConditionalAssignment") == 0) {
+            printf("Generating MIPS for Conditional Assignment operation\n");
+            fprintf(outputFile, "\tla $t2, %s\t\t# Load address of %s into $t2\n", tac->result, tac->result);
+            fprintf(outputFile, "\tsw $t5, 0($t2)\t\t# Save $t5 into variable\n\n");
+
         } else if (strcmp(tac->op, "ArrayAssingment") == 0) {
             printf("Generating MIPS for Array Assignment operation\n");
             printf("\t%s (%s[%d]) = %s\n", tac->result, tac->arg1, tac->arg3, tac->arg2);
@@ -133,12 +146,30 @@ void generateMIPS(TAC* tacInstructions) {
             } else if (strcmp(tac->arg1, "$f1") == 0) {
                 fprintf(outputFile, "\tmov.s $f12, %s\n", tac->arg1);
                 fprintf(outputFile, "\tli $v0, 2\t\t# Load print float system function\n");  
+            } else if (strcmp(tac->arg1, "$t5") == 0) {
+                fprintf(outputFile, "\tmove $a0, %s\t\t# Move %s to $a0 for print output\n", tac->arg1, tac->arg1);
+                fprintf(outputFile, "\tli $v0, 1\t\t# Load print int system function\n");   
             }
             fprintf(outputFile, "\tsyscall\t\t# Syscall to print int\n\n");
 
             fprintf(outputFile, "\tli $v0, 4\t\t# Load syscall code for print string\n");
-            fprintf(outputFile, "\tla $a0, newline\t\t# Load address of newline into $a0\n");
+            fprintf(outputFile, "\tla $a0, print\t\t# Load address of print into $a0\n");
             fprintf(outputFile, "\tsyscall\t\t# Syscall to print string\n\n");
+
+        } else if (strcmp(tac->op, "BooleanValue") == 0) {
+            printf("Generating MIPS for BooleanValue\n");
+            printf("\t%s = %s\n", tac->result, tac->arg1);
+            if(strcmp(tac->arg1, "true") == 0) {
+                fprintf(outputFile, "\tli $t5, 1\n");
+            } else {
+                fprintf(outputFile, "\tli $t5, 0\n");
+            }
+
+        } else if (strcmp(tac->op, "ConditionalID") == 0) {
+            printf("Generating MIPS for ConditionalID\n");
+            printf("\t%s = (%s) %s\n", tac->result, tac->arg1, tac->arg2);
+            fprintf(outputFile, "\tla $t2, %s\n", tac->arg2);
+            fprintf(outputFile, "\tlw %s, 0($t2)\n", tac->result);
 
         } else if (strcmp(tac->op, "+") == 0) {
             printf("Generating MIPS for Addition\n");

@@ -84,7 +84,7 @@ Symbol* lookupSymbol(SymbolBST* head, char* name)   {
     }
 
     if (head->symbol == NULL) {
-        fprintf(stderr,"SymbolBST Error in lookupSymbol(): symbol could not be found in SymbolBST \n");
+        fprintf(stderr,"SymbolBST Error in lookupSymbol(): symbol could not be found in SymbolBST %s\n", name);
         return NULL;
     }
 
@@ -100,7 +100,7 @@ Symbol* lookupSymbol(SymbolBST* head, char* name)   {
 
     // else (head->hash > curHash)    
     if (head->left == NULL) {
-        fprintf(stderr,"SymbolBST Error in lookupSymbol(): symbol could not be found in SymbolBST \n");
+        fprintf(stderr,"SymbolBST Error in lookupSymbol(): symbol could not be found in SymbolBST %s\n", name);
         exit(0);
     }
     return lookupSymbol(head->left, name);

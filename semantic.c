@@ -179,11 +179,37 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
 
             char* savedType2 = currentExpressionType;
             currentExpressionType = lookupSymbol(symTab, node->value.assignment.varName)->type;
+
+            if(strcmp(savedType2, "bool") == 0 && strcmp(currentExpressionType, "bool") != 0) {
+                printf("Error: non boolean variable cannot be assigned a boolean\n");
+                exit(1);
+            } else if(strcmp(savedType2, "bool") != 0 && strcmp(currentExpressionType, "bool") == 0) {
+                printf("Error: non boolean cannot be assigned to boolean variable\n");
+                exit(1);
+            }
+
             if(strcmp(savedType2, "int") == 0 && strcmp(currentExpressionType, "float") == 0) {
                 TACConvertIntToFloat(strdup("$t1"));
             } else if(strcmp(savedType2, "float") == 0 && strcmp(currentExpressionType, "int") == 0) {
                 TACConvertFloatToInt(strdup("$f1"));
             }
+            break;
+
+        case NodeType_ConditionalAssignment:
+            printf("Semantic Analysis running on node of type: NodeType_ConditionalAssignment\n");
+
+            if (!lookupSymbol(symTab, node->value.ConditionalAssignment.varName)) {
+                fprintf(stderr, "Error: Variable %s not declared\n", node->value.ConditionalAssignment.varName);
+                exit(1);
+            }
+
+            semanticAnalysis(node->value.ConditionalAssignment.expr, symTab, functionBST, arraySymTab);
+
+            if(strcmp(lookupSymbol(symTab, node->value.ConditionalAssignment.varName)->type, "bool") != 0) {
+                fprintf(stderr, "Error: Non boolean variable %s is being assigned a boolean value\n", node->value.ConditionalAssignment.varName);
+                exit(1);
+            }
+
             break;
 
         case NodeType_ArrayAssignment:
@@ -205,6 +231,18 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
         case NodeType_Print:
             printf("Semantic Analysis running on node of type: NodeType_Print\n");
             semanticAnalysis(node->value.print.expr, symTab, functionBST, arraySymTab);
+            break;
+
+        case NodeType_BooleanValue:
+            printf("Semantic Analysis running on node of type: NodeType_BooleanValue\n");
+            printf("Value: %s\n", node->value.booleanValue.value);
+            break;
+
+            if(strcmp(currentExpressionType, "bool") != 0) {
+                printf("Boolean expression does not have boolean result, actual result: %s\n", currentExpressionType);
+                exit(0);
+            }
+
             break;
 
         case NodeType_Expression:
@@ -409,7 +447,9 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
         node->type == NodeType_VarDecl || 
         node->type == NodeType_ArrayDecl ||
         node->type == NodeType_Assignment || 
+        node->type == NodeType_ConditionalAssignment ||
         node->type == NodeType_ArrayAssignment ||
+        node->type == NodeType_BooleanValue || 
         node->type == NodeType_Number || 
         node->type == NodeType_FloatNumber ||
         node->type == NodeType_Print || 
@@ -500,9 +540,21 @@ TAC* generateTACForExpr(ASTNode* expr) {
                 instruction->arg2 = strdup("$t1");
             } else if (strcmp(currentExpressionType, "float") == 0) {
                 instruction->arg2 = strdup("$f1");
-            } 
+            } else if (strcmp(currentExpressionType, "bool") == 0) {
+                instruction->arg2 = strdup("$t5");
+            }
             instruction->op = strdup("=");
             instruction->result = getVariableReference(expr->value.assignment.varName);
+            isRight = true;
+            break;
+        }
+
+        case NodeType_ConditionalAssignment: {
+            printf("Generating TAC for Conditional Assignment\n");
+            instruction->arg1 = strdup(expr->value.ConditionalAssignment.varName);
+            instruction->arg2 = strdup("$t5");
+            instruction->op = strdup("ConditionalAssignment");
+            instruction->result = getVariableReference(expr->value.ConditionalAssignment.varName);
             isRight = true;
             break;
         }
@@ -524,11 +576,22 @@ TAC* generateTACForExpr(ASTNode* expr) {
                 instruction->arg1 = strdup("$t1");
             } else if (strcmp(currentExpressionType, "float") == 0) {
                 instruction->arg1 = strdup("$f1");
+            } else if (strcmp(currentExpressionType, "bool") == 0) {
+                instruction->arg1 = strdup("$t5");
             }
             instruction->arg2 = NULL;
             instruction->op = strdup("Print");
             instruction->result = NULL;
             isRight = true;
+            break;
+        }
+
+        case NodeType_BooleanValue: {
+            printf("Generating TAC for Boolean Value\n");
+            instruction->arg1 = expr->value.booleanValue.value;
+            instruction->op = strdup("BooleanValue");
+            instruction->result = strdup("$t5");
+            currentExpressionType = strdup("bool");
             break;
         }
 
@@ -596,6 +659,8 @@ TAC* generateTACForExpr(ASTNode* expr) {
                     instruction->result = strdup("$t1");
                 } else if (strcmp(currentExpressionType, "float") == 0) {
                     instruction->result = strdup("$f1");
+                } else if (strcmp(currentExpressionType, "bool") == 0) {
+                    instruction->result = strdup("$t5");
                 }
                 isRight = false;
             } else {
@@ -603,6 +668,8 @@ TAC* generateTACForExpr(ASTNode* expr) {
                     instruction->result = strdup("$t0");
                 } else if (strcmp(currentExpressionType, "float") == 0) {
                     instruction->result = strdup("$f0");
+                } else if (strcmp(currentExpressionType, "bool") == 0) {
+                    instruction->result = strdup("$t5");
                 }
             }
             break;
@@ -710,10 +777,14 @@ void printTAC(TAC* tac) {
         printf("\tArray: %s %s[%d] ==> %s[%d]\n", tac->arg1, tac->arg2,  tac->arg3, tac->result, tac->arg3);
     } else if (strcmp(tac->op, "=") == 0) {
         printf("\t%s (%s) = %s\n", tac->result, tac->arg1, tac->arg2);
+    } else if (strcmp(tac->op, "ConditionalAssignment") == 0) {
+        printf("\t%s (%s) = %s\n", tac->result, tac->arg1, tac->arg2);
     } else if (strcmp(tac->op, "ArrayAssingment") == 0) {
         printf("\t%s (%s[%d]) = %s\n", tac->result, tac->arg1, tac->arg3, tac->arg2);
     } else if (strcmp(tac->op, "Print") == 0) {
         printf("\tPrint(%s)\n", tac->arg1);
+    } else if (strcmp(tac->op, "BooleanValue") == 0) {
+        printf("\t%s = %s\n", tac->result, tac->arg1);
     } else if (strcmp(tac->op, "+") == 0) {
         printf("\t%s = %s + %s\n", tac->result, tac->arg1, tac->arg2);
     } else if (strcmp(tac->op, "-") == 0) {

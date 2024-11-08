@@ -39,7 +39,7 @@ BAD_ID {NUMBER}{ID}
     // You might want to add a STRING token if you need it in your grammar
 }
 
-"int"|"float"|"char" { 
+"int"|"float"|"char"|"bool" { 
     words++; chars += strlen(yytext);
     printf("%-10s | %-10s\n", yytext, "TYPE");
     yylval.string = strdup(yytext);
@@ -72,6 +72,13 @@ BAD_ID {NUMBER}{ID}
     words++; chars += strlen(yytext);
     printf("%-10s | %-10s\n", yytext, "PRINT");
     return PRINT;
+}
+
+"true"|"false" { 
+    words++; chars += strlen(yytext);
+    printf("%-10s | %-10s\n", yytext, "BASECONDITIONAL");
+    yylval.string = strdup(yytext);
+    return BASECONDITIONAL;
 }
 
 {ID} {
