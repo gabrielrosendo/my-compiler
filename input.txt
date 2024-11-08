@@ -1,14 +1,20 @@
+bool returnF(bool a, bool b) {
+	return a;
+}
+
+bool returnS(bool a, bool b) {
+	return b;
+}
+
 void main() {
-	char x;
-	bool e;	
-	bool h;
-	int g;
-	int r;
+	bool a;
+	bool b;
 	
-	e = true;
-	e = false;
-	e = h;
-	print(e);
-	print(true);
+	b = true;
+	a = returnS(a, b);
+	print(a);
+
+	b = false;
+	b = returnF(a, b);
 }
 

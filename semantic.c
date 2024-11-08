@@ -424,12 +424,16 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
                     instruction->result = strdup("$t1");
                 } else if (strcmp(currentExpressionType, "float") == 0) {
                     instruction->result = strdup("$f1");
+                } else if(strcmp(currentExpressionType, "bool") == 0) {
+                    instruction->result = strdup("$t5");
                 }
             } else {
                 if(strcmp(currentExpressionType, "int") == 0) {
                     instruction->result = strdup("$t0");
                 } else if (strcmp(currentExpressionType, "float") == 0) {
                     instruction->result = strdup("$f0");
+                } else if(strcmp(currentExpressionType, "bool") == 0) {
+                    instruction->result = strdup("$t5");
                 }
             }
             isRight = false;
@@ -720,6 +724,8 @@ TAC* generateTACForExpr(ASTNode* expr) {
                     instruction->arg1 = strdup("$t1");
                 } else if (strcmp(currentExpressionType, "float") == 0) {
                     instruction->arg1 = strdup("$f1");
+                } else if(strcmp(currentExpressionType, "bool") == 0) {
+                    instruction->arg1 = strdup("$t5");
                 }
                 instruction->arg2 = strdup("");
                 instruction->op = strdup("ParamCall");
