@@ -1,10 +1,28 @@
 $t1 = addOnex (x)
+Print((null) ($t1))
+$f1 = addOney (y)
+Print((null) ($f1))
+$t1 = addOnex (x)
 $t0 = 1
 $t1 = $t0 + $t1
 addOnex (x) = $t1
+$f1 = 3.320000
+$t0 = 1
+$f1 = $f0 + $f1
+$f0 = addOney (y)
+$f1 = $f0 + $f1
+addOney (y) = $f1
 $t1 = addOnex (x)
 int a ==> maina
 float b ==> mainb
+$t1 = 5
+maina (a) = $t1
+$f1 = 6.200000
+mainb (b) = $f1
 $f1 = mainb (b)
 $t1 = maina (a)
-maina (a) = $t1
+mainb (b) = $f1
+$t1 = maina (a)
+Print((null) ($t1))
+$f1 = mainb (b)
+Print((null) ($f1))

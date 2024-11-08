@@ -107,6 +107,29 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
             printf("Semantic Analysis running on node of type: NodeType_FuncDecl\n");
             printf("FuncTail type: %s\n", node->value.FuncTail.type);
             semanticAnalysis(node->value.FuncTail.expr, symTab, functionBST, arraySymTab);
+
+            if (strcmp(currentFunctionName, "main") == 0) {
+                node->value.FuncTail.type = strdup("void");
+                break;
+            }
+            
+            char* currentFunctionType = lookupFunctionNode(functionBST, currentFunctionName)->symbol->type;
+
+            if(strcmp(currentFunctionType, currentExpressionType) != 0) {
+                if (strcmp(currentFunctionType, "int") == 0 && strcmp(currentExpressionType, "float") == 0) {
+                    TACConvertFloatToInt("$f1");
+                    currentExpressionType = strdup("int");
+                } else if (strcmp(currentFunctionType, "float") == 0 && strcmp(currentExpressionType, "int") == 0) {
+                    TACConvertIntToFloat(strdup("$t1"));
+                    currentExpressionType = strdup("float");
+                } else {
+                    fprintf(stderr, "Error: function return expression type doesnt match function declaration parameter Function name: %s Expected return type: %s Given type: %s\n", currentFunctionCallName, currentFunctionType, currentExpressionType);
+                    exit(0);
+                }
+            }
+
+            node->value.FuncTail.type = currentFunctionType;
+
             break;
 
         case NodeType_VarDeclList:
@@ -311,7 +334,8 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
                         TACConvertFloatToInt(strdup("$f1"));
                         currentExpressionType = strdup("int");
                     } else if (strcmp(currentParameter->type, "float") == 0 && strcmp(currentExpressionType, "int") == 0) {
-                        // Do nothing
+                        TACConvertIntToFloat(strdup("$t1"));
+                        currentExpressionType = strdup("float");
                     } else {
                         fprintf(stderr, "Error: function call parameter type doesnt match function declaration parameter Function name: %s Expected parameter: %s %s Given type: %s\n", currentFunctionCallName, currentParameter->type, currentParameter->name, currentExpressionType);
                         exit(0);
@@ -438,7 +462,13 @@ TAC* generateTACForExpr(ASTNode* expr) {
         case NodeType_FuncTail: {
             printf("Generating TAC for Function tail\n");
             instruction->arg1 = strdup(expr->value.FuncTail.type);
-            instruction->arg2 = strdup("$t1");
+            if(strcmp(expr->value.FuncTail.type, "int") == 0) {
+                instruction->arg2 = strdup("$t1");
+            } else if (strcmp(expr->value.FuncTail.type, "float") == 0) {
+                instruction->arg2 = strdup("$f1");
+            } else {
+                 instruction->arg2 = strdup("void");
+            }
             instruction->op = strdup("return");
             instruction->result = strdup("$t1");
             break;
