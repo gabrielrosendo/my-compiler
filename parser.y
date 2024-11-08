@@ -35,6 +35,7 @@ ArraySymbolTable* arraySymTab = NULL;
 %union {
     int number;
     float floatnumber;
+    float floatnumber;
     char character;
     char* string;
     char* keyword;
@@ -43,6 +44,7 @@ ArraySymbolTable* arraySymTab = NULL;
 }
 
 %token <number> NUMBER
+%token <floatnumber> FLOATNUMBER
 %token <floatnumber> FLOATNUMBER
 %token <string> ID
 %token <string> TYPE
@@ -55,10 +57,14 @@ ArraySymbolTable* arraySymTab = NULL;
 %token <op> DIV
 %token <string> SEMICOLON
 %token <string> SINGLEQUOTE
+%token <string> SEMICOLON
+%token <string> SINGLEQUOTE
 %token <string> LPAREN
 %token <string> RPAREN
 %token <string> LBRACE
 %token <string> RBRACE
+%token <string> LBRACKET
+%token <string> RBRACKET
 %token <string> LBRACKET
 %token <string> RBRACKET
 %token <string> COMMA
@@ -66,9 +72,13 @@ ArraySymbolTable* arraySymTab = NULL;
 %token <keyword> MAIN
 %token <string> BASECONDITIONAL
 %token <string> CHARACTER
+%token <string> BASECONDITIONAL
+%token <string> CHARACTER
 
 %left ADD SUB MUL DIV
+%left ADD SUB MUL DIV
 
+%type <ast> Program FuncDeclList FuncDecl MainFunc ParamList ParamDecl ParamArrayDecl Body VarDeclList VarDecl ArrayDecl StmtList Stmt ConditionalStmt Expr HighExpr BinOp HighBinOp CallParamList FuncTail FunctionCall
 %type <ast> Program FuncDeclList FuncDecl MainFunc ParamList ParamDecl ParamArrayDecl Body VarDeclList VarDecl ArrayDecl StmtList Stmt ConditionalStmt Expr HighExpr BinOp HighBinOp CallParamList FuncTail FunctionCall
 
 %%
@@ -131,9 +141,48 @@ ParamList: /* empty */ {
         $$->value.ParamList.nextParamDecl = $3;
         printf("PARSER: Recognized parameter array list\n");
     }
+    } 
+    | ParamDecl {
+        $$ = createNode(NodeType_ParamList);
+        $$->value.ParamList.ParamDecl = $1;
+        $$->value.ParamList.nextParamDecl = NULL;
+        printf("One parameter\n");
+    }
+    | ParamArrayDecl {
+        $$ = createNode(NodeType_ParamList);
+        $$->value.ParamList.ParamDecl = $1;
+        $$->value.ParamList.nextParamDecl = NULL;
+        printf("One parameter array\n");
+    }
+    | ParamDecl COMMA ParamList {
+        $$ = createNode(NodeType_ParamList);
+        $$->value.ParamList.ParamDecl = $1;
+        $$->value.ParamList.nextParamDecl = $3;
+        printf("PARSER: Recognized parameter list\n");
+    }
+    | ParamArrayDecl COMMA ParamList {
+        $$ = createNode(NodeType_ParamList);
+        $$->value.ParamList.ParamDecl = $1;
+        $$->value.ParamList.nextParamDecl = $3;
+        printf("PARSER: Recognized parameter array list\n");
+    }
 ;
 
 ParamDecl: TYPE ID {
+        printf("PARSER: Recognized parameter declaration\n");
+        $$ = createNode(NodeType_ParamDecl);
+        $$->value.ParamDecl.paramType = $1;
+        $$->value.ParamDecl.paramName = $2;
+    }
+;
+
+ParamArrayDecl: TYPE ID LBRACKET NUMBER RBRACKET {
+        printf("PARSER: Recognized parameter array declaration\n"); 
+        $$ = createNode(NodeType_ParamArrayDecl);
+        $$->value.ParamArrayDecl.paramType = $1;
+        $$->value.ParamArrayDecl.paramName = $2;
+        $$->value.ParamArrayDecl.size = $4;
+    }
         printf("PARSER: Recognized parameter declaration\n");
         $$ = createNode(NodeType_ParamDecl);
         $$->value.ParamDecl.paramType = $1;
@@ -164,17 +213,27 @@ FuncTail: /* no return statement, if a void function was defined */
         $$ = createNode(NodeType_FuncTail);
         $$->value.FuncTail.expr = NULL;
         $$->value.FuncTail.type = strdup("void");
+        $$ = createNode(NodeType_FuncTail);
+        $$->value.FuncTail.expr = NULL;
+        $$->value.FuncTail.type = strdup("void");
     }
     | RETURN Expr SEMICOLON { 
         printf("PARSER: Recognized function tail\n");
         $$ = createNode(NodeType_FuncTail);
         $$->value.FuncTail.expr = $2;
         $$->value.FuncTail.type = strdup("unknown");
+        $$->value.FuncTail.type = strdup("unknown");
     }
 ;
 
+
 VarDeclList: {$$ = NULL;}
            | VarDecl VarDeclList {
+                $$ = createNode(NodeType_VarDeclList); 
+                $$->value.VarDeclList.VarDecl = $1;
+                $$->value.VarDeclList.nextVarDecl = $2;
+           }
+           | ArrayDecl VarDeclList {
                 $$ = createNode(NodeType_VarDeclList); 
                 $$->value.VarDeclList.VarDecl = $1;
                 $$->value.VarDeclList.nextVarDecl = $2;
@@ -194,29 +253,24 @@ VarDecl: TYPE ID SEMICOLON {
             $$->value.VarDecl.varName = $2;
             printf("Parsed variable declaration: %s\n", $2);
         }    
-        | TYPE ID EQ Expr SEMICOLON {
-            printf("PARSER: Recognized variable declaration\n");
-            printf("Type: %s, ID: %s\n", $1, $2);
-            $$ = createNode(NodeType_VarDecl); 
-            $$->value.VarDecl.varType = $1; 
-            $$->value.VarDecl.varName = $2;
-            $$->value.VarDecl.initExpr = $4; 
-            printf("Parsed variable declaration with initialization: %s\n", $2);
-        }
-        | TYPE ID LBRACKET NUMBER RBRACKET SEMICOLON {
-            printf("PARSER: Recognized array declaration\n");
-                $$ = createNode(NodeType_VarDecl);
-                $$->value.VarDecl.varType = $1;
-                $$->value.VarDecl.varName = $2;
-                $$->value.VarDecl.isArray = 1;
-                $$->value.VarDecl.arraySize = $4;
-                $$->value.VarDecl.initExpr = NULL;
-
-        }    		
         | TYPE ID {
                   printf ("Missing semicolon after declaring variable: %s\n", $2);
                   // stop compilation
                     exit(1);
+        }  
+;
+
+ArrayDecl:  TYPE ID LBRACKET NUMBER RBRACKET SEMICOLON {
+            printf("PARSER: Recognized array declaration\n");
+            printf("Type: %s, ID: %s, Size: %d\n", $1, $2, $4);
+            $$ = createNode(NodeType_ArrayDecl); 
+            $$->value.ArrayDecl.arrayType = $1; 
+            $$->value.ArrayDecl.arrayName = $2;
+            $$->value.ArrayDecl.arraySize = $4; 
+        } 
+        | TYPE ID LBRACKET NUMBER RBRACKET {
+            printf ("Missing semicolon after declaring array: %s\n", $2);
+            exit(1);
         }  
 ;
 
@@ -278,7 +332,51 @@ Stmt: ID EQ Expr SEMICOLON {
         $$ = createNode(NodeType_Print);
         $$->value.print.expr = $3;
     }
+		printf("PARSER: Recognized assignment statement\n");
+        printf("ID: %s, EQ: %s, Expr: %p\n", $1, $2, $3);
+        $$ = createNode(NodeType_Assignment);
+		$$->value.assignment.varName = $1;
+		$$->value.assignment.op = $2;
+		$$->value.assignment.expr = $3;
+    }
+    |ID EQ ConditionalStmt SEMICOLON { 
+		printf("PARSER: Recognized boolean assignment statement\n");
+        printf("ID: %s, EQ: %s, Expr: %p\n", $1, $2, $3);
+        $$ = createNode(NodeType_ConditionalAssignment);
+		$$->value.ConditionalAssignment.varName = $1;
+		$$->value.ConditionalAssignment.op = $2;
+		$$->value.ConditionalAssignment.expr = $3;
+    }
+    | ID LBRACKET NUMBER RBRACKET EQ Expr SEMICOLON {
+        printf("PARSER: identified array assignment\n");
+        printf("ID: %s, EQ: %s, Expr: %p, arraySize: %d\n", $1, $5, $6, $3);
+        $$ = createNode(NodeType_ArrayAssignment);
+        $$->value.arrayAssignment.varName = $1;
+        $$->value.arrayAssignment.index = $3;
+		$$->value.arrayAssignment.op = $5;
+		$$->value.arrayAssignment.expr = $6;
+    }
+	| PRINT LPAREN Expr RPAREN SEMICOLON { 
+        printf("PARSER: Recognized print statement\n"); 
+        $$ = createNode(NodeType_Print);
+        $$->value.print.expr = $3;
+    }
+    | PRINT LPAREN ConditionalStmt RPAREN SEMICOLON { 
+        printf("PARSER: Recognized print statement\n"); 
+        $$ = createNode(NodeType_Print);
+        $$->value.print.expr = $3;
+    }
     // Handle missng semicolon  
+    | PRINT LPAREN Expr RPAREN { 
+        printf ("Missing semicolon after print statement: %s\n", $3);
+        // stop compilation
+        exit(1);
+    }
+    | PRINT LPAREN ConditionalStmt RPAREN SEMICOLON { 
+        printf ("Missing semicolon after print statement: %s\n", $3);
+        // stop compilation
+        exit(1);
+    }
     | PRINT LPAREN Expr RPAREN { 
         printf ("Missing semicolon after print statement: %s\n", $3);
         // stop compilation
@@ -363,16 +461,54 @@ HighExpr: HighExpr HighBinOp HighExpr {
 	            $$->value.Expression.right = $3;
 		        $$->value.Expression.op = $2->value.binaryOp.op;
 	        }
+        printf ("Missing semicolon after assignment statement: %s\n", $1);
+        // stop compilation
+        exit(1);
+    }
+    | ID EQ ConditionalStmt { 
+        printf ("Missing semicolon after assignment statement: %s\n", $1);
+        // stop compilation
+        exit(1);
+    }
+    | ID LBRACKET NUMBER RBRACKET EQ Expr {
+        printf ("Missing semicolon after assignment statement: %s\n", $1);
+        // stop compilation
+        exit(1);
+    }
+;
+
+ConditionalStmt : BASECONDITIONAL {
+        printf("PARSER: Recognized Base conditional\n");
+        $$ = createNode(NodeType_BooleanValue);
+        $$->value.booleanValue.value = $1;
+    } 
+;
+
+Expr: Expr BinOp Expr { 
+                printf("PARSER: Recognized expression\n");
+		        $$ = createNode(NodeType_Expression);
+				$$->value.Expression.left = $3;
+				$$->value.Expression.right = $1;
+				$$->value.Expression.op = $2->value.binaryOp.op;
+			 }
+    | HighExpr BinOp Expr { 
+                printf("PARSER: Recognized expression\n");
+				$$ = createNode(NodeType_Expression);
+				$$->value.Expression.left = $3;
+				$$->value.Expression.right = $1;
+				$$->value.Expression.op = $2->value.binaryOp.op;
+			 }
+    | HighExpr { printf("PARSER: Recognized expression\n");	}
 	| NUMBER { 
 				printf("PARSER: Recognized number\n");
 				$$ = createNode(NodeType_Number);
 				$$->value.Number.number = $1;
-			 }	
+			 }
     | FLOATNUMBER { 
 				printf("PARSER: Recognized floatnumber\n");
 				$$ = createNode(NodeType_FloatNumber);
 				$$->value.FloatNumber.value = $1;
-	        }	
+			 }	
 	| ID {
 			$$ = createNode(NodeType_Identifier);
 			$$->value.identifier.name = $1;
@@ -389,14 +525,49 @@ HighExpr: HighExpr HighBinOp HighExpr {
         $$->value.FunctionCall.funcName = $1;
         $$->value.FunctionCall.CallParamList = $3;
     }
-    | ID LBRACKET Expr RBRACKET {
-        printf("PARSER: Recognized array access\n");
-        $$ = createNode(NodeType_ArrayAccess);
-        $$->value.ArrayAccess.varName = $1;
-        $$->value.ArrayAccess.indexExpr = $3;
-    }
 ;
-FunctionCall: ID LPAREN CallParamList RPAREN {
+
+HighExpr: HighExpr HighBinOp HighExpr { 
+                printf("PARSER: Recognized high expression\n");
+		        $$ = createNode(NodeType_Expression);
+		        $$->value.Expression.left = $1;
+	            $$->value.Expression.right = $3;
+		        $$->value.Expression.op = $2->value.binaryOp.op;
+	        }
+	| NUMBER { 
+				printf("PARSER: Recognized number\n");
+				$$ = createNode(NodeType_Number);
+				$$->value.Number.number = $1;
+			 }	
+    | FLOATNUMBER { 
+				printf("PARSER: Recognized floatnumber\n");
+				$$ = createNode(NodeType_FloatNumber);
+				$$->value.FloatNumber.value = $1;
+	        }	
+			 }	
+    | FLOATNUMBER { 
+				printf("PARSER: Recognized floatnumber\n");
+				$$ = createNode(NodeType_FloatNumber);
+				$$->value.FloatNumber.value = $1;
+	        }	
+	| ID {
+			$$ = createNode(NodeType_Identifier);
+			$$->value.identifier.name = $1;
+		}
+    | ID LBRACKET NUMBER RBRACKET {
+            printf("PARSER: Recognized Array Access\n");
+            $$ = createNode(NodeType_ArrayAccess);
+            $$->value.ArrayAccess.name = $1;
+            $$->value.ArrayAccess.index = $3;
+        }
+		}
+    | ID LBRACKET NUMBER RBRACKET {
+            printf("PARSER: Recognized Array Access\n");
+            $$ = createNode(NodeType_ArrayAccess);
+            $$->value.ArrayAccess.name = $1;
+            $$->value.ArrayAccess.index = $3;
+        }
+    | ID LPAREN CallParamList RPAREN {
         printf("PARSER: Recognized function call\n");
         $$ = createNode(NodeType_FunctionCall);
         $$->value.FunctionCall.funcName = $1;
@@ -404,9 +575,19 @@ FunctionCall: ID LPAREN CallParamList RPAREN {
     }
 ;
 
+FunctionCall: ID LPAREN CallParamList RPAREN {
+        printf("PARSER: Recognized function call\n");
+        $$ = createNode(NodeType_FunctionCall);
+        $$->value.FunctionCall.funcName = $1;
+        $$->value.FunctionCall.CallParamList = $3;
+    }
+;
+;
+
 CallParamList:
            {
             printf("PARSER: Recognized no call parameters\n");
+            $$ = NULL;
             $$ = NULL;
         } /*empty, i.e. it is possible not to have any parameter*/
     | Expr { 
@@ -426,6 +607,9 @@ BinOp: ADD {
 			printf("PARSER: Recognized addition operator\n");
 			$$ = createNode(NodeType_BinaryOp);
 			$$->value.binaryOp.op = $1;
+			printf("PARSER: Recognized addition operator\n");
+			$$ = createNode(NodeType_BinaryOp);
+			$$->value.binaryOp.op = $1;
             }
         | SUB {
             printf("Recognized subtraction operator\n");
@@ -435,15 +619,21 @@ BinOp: ADD {
 ;
 
 HighBinOp: MUL {
+;
+
+HighBinOp: MUL {
             printf("Recognized multiplication operator\n");
             printf("operator = %s\n", $1);
+            printf("operator = %s\n", $1);
             $$ = createNode(NodeType_BinaryOp);
+			$$->value.binaryOp.op = $1;
 			$$->value.binaryOp.op = $1;
         }
         | DIV {
             printf("Recognized division operator\n");
             $$ = createNode(NodeType_BinaryOp);
             $$->value.binaryOp.op = $1;
+        }   
         }   
 ;
 
@@ -484,11 +674,14 @@ int main(int argc, char **argv) {
     semanticAnalysis(root, symbolBST, functionBST, arraySymTab);
 
     printf("\n-----TAC CODE-----\n\n");
+    printf("\n-----TAC CODE-----\n\n");
     TAC* tempTac = tacHead;
     while (tempTac != NULL) {
         printTAC(tempTac);
         tempTac = tempTac->next;
     }
+    printf("---END TAC CODE----\n\n");
+
     printf("---END TAC CODE----\n\n");
 
     // Output TAC to file
@@ -503,6 +696,7 @@ int main(int argc, char **argv) {
 
     
     //optimizeforMIPS(&tacHead);
+    initCodeGenerator("output.s", tacHead);
     initCodeGenerator("output.s", tacHead);
     generateMIPS(tacHead);
     finalizeCodeGenerator("output.s");
