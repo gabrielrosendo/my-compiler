@@ -12,6 +12,7 @@ int lines = 0;
 
 letter [a-zA-Z]
 digit [0-9]
+SINGLELETTER {letter}!({letter}|{digit})*
 ID {letter}({letter}|{digit})*
 delim [ \t\n]
 NUMBER {digit}+(\.{digit}+)?
@@ -81,6 +82,13 @@ BAD_ID {NUMBER}{ID}
     return BASECONDITIONAL;
 }
 
+{letter} {
+    words++; chars += strlen(yytext);
+    printf("%-10s | %-10s\n", yytext, "CHARACTER");
+    yylval.string = strdup(yytext);
+    return CHARACTER;
+}
+
 {ID} {
     words++; chars += strlen(yytext);
     printf("%-10s | %-10s\n", yytext, "IDENTIFIER");
@@ -143,6 +151,12 @@ BAD_ID {NUMBER}{ID}
     chars++;
     printf("%-10s | %-10s\n", yytext, "COMMA");
     return COMMA;
+}
+
+"'" { 
+    chars++;
+    printf("%-10s | %-10s\n", yytext, "SINGLEQUOTE");
+    return SINGLEQUOTE; 
 }
 
 "(" { 
