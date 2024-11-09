@@ -927,6 +927,11 @@ char* processExpressionTypes(char* type1, char* type2) {
         exit(0);
     }
 
+    if(strcmp(type1, "bool") == 0 || strcmp(type2, "bool") == 0) {
+        printf("combining bools in expressions is not allowed, now everything is broken, good job programmer\n");
+        exit(0);
+    }
+
     if(strcmp(type1, type2) == 0) {
         return(strdup(type1));
     } else if (strcmp(type1,"int") == 0 && strcmp(type2, "float") == 0) {
