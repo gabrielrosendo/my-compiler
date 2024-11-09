@@ -44,6 +44,7 @@ ArraySymbolTable* arraySymTab = NULL;
 
 %token <number> NUMBER
 %token <floatnumber> FLOATNUMBER
+%token <string> CHARACTER
 %token <string> ID
 %token <string> TYPE
 %token <keyword> VOID
@@ -313,6 +314,11 @@ Expr: Expr BinOp Expr {
 				$$ = createNode(NodeType_Number);
 				$$->value.Number.number = $1;
 			 }
+    | CHARACTER {
+                printf("PARSER: Recognized character\n");
+                $$ = createNode(NodeType_Character);
+                $$->value.Character.character = $1[1];
+            }
     | FLOATNUMBER { 
 				printf("PARSER: Recognized floatnumber\n");
 				$$ = createNode(NodeType_FloatNumber);

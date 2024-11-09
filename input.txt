@@ -1,13 +1,27 @@
-bool value() {
-	bool x;
-	x = true;
+char first(char x, char y) {
+	print(x);
+	print(y);
 	return x;
 }
 
-void main() {
-	bool x;
-
-	x = value();
+char second(char x, char y) {
 	print(x);
+	print(y);
+	return y;
+}
+
+void main() {
+	char a;
+	char b;
+	
+	a = 'a';
+	b = 'b';
+
+	b = first(a, b);
+	print(b);
+
+	b = 'b';
+	a = second(a, b);
+	print(a);
 }
 

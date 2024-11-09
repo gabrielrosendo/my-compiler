@@ -1,6 +1,25 @@
-bool x ==> valuex
-$t5 = valuex (x)
-bool x ==> mainx
-mainx (x) = $t5
-$t5 = mainx (x)
-Print((null) ($t5))
+$t7 = firstx (x)
+Print((null) ($t7))
+$t7 = firsty (y)
+Print((null) ($t7))
+$t7 = firstx (x)
+$t7 = secondx (x)
+Print((null) ($t7))
+$t7 = secondy (y)
+Print((null) ($t7))
+$t7 = secondy (y)
+char a ==> maina
+char b ==> mainb
+maina (a) = $t7
+mainb (b) = $t7
+$t7 = maina (a)
+$t7 = mainb (b)
+mainb (b) = $t7
+$t7 = mainb (b)
+Print((null) ($t7))
+mainb (b) = $t7
+$t7 = maina (a)
+$t7 = mainb (b)
+maina (a) = $t7
+$t7 = maina (a)
+Print((null) ($t7))

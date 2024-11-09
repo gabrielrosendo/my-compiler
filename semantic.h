@@ -12,6 +12,7 @@ typedef struct TAC {
     char *arg1;
     char *arg2;
     unsigned int arg3;
+    char arg4;
     char *result;
     struct TAC *next;
 } TAC;

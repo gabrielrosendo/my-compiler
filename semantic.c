@@ -188,6 +188,14 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
                 exit(1);
             }
 
+            if(strcmp(savedType2, "char") == 0 && strcmp(currentExpressionType, "char") != 0) {
+                printf("Error: non char variable cannot be assigned a char variable\n");
+                exit(1);
+            } else if(strcmp(savedType2, "char") != 0 && strcmp(currentExpressionType, "char") == 0) {
+                printf("Error: non char cannot be assigned to char variable\n");
+                exit(1);
+            }
+
             if(strcmp(savedType2, "int") == 0 && strcmp(currentExpressionType, "float") == 0) {
                 TACConvertIntToFloat(strdup("$t1"));
             } else if(strcmp(savedType2, "float") == 0 && strcmp(currentExpressionType, "int") == 0) {
@@ -294,6 +302,11 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
         case NodeType_Number:
             printf("Semantic Analysis running on node of type: NodeType_Number\n");
             currentExpressionType = strdup("int");
+            break;
+
+        case NodeType_Character:
+            printf("Semantic Analysis running on node of type: NodeType_Character\n");
+            currentExpressionType = strdup("char");
             break;
 
         case NodeType_FloatNumber:
@@ -426,6 +439,8 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
                     instruction->result = strdup("$f1");
                 } else if(strcmp(currentExpressionType, "bool") == 0) {
                     instruction->result = strdup("$t5");
+                } else if(strcmp(currentExpressionType, "char") == 0) {
+                    instruction->result = strdup("$t7");
                 }
             } else {
                 if(strcmp(currentExpressionType, "int") == 0) {
@@ -434,6 +449,8 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
                     instruction->result = strdup("$f0");
                 } else if(strcmp(currentExpressionType, "bool") == 0) {
                     instruction->result = strdup("$t5");
+                } else if(strcmp(currentExpressionType, "char") == 0) {
+                    instruction->result = strdup("$t7");
                 }
             }
             isRight = false;
@@ -455,6 +472,7 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
         node->type == NodeType_ArrayAssignment ||
         node->type == NodeType_BooleanValue || 
         node->type == NodeType_Number || 
+        node->type == NodeType_Character ||
         node->type == NodeType_FloatNumber ||
         node->type == NodeType_Print || 
         node->type == NodeType_Identifier ||
@@ -546,6 +564,8 @@ TAC* generateTACForExpr(ASTNode* expr) {
                 instruction->arg2 = strdup("$f1");
             } else if (strcmp(currentExpressionType, "bool") == 0) {
                 instruction->arg2 = strdup("$t5");
+            } else if (strcmp(currentExpressionType, "char") == 0) {
+                instruction->arg2 = strdup("$t7");
             }
             instruction->op = strdup("=");
             instruction->result = getVariableReference(expr->value.assignment.varName);
@@ -582,6 +602,8 @@ TAC* generateTACForExpr(ASTNode* expr) {
                 instruction->arg1 = strdup("$f1");
             } else if (strcmp(currentExpressionType, "bool") == 0) {
                 instruction->arg1 = strdup("$t5");
+            } else if (strcmp(currentExpressionType, "char") == 0) {
+                instruction->arg1 = strdup("$t7");
             }
             instruction->arg2 = NULL;
             instruction->op = strdup("Print");
@@ -634,6 +656,14 @@ TAC* generateTACForExpr(ASTNode* expr) {
             break;
         }
 
+        case NodeType_Character: {
+            printf("Generating TAC for character\n");
+            instruction->arg4 = expr->value.Character.character;
+            instruction->op = strdup("Char");
+            instruction->result = strdup("$t7");
+            break;
+        }
+
         case NodeType_FloatNumber: {
             printf("Generating TAC for float number\n");
             char buffer[20];
@@ -665,6 +695,8 @@ TAC* generateTACForExpr(ASTNode* expr) {
                     instruction->result = strdup("$f1");
                 } else if (strcmp(currentExpressionType, "bool") == 0) {
                     instruction->result = strdup("$t5");
+                } else if (strcmp(currentExpressionType, "char") == 0) {
+                    instruction->result = strdup("$t7");
                 }
                 isRight = false;
             } else {
@@ -674,6 +706,8 @@ TAC* generateTACForExpr(ASTNode* expr) {
                     instruction->result = strdup("$f0");
                 } else if (strcmp(currentExpressionType, "bool") == 0) {
                     instruction->result = strdup("$t5");
+                } else if (strcmp(currentExpressionType, "char") == 0) {
+                    instruction->result = strdup("$t7");
                 }
             }
             break;
@@ -726,6 +760,8 @@ TAC* generateTACForExpr(ASTNode* expr) {
                     instruction->arg1 = strdup("$f1");
                 } else if(strcmp(currentExpressionType, "bool") == 0) {
                     instruction->arg1 = strdup("$t5");
+                } else if(strcmp(currentExpressionType, "char") == 0) {
+                    instruction->arg1 = strdup("$t7");
                 }
                 instruction->arg2 = strdup("");
                 instruction->op = strdup("ParamCall");
@@ -803,6 +839,8 @@ void printTAC(TAC* tac) {
         printf("\t%s --> %s\n", tac->arg1, tac->result);
     } else if (strcmp(tac->op, "Num") == 0) {
         printf("\t%s = %s\n", tac->result, tac->arg1);
+    } else if (strcmp(tac->op, "Char") == 0) {
+        printf("\t%s = '%c'\n", tac->result, tac->arg4);   
     } else if (strcmp(tac->op, "ID") == 0) {
         printf("\t%s = %s (%s)\n", tac->result, tac->arg2, tac->arg1);
     } else if (strcmp(tac->op, "ArrayAccess") == 0) {
