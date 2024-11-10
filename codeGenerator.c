@@ -178,6 +178,13 @@ void generateMIPS(TAC* tacInstructions) {
                 fprintf(outputFile, "\tsb $t7, %d($t2)\t\t# Save $t7 into array with the offset calculated with the index\n\n", tac->arg3);
             }
 
+        } else if (strcmp(tac->op, "ConditionalArrayAssingment") == 0) {
+            printf("Generating MIPS for Conditional Array Assignment operation\n");
+            printf("\t%s (%s[%d]) = %s\n", tac->result, tac->arg1, tac->arg3, tac->arg2);
+            fprintf(outputFile, "\tla $t2, %s\t\t# Load address of %s into $t2\n", tac->result, tac->result);
+            fprintf(outputFile, "\tsw $t5, %d($t2)\t\t# Save $t5 into array with the offset calculated with the index\n\n", tac->arg3 * 4);
+
+
         } else if (strcmp(tac->op, "Print") == 0) {
             printf("Generating MIPS for Print operation\n");
 

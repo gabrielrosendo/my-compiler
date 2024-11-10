@@ -3,5 +3,10 @@ void main() {
 
 	x[1] = true;
 	x[2] = false;
+
+	x[0] = x[1];
+	
+	print(x[0]);
+	print(x[2]);
 }
 

@@ -267,23 +267,23 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
                 fprintf(stderr, "Error: array %s not declared\n", node->value.arrayAssignment.varName);
                 exit(1);
             }
-            Symbol* tempSymbol = lookupSymbol(symTab, node->value.arrayAssignment.varName);
-            unsigned int index = node->value.arrayAssignment.index;
-            if(index < 0 || index >= tempSymbol->size) {
+            Symbol* tempSymbol4 = lookupSymbol(symTab, node->value.arrayAssignment.varName);
+            unsigned int index4 = node->value.arrayAssignment.index;
+            if(index4 < 0 || index4 >= tempSymbol4->size) {
                 printf("Index out of bounds on array %s\n", node->value.arrayAssignment.varName);
                 exit(0);
             }
 
             semanticAnalysis(node->value.arrayAssignment.expr, symTab, functionBST, arraySymTab);
 
-            char* savedType3 = currentExpressionType;
+            char* savedType4 = currentExpressionType;
             currentExpressionType = lookupSymbol(symTab, node->value.assignment.varName)->type;
 
             if(strcmp(currentExpressionType, "bool") != 0) {
-                printf("Non boolean cannot be assigned \n");
+                printf("Non boolean variable cannot be assigned a boolean value \n");
                 exit(1);
-            } else if(strcmp(savedType3, "bool") != 0) {
-                printf("Error: non boolean cannot be assigned to boolean variable\n");
+            } else if(strcmp(savedType4, "bool") != 0) {
+                printf("Expression being saved to boolean array is not boolean value\n");
                 exit(1);
             }
             break;
@@ -522,6 +522,7 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
         node->type == NodeType_Assignment || 
         node->type == NodeType_ConditionalAssignment ||
         node->type == NodeType_ArrayAssignment ||
+        node->type == NodeType_ConditionalArrayAssignment ||
         node->type == NodeType_BooleanValue || 
         node->type == NodeType_Number || 
         node->type == NodeType_Character ||
@@ -650,6 +651,17 @@ TAC* generateTACForExpr(ASTNode* expr) {
             instruction->arg3 = expr->value.arrayAssignment.index;
             instruction->op = strdup("ArrayAssingment");
             instruction->result = getVariableReference(expr->value.arrayAssignment.varName);
+            isRight = true;
+            break;
+        }
+
+        case NodeType_ConditionalArrayAssignment: {
+            printf("Generating TAC for Conditional Array Assignment\n");
+            instruction->arg1 = strdup(expr->value.ConditionalArrayAssignment.varName);
+            instruction->arg2 = strdup("$t5");
+            instruction->arg3 = expr->value.ConditionalArrayAssignment.index;
+            instruction->op = strdup("ConditionalArrayAssingment");
+            instruction->result = getVariableReference(expr->value.ConditionalArrayAssignment.varName);
             isRight = true;
             break;
         }
@@ -784,6 +796,8 @@ TAC* generateTACForExpr(ASTNode* expr) {
                     instruction->result = strdup("$t1");
                 } else if (strcmp(currentExpressionType, "float") == 0) {
                     instruction->result = strdup("$f1");
+                } else if (strcmp(currentExpressionType, "bool") == 0) {
+                    instruction->result = strdup("$t5");
                 } else if (strcmp(currentExpressionType, "char") == 0) {
                     instruction->result = strdup("$t7");
                 }
@@ -793,6 +807,8 @@ TAC* generateTACForExpr(ASTNode* expr) {
                     instruction->result = strdup("$t0");
                 } else if (strcmp(currentExpressionType, "float") == 0) {
                     instruction->result = strdup("$f0");
+                } else if (strcmp(currentExpressionType, "bool") == 0) {
+                    instruction->result = strdup("$t5");
                 } else if (strcmp(currentExpressionType, "char") == 0) {
                     instruction->result = strdup("$t7");
                 }
@@ -886,6 +902,8 @@ void printTAC(TAC* tac) {
     } else if (strcmp(tac->op, "ConditionalAssignment") == 0) {
         printf("\t%s (%s) = %s\n", tac->result, tac->arg1, tac->arg2);
     } else if (strcmp(tac->op, "ArrayAssingment") == 0) {
+        printf("\t%s (%s[%d]) = %s\n", tac->result, tac->arg1, tac->arg3, tac->arg2);
+    } else if (strcmp(tac->op, "ConditionalArrayAssingment") == 0) {
         printf("\t%s (%s[%d]) = %s\n", tac->result, tac->arg1, tac->arg3, tac->arg2);
     } else if (strcmp(tac->op, "Print") == 0) {
         printf("\tPrint(%s)\n", tac->arg1);
