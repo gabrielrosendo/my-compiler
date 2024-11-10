@@ -104,7 +104,7 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
             break;
 
         case NodeType_FuncTail:
-            printf("Semantic Analysis running on node of type: NodeType_FuncDecl\n");
+            printf("Semantic Analysis running on node of type: NodeType_FuncTail\n");
             printf("FuncTail type: %s\n", node->value.FuncTail.type);
             semanticAnalysis(node->value.FuncTail.expr, symTab, functionBST, arraySymTab);
 
@@ -234,6 +234,58 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
             }
 
             semanticAnalysis(node->value.arrayAssignment.expr, symTab, functionBST, arraySymTab);
+
+            char* savedType3 = currentExpressionType;
+            currentExpressionType = lookupSymbol(symTab, node->value.assignment.varName)->type;
+
+            if(strcmp(savedType3, "bool") == 0 && strcmp(currentExpressionType, "bool") != 0) {
+                printf("Error: non boolean variable cannot be assigned a boolean\n");
+                exit(1);
+            } else if(strcmp(savedType3, "bool") != 0 && strcmp(currentExpressionType, "bool") == 0) {
+                printf("Error: non boolean cannot be assigned to boolean variable\n");
+                exit(1);
+            }
+
+            if(strcmp(savedType3, "char") == 0 && strcmp(currentExpressionType, "char") != 0) {
+                printf("Error: non char variable cannot be assigned a char variable\n");
+                exit(1);
+            } else if(strcmp(savedType3, "char") != 0 && strcmp(currentExpressionType, "char") == 0) {
+                printf("Error: non char cannot be assigned to char variable\n");
+                exit(1);
+            }
+
+            if(strcmp(savedType3, "int") == 0 && strcmp(currentExpressionType, "float") == 0) {
+                TACConvertIntToFloat(strdup("$t1"));
+            } else if(strcmp(savedType3, "float") == 0 && strcmp(currentExpressionType, "int") == 0) {
+                TACConvertFloatToInt(strdup("$f1"));
+            }
+            break;
+
+        case NodeType_ConditionalArrayAssignment:
+            printf("Semantic Analysis running on node of type: NodeType_ArrayAssignment\n");
+            if (!lookupSymbol(symTab, node->value.arrayAssignment.varName)) {
+                fprintf(stderr, "Error: array %s not declared\n", node->value.arrayAssignment.varName);
+                exit(1);
+            }
+            Symbol* tempSymbol = lookupSymbol(symTab, node->value.arrayAssignment.varName);
+            unsigned int index = node->value.arrayAssignment.index;
+            if(index < 0 || index >= tempSymbol->size) {
+                printf("Index out of bounds on array %s\n", node->value.arrayAssignment.varName);
+                exit(0);
+            }
+
+            semanticAnalysis(node->value.arrayAssignment.expr, symTab, functionBST, arraySymTab);
+
+            char* savedType3 = currentExpressionType;
+            currentExpressionType = lookupSymbol(symTab, node->value.assignment.varName)->type;
+
+            if(strcmp(currentExpressionType, "bool") != 0) {
+                printf("Non boolean cannot be assigned \n");
+                exit(1);
+            } else if(strcmp(savedType3, "bool") != 0) {
+                printf("Error: non boolean cannot be assigned to boolean variable\n");
+                exit(1);
+            }
             break;
 
         case NodeType_Print:
@@ -586,7 +638,15 @@ TAC* generateTACForExpr(ASTNode* expr) {
         case NodeType_ArrayAssignment: {
             printf("Generating TAC for Array Assignment\n");
             instruction->arg1 = strdup(expr->value.arrayAssignment.varName);
-            instruction->arg2 = strdup("$t1");
+            if (strcmp(currentExpressionType, "int") == 0) {
+                instruction->arg2 = strdup("$t1");
+            } else if (strcmp(currentExpressionType, "float") == 0) {
+                instruction->arg2 = strdup("$f1");
+            } else if (strcmp(currentExpressionType, "bool") == 0) {
+                instruction->arg2 = strdup("$t5");
+            } else if (strcmp(currentExpressionType, "char") == 0) {
+                instruction->arg2 = strdup("$t7");
+            }
             instruction->arg3 = expr->value.arrayAssignment.index;
             instruction->op = strdup("ArrayAssingment");
             instruction->result = getVariableReference(expr->value.arrayAssignment.varName);
@@ -724,6 +784,8 @@ TAC* generateTACForExpr(ASTNode* expr) {
                     instruction->result = strdup("$t1");
                 } else if (strcmp(currentExpressionType, "float") == 0) {
                     instruction->result = strdup("$f1");
+                } else if (strcmp(currentExpressionType, "char") == 0) {
+                    instruction->result = strdup("$t7");
                 }
                 isRight = false;
             } else {
@@ -731,6 +793,8 @@ TAC* generateTACForExpr(ASTNode* expr) {
                     instruction->result = strdup("$t0");
                 } else if (strcmp(currentExpressionType, "float") == 0) {
                     instruction->result = strdup("$f0");
+                } else if (strcmp(currentExpressionType, "char") == 0) {
+                    instruction->result = strdup("$t7");
                 }
             }
             break;

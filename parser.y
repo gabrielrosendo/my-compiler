@@ -249,6 +249,15 @@ Stmt: ID EQ Expr SEMICOLON {
 		$$->value.arrayAssignment.op = $5;
 		$$->value.arrayAssignment.expr = $6;
     }
+    | ID LBRACKET NUMBER RBRACKET EQ ConditionalStmt SEMICOLON {
+        printf("PARSER: identified conditional array assignment\n");
+        printf("ID: %s, EQ: %s, Expr: %p, arraySize: %d\n", $1, $5, $6, $3);
+        $$ = createNode(NodeType_ConditionalArrayAssignment);
+        $$->value.arrayAssignment.varName = $1;
+        $$->value.arrayAssignment.index = $3;
+		$$->value.arrayAssignment.op = $5;
+		$$->value.arrayAssignment.expr = $6;
+    }
 	| PRINT LPAREN Expr RPAREN SEMICOLON { 
         printf("PARSER: Recognized print statement\n"); 
         $$ = createNode(NodeType_Print);
@@ -281,6 +290,11 @@ Stmt: ID EQ Expr SEMICOLON {
         exit(1);
     }
     | ID LBRACKET NUMBER RBRACKET EQ Expr {
+        printf ("Missing semicolon after assignment statement: %s\n", $1);
+        // stop compilation
+        exit(1);
+    }
+    | ID LBRACKET NUMBER RBRACKET EQ ConditionalStmt {
         printf ("Missing semicolon after assignment statement: %s\n", $1);
         // stop compilation
         exit(1);

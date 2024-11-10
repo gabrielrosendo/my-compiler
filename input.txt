@@ -1,27 +1,7 @@
-char first(char x, char y) {
-	print(x);
-	print(y);
-	return x;
-}
-
-char second(char x, char y) {
-	print(x);
-	print(y);
-	return y;
-}
-
 void main() {
-	char a;
-	char b;
-	
-	a = 'a';
-	b = 'b';
+	bool x[10];
 
-	b = first(a, b);
-	print(b);
-
-	b = 'b';
-	a = second(a, b);
-	print(a);
+	x[1] = true;
+	x[2] = false;
 }
 

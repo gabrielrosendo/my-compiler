@@ -80,6 +80,11 @@ struct ASTNode* createNode(NodeType type) {
             newNode->value.arrayAssignment.index = 0;
             newNode->value.arrayAssignment.op = NULL;
             newNode->value.arrayAssignment.expr = NULL;
+        case NodeType_ConditionalArrayAssignment:
+            newNode->value.ConditionalArrayAssignment.varName = NULL;
+            newNode->value.ConditionalArrayAssignment.index = 0;
+            newNode->value.ConditionalArrayAssignment.op = NULL;
+            newNode->value.ConditionalArrayAssignment.expr = NULL;
         case NodeType_Print:
             newNode->value.print.expr = NULL;
             break;
@@ -203,6 +208,11 @@ void freeAST(struct ASTNode* node) {
             free(node->value.arrayAssignment.op);
             free(node->value.arrayAssignment.varName);
             freeAST(node->value.arrayAssignment.expr);
+            break;
+        case NodeType_ConditionalArrayAssignment:
+            free(node->value.ConditionalArrayAssignment.op);
+            free(node->value.ConditionalArrayAssignment.varName);
+            freeAST(node->value.ConditionalArrayAssignment.expr);
             break;
         case NodeType_Print:
             freeAST(node->value.print.expr);
@@ -393,7 +403,18 @@ void printAST(struct ASTNode* node, int indent) {
             printf("AST Print: op = %s\n", node->value.arrayAssignment.op); 
             spaceOut(indent);
             printf("AST Print: index = %d\n", node->value.arrayAssignment.index); 
-            printAST(node->value.assignment.expr, indent + 1);
+            printAST(node->value.arrayAssignment.expr, indent + 1);
+            break;
+        case NodeType_ConditionalArrayAssignment:
+            spaceOut(indent);
+            printf("AST Print: NodeType_ConditionalArrayAssignment\n");
+            spaceOut(indent);
+            printf("AST Print: Name = %s\n", node->value.ConditionalArrayAssignment.varName);
+            spaceOut(indent);
+            printf("AST Print: op = %s\n", node->value.ConditionalArrayAssignment.op); 
+            spaceOut(indent);
+            printf("AST Print: index = %d\n", node->value.ConditionalArrayAssignment.index); 
+            printAST(node->value.ConditionalArrayAssignment.expr, indent + 1);
             break;
         case NodeType_Print:
             spaceOut(indent);
