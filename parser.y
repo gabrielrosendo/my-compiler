@@ -497,7 +497,7 @@ int main(int argc, char **argv) {
     }
 
     
-    //optimizeforMIPS(&tacHead);
+    optimizeforMIPS(&tacHead);
     initCodeGenerator("output.s", tacHead);
     generateMIPS(tacHead);
     finalizeCodeGenerator("output.s");
@@ -505,7 +505,7 @@ int main(int argc, char **argv) {
     printf("\n=== CODE OPTIMIZATION ===\n");
     // Traverse the linked list of TAC entries and optimize
     // But - you MIGHT need to traverse the AST again to optimize
-    //optimizeTAC(&tacHead);
+    optimizeTAC(&tacHead);
     // Output optimized TAC to file
     FILE* optimizedTacFile = fopen("optimizedTAC.ir", "w");
     freeSymbolTable(symbolBST);
@@ -522,7 +522,6 @@ int main(int argc, char **argv) {
         printTAC(tempTac);
         tempTac = tempTac->next;
     }
-    printf("testing\n");
 
     if (optimizedTacFile) {
         printf("Writing optimized TAC to file...\n");

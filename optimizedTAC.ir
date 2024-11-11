@@ -1,2 +1,5 @@
-Print((null) ($t5))
-Print((null) ($t5))
+int b ==> mainb
+$t1 = 5
+mainb (b) = $t1
+$t1 = mainb ()
+Print((null) ($t1))
