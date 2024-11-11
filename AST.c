@@ -155,7 +155,9 @@ void freeAST(struct ASTNode* node) {
             break;
         case NodeType_FuncDecl:
             free(node->value.FuncDecl.FuncType);
+            node->value.FuncDecl.FuncType = NULL;  // Prevent double free
             free(node->value.FuncDecl.FuncName);
+            node->value.FuncDecl.FuncName = NULL;  // Prevent double free
             freeAST(node->value.FuncDecl.ParamList);
             freeAST(node->value.FuncDecl.Body);
             break;
@@ -168,11 +170,15 @@ void freeAST(struct ASTNode* node) {
             break;
         case NodeType_ParamDecl:
             free(node->value.ParamDecl.paramType);
+            node->value.ParamDecl.paramType = NULL;  // Prevent double free
             free(node->value.ParamDecl.paramName);
+            node->value.ParamDecl.paramName = NULL;  // Prevent double free
             break;
         case NodeType_ParamArrayDecl:
             free(node->value.ParamArrayDecl.paramType);
+            node->value.ParamArrayDecl.paramType = NULL;  // Prevent double free
             free(node->value.ParamArrayDecl.paramName);
+            node->value.ParamArrayDecl.paramName = NULL;  // Prevent double free
             break;
         case NodeType_Body:
             freeAST(node->value.Body.VarDeclList);
@@ -184,11 +190,15 @@ void freeAST(struct ASTNode* node) {
             break;
         case NodeType_VarDecl:
             free(node->value.VarDecl.varType);
+            node->value.VarDecl.varType = NULL;  // Prevent double free
             free(node->value.VarDecl.varName);
+            node->value.VarDecl.varName = NULL;  // Prevent double free
             break;
         case NodeType_ArrayDecl:
             free(node->value.ArrayDecl.arrayType);
+            node->value.ArrayDecl.arrayType = NULL;  // Prevent double free
             free(node->value.ArrayDecl.arrayName);
+            node->value.ArrayDecl.arrayName = NULL;  // Prevent double free
             break;
         case NodeType_StmtList:
             freeAST(node->value.StmtList.stmt);
@@ -196,22 +206,30 @@ void freeAST(struct ASTNode* node) {
             break;
         case NodeType_Assignment:
             free(node->value.assignment.op);
+            node->value.assignment.op = NULL;  // Prevent double free
             free(node->value.assignment.varName);
+            node->value.assignment.varName = NULL;  // Prevent double free
             freeAST(node->value.assignment.expr);
             break;
         case NodeType_ConditionalAssignment:
             free(node->value.ConditionalAssignment.op);
+            node->value.ConditionalAssignment.op = NULL;  // Prevent double free
             free(node->value.ConditionalAssignment.varName);
+            node->value.ConditionalAssignment.varName = NULL;  // Prevent double free
             freeAST(node->value.ConditionalAssignment.expr);
             break;
         case NodeType_ArrayAssignment:
             free(node->value.arrayAssignment.op);
+            node->value.arrayAssignment.op = NULL;  // Prevent double free
             free(node->value.arrayAssignment.varName);
+            node->value.arrayAssignment.varName = NULL;  // Prevent double free
             freeAST(node->value.arrayAssignment.expr);
             break;
         case NodeType_ConditionalArrayAssignment:
             free(node->value.ConditionalArrayAssignment.op);
+            node->value.ConditionalArrayAssignment.op = NULL;  // Prevent double free
             free(node->value.ConditionalArrayAssignment.varName);
+            node->value.ConditionalArrayAssignment.varName = NULL;  // Prevent double free
             freeAST(node->value.ConditionalArrayAssignment.expr);
             break;
         case NodeType_Print:
@@ -221,14 +239,17 @@ void freeAST(struct ASTNode* node) {
             freeAST(node->value.BooleanExpression.left);
             freeAST(node->value.BooleanExpression.right);
             free(node->value.BooleanExpression.op);
+            node->value.BooleanExpression.op = NULL;  // Prevent double free
             break;
         case NodeType_BooleanValue:
             free(node->value.booleanValue.value);
+            node->value.booleanValue.value = NULL;  // Prevent double free
             break;
         case NodeType_Expression:
             freeAST(node->value.Expression.left);
             freeAST(node->value.Expression.right);
             free(node->value.Expression.op);
+            node->value.Expression.op = NULL;  // Prevent double free
             break;
         case NodeType_Number:
             // No dynamic memory to free
@@ -240,20 +261,24 @@ void freeAST(struct ASTNode* node) {
             break;
         case NodeType_Identifier:
             free(node->value.identifier.name);
+            node->value.identifier.name = NULL;  // Prevent double free
             break;
         case NodeType_ArrayAccess:
             free(node->value.ArrayAccess.name);
+            node->value.ArrayAccess.name = NULL;  // Prevent double free
             break;
         case NodeType_BinaryOp:
             // No dynamic memory to free
             break;
         case NodeType_FunctionCall:
             free(node->value.FunctionCall.funcName);
+            node->value.FunctionCall.funcName = NULL;  // Prevent double free
             freeAST(node->value.FunctionCall.CallParamList);
             break;
         case NodeType_FuncTail:
             freeAST(node->value.FuncTail.expr);
             free(node->value.FuncTail.type);
+            node->value.FuncTail.type = NULL;  // Prevent double free
             break;
         case NodeType_CallParamList:
             freeAST(node->value.CallParamList.expr);
