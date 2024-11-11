@@ -36,7 +36,7 @@ void initCodeGenerator(const char* outputFilename, TAC* tacInstructions) {
             if (strcmp(tac->arg1, "int") == 0) {
                 fprintf(outputFile, "%s: .word 0:%d\n", tac->result, tac->arg3);
             } else if (strcmp(tac->arg1, "float") == 0) {
-                fprintf(outputFile, "%s: .float 0.0:%d\n", tac->result, tac->arg3);
+                fprintf(outputFile, "%s: .float 0.0:%d\n", tac->result, tac->arg3); 
             } else if (strcmp(tac->arg1, "char") == 0) {
                 fprintf(outputFile, "%s: .byte ' ':%d\n", tac->result, tac->arg3);
             } else if (strcmp(tac->arg1, "bool") == 0) {

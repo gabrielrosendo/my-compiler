@@ -1,8 +1,11 @@
 void main() {
     int arr[10];
     int b;
+    float c;
 
     arr[1] = 5;
     b = arr[1];
+    c = 3.5;
     print(b);
+    print(c);
 }
