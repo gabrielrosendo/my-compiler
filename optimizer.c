@@ -2,14 +2,11 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-void optimizeforMIPS(TAC** head) {
-    constantFolding(head);
-    deadCodeElimination(head);
-}
 void optimizeTAC(TAC** head) {
+    constantFolding(head);
     constantPropagation(head);
-    //copyPropagation(head);
-    
+    copyPropagation(head);
+    deadCodeElimination(head);
 }
 bool isConstant(const char* str) {
     if (str == NULL || *str == '\0') {

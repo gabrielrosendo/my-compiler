@@ -497,7 +497,6 @@ int main(int argc, char **argv) {
     }
 
     
-    optimizeforMIPS(&tacHead);
     initCodeGenerator("output.s", tacHead);
     generateMIPS(tacHead);
     finalizeCodeGenerator("output.s");
@@ -509,7 +508,10 @@ int main(int argc, char **argv) {
     // Output optimized TAC to file
     FILE* optimizedTacFile = fopen("optimizedTAC.ir", "w");
     freeSymbolTable(symbolBST);
+    printf("Freeing symbol table...\n");
+
     freeFunctionSymbolTable(functionBST);
+
     freeArraySymbolTable(arraySymTab);
 
     printf("Freeing AST...\n");

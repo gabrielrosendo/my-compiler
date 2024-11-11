@@ -186,25 +186,33 @@ void freeFunctionSymbolTable(FunctionSymbolBST* node) {
     if (node == NULL) {
         return;
     }
-    printf("LOG: freeing symbolBST\n");
+    
+    printf("LOG: freeing function symbol node at %p\n", (void*)node);
+    
+    // Free children first
     freeFunctionSymbolTable(node->right);
     freeFunctionSymbolTable(node->left);
-    freeParameters(node->parameters);
+    
+    // Free parameters only once - use freeParameters OR direct free, not both
+    if (node->parameters != NULL) {
+        freeParameters(node->parameters);  // This should handle all parameter cleanup
+        node->parameters = NULL;  // Prevent any accidental reuse
+    }
+    
+    // Free symbol data
     if (node->symbol != NULL) {
-    if (node->symbol->name != NULL) {
-        free(node->symbol->name);
+        if (node->symbol->name != NULL) {
+            free(node->symbol->name);
+        }
+        if (node->symbol->type != NULL) {
+            free(node->symbol->type);
+        }
+        free(node->symbol);
     }
-    if (node->symbol->type != NULL) {
-        free(node->symbol->type);
-    }
-    if(node->parameters != NULL) {
-        free(node->parameters);
-    }
-    free(node->symbol);
-    }
+    
+    // Free the node itself
     free(node);
 }
-
 
 void printFunctionSymbolTablePrivateRight(FunctionSymbolBST* curNode, int indent)  {
 

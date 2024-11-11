@@ -1,5 +1,18 @@
-int b ==> mainb
-$t1 = 5
-mainb (b) = $t1
-$t1 = mainb ()
+$t1 = addOnea (a)
+$t0 = 2
+$t1 = addOneb (b)
+$t1 = addTwoa (a)
+$t0 = 4
+$t1 = addTwoc (c)
+int a ==> maina
+int d ==> maind
+$t1 = 1
+maina (a) = 1
+$t1 = 2
+maind (d) = 2
+$t1 = a (a)
+maind (d) = $t1
+$t1 = d (d)
+maind (d) = $t1
+$t1 = d (ğ_à/)
 Print((null) ($t1))
