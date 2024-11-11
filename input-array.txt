@@ -7,5 +7,5 @@ void main() {
     b = arr[1];
     c = 3.5;
     print(b);
-    print(c);
+    print(c+b);
 }

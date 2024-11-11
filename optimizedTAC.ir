@@ -7,4 +7,6 @@ mainc (c) = 3.500000
 $t1 = b (b)
 Print($t1 (b))
 $f1 = c (c)
-Print($f1 (c))
+$t0 = b (b)
+$f1 = $f0 + $f1
+Print($f1 ($f0))

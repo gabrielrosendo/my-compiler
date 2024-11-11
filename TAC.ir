@@ -7,4 +7,6 @@ mainc (c) = $f1
 $t1 = mainb (b)
 Print($t1 (mainb))
 $f1 = mainc (c)
-Print($f1 (mainc))
+$t0 = mainb (b)
+$f1 = $f0 + $f1
+Print($f1 ($f0))
