@@ -35,9 +35,21 @@ void constantFolding(TAC** head) {
     TAC* prev = NULL;
     TAC* prev_prev = NULL;
     TAC* prev_prev_prev = NULL;
-    char* t0 = '\0';
-    char* t1 = '\0';
+    char* t0 = NULL;
+    char* t1 = NULL;
     while (current != NULL) {
+        // Free previous values before getting new ones
+        if (t0 != NULL) {
+            free(t0);
+            t0 = NULL;
+        }
+        if (t1 != NULL) {
+            free(t1);
+            t1 = NULL;
+        }
+        
+        getVal(current, &t0, &t1);
+
         getVal(current, &t0, &t1);
 
         if (current != NULL && current->op != NULL && strcmp(current->op, "+") == 0 || strcmp(current->op, "-") == 0) {
@@ -167,7 +179,10 @@ void constantFolding(TAC** head) {
         current = current->next;
     }
 
-    free(t1);
+    // Clean up at the end
+    if (t0 != NULL) free(t0);
+    if (t1 != NULL) free(t1);
+
 }
 
 void updateTemp(TAC* current, char** t0, char** t1) {
@@ -184,17 +199,13 @@ void updateTemp(TAC* current, char** t0, char** t1) {
 }
 void getVal(TAC* current, char** t0, char** t1) {
     if (current->op != NULL && (strcmp(current->op, "Num") == 0 || strcmp(current->op, "ID") == 0)) {
-        printf("INSIDE\n");
         if (strcmp(current->result, "$t0") == 0) {
-            *t0 = current->arg1;
-            printf("$t0: %s\n", *t0);
+            *t0 = strdup(current->arg1);  // Make a copy of the string
         } else {
-            *t1 = current->arg1;
-            printf("$t1: %s\n", *t1);
+            *t1 = strdup(current->arg1);  // Make a copy of the string
         }
     }
 }
-
 void constantPropagation(TAC** head) {
     printf("Inside constant propagation\n");
     TAC* current = *head;
@@ -328,7 +339,7 @@ void printCurrentOptimizedTAC(TAC* tac) {
     } else if (strcmp(tac->op, "=") == 0) {
         printf("%s (%s) = %s\n", tac->result, tac->arg1, tac->arg2);
     } else if (strcmp(tac->op, "Print") == 0) {
-        printf("Print(%s (%s))\n", tac->result, tac->arg1);
+        printf("Print(%s (%s))\n", tac->arg1);
     } else if (strcmp(tac->op, "+") == 0) {
         printf("%s = %s + %s\n", tac->result, tac->arg1, tac->arg2);
     } else if (strcmp(tac->op, "Num") == 0) {

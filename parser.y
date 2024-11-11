@@ -520,7 +520,6 @@ int main(int argc, char **argv) {
     printf("-----TAC CODE AFTER OPTIMIZATION-----\n");
     tempTac = tacHead;
     while (tempTac != NULL) {
-        printf("testing\n");
         printTAC(tempTac);
         tempTac = tempTac->next;
     }

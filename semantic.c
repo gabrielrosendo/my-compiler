@@ -953,7 +953,7 @@ void printTACToFile(const char* filename, TAC* tac) {
         } else if (strcmp(current->op, "=") == 0) {
             fprintf(file, "%s (%s) = %s\n", current->result, current->arg1, current->arg2);
         } else if (strcmp(current->op, "Print") == 0) {
-            fprintf(file, "Print(%s (%s))\n", current->result, current->arg1);
+            fprintf(file, "Print(%s (%s))\n", current->arg1);
         } else if (strcmp(current->op, "+") == 0) {
             fprintf(file, "%s = %s + %s\n", current->result, current->arg1, current->arg2);
         } else if (strcmp(current->op, "-") == 0) {

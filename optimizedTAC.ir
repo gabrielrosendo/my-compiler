@@ -1,9 +1,15 @@
+int b ==> addOneb
 $t1 = addOnea (a)
-$t0 = 2
-$t1 = addOneb (b)
+$t0 = 1
+$t1 = 1 + $t1
+addOneb (b) = $t1
+$t1 = b (b)
+int c ==> addTwoc
 $t1 = addTwoa (a)
-$t0 = 4
-$t1 = addTwoc (c)
+$t0 = 2
+$t1 = 2 + $t1
+addTwoc (c) = $t1
+$t1 = c (c)
 int a ==> maina
 int d ==> maind
 $t1 = 1
@@ -14,5 +20,5 @@ $t1 = a (a)
 maind (d) = $t1
 $t1 = d (d)
 maind (d) = $t1
-$t1 = d (ð_à/)
-Print((null) ($t1))
+$t1 = d (d)
+Print($t1 (d))

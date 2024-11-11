@@ -21,4 +21,4 @@ maind (d) = $t1
 $t1 = maind (d)
 maind (d) = $t1
 $t1 = maind (d)
-Print((null) ($t1))
+Print($t1 (maind))
