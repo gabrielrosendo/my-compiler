@@ -1,0 +1,38 @@
+
+
+float subtract(float a, float b) {
+    float z;
+    z = a - b;
+    return z;
+    }
+
+float multiply(float a, float b) {
+    float z;
+    z = a * b;
+    return z;
+}
+
+float divide(float a, float b) {
+    float z;
+    z = a / b;
+    return z;
+}
+
+void main() {
+    float x;
+    float y;
+    int result;
+
+    x = 5.5;
+    y = 2.2;
+
+
+    result = subtract(y,x);
+    print(result);  
+
+    result = multiply(x, y);
+    print(result); 
+
+    result = divide(x, y);
+    print(result);  
+}
