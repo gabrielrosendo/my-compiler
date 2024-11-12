@@ -1,12 +1,44 @@
-int b ==> mainb
-float c ==> mainc
-$t1 = 5
-mainb (b) = $t1
-$f1 = 3.500000
-mainc (c) = $f1
-$t1 = mainb (b)
-Print($t1 (mainb))
-$f1 = mainc (c)
-$t0 = mainb (b)
+$t1 = addOnea (a)
+$t0 = 1
+$t1 = $t0 + $t1
+int a ==> maina
+float fta ==> mainfta
+bool bla ==> mainbla
+char chra ==> mainchra
+$t1 = 1
+maina (a) = $t1
+$t1 = maina (a)
+maina (a) = $t1
+$t1 = maina (a)
+Print($t1 (maina))
+$f1 = 3.200000
+mainfta (fta) = $f1
+$f1 = mainfta (fta)
+Print($f1 (mainfta))
+$t5 = mainbla (bla)
+Print($t5 (mainbla))
+mainchra (chra) = $t7
+$t7 = mainchra (chra)
+Print($t7 (mainchra))
+$f1 = 8.300000
+$t0 = 2
+$f1 = $f0 * $f1
+$t0 = 5
+$f1 = $f1 - $f0
+$t1 = 3
+$f0 = mainfta (fta)
+$f1 = $f0 / $f1
 $f1 = $f0 + $f1
-Print($f1 ($f0))
+mainfta (fta) = $f1
+$f1 = mainfta (fta)
+Print($f1 (mainfta))
+$t1 = 5
+$t0 = 2
+$t1 = $t0 * $t1
+$t0 = 1
+$t1 = $t0 + $t1
+$t0 = 3
+$t1 = $t1 - $t0
+maina (a) = $t1
+$t1 = maina (a)
+Print($t1 (maina))

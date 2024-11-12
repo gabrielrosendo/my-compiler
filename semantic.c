@@ -697,11 +697,21 @@ TAC* generateTACForExpr(ASTNode* expr) {
             printf("Generating TAC for expression\n");
             char* op = strdup(expr->value.Expression.op);
             if(strcmp(currentExpressionType, "int") == 0) {
-                instruction->arg1 = strdup("$t0");
-                instruction->arg2 = strdup("$t1");
+                if(strcmp(op, "-") == 0) {
+                    instruction->arg1 = strdup("$t1");
+                    instruction->arg2 = strdup("$t0");
+                } else {
+                    instruction->arg1 = strdup("$t0");
+                    instruction->arg2 = strdup("$t1");
+                }
             } else if(strcmp(currentExpressionType, "float") == 0) {
-                instruction->arg1 = strdup("$f0");
-                instruction->arg2 = strdup("$f1");
+                if(strcmp(op, "-") == 0) {
+                    instruction->arg1 = strdup("$f1");
+                    instruction->arg2 = strdup("$f0");
+                } else {
+                    instruction->arg1 = strdup("$f0");
+                    instruction->arg2 = strdup("$f1");
+                }
             }
             instruction->op = op;
             if(strcmp(currentExpressionType, "int") == 0) {

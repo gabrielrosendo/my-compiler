@@ -226,9 +226,9 @@ void generateMIPS(TAC* tacInstructions) {
             printf("Generating MIPS for Subtraction\n");
             printf("%s = %s - %s\n", tac->result, tac->arg1, tac->arg2);
             printf("\tsub %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
-            if (strcmp(tac->arg1, "$t0") == 0) {
+            if (strcmp(tac->arg1, "$t0") == 0 || strcmp(tac->arg1, "$t1") == 0) {
                 fprintf(outputFile, "\tsub %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
-            } else if (strcmp(tac->arg1, "$f0") == 0) {
+            } else if (strcmp(tac->arg1, "$f0") == 0 || strcmp(tac->arg1, "$f1") == 0) {
                 fprintf(outputFile, "\tsub.s %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
             }
 
