@@ -36,6 +36,7 @@ typedef enum {
     NodeType_BinaryOp,
     NodeType_FunctionCall,
     NodeType_CallParamList,
+    NodeType_If
 } NodeType;
 
 // Define AST Structure
@@ -193,6 +194,11 @@ typedef struct ASTNode {
             struct ASTNode* expr;
             struct ASTNode* nextParam;
         }CallParamList;
+
+        struct {
+            struct ASTNode* condition;
+            struct ASTNode* ifBody;
+        }If;
 
     } value;
 }ASTNode;

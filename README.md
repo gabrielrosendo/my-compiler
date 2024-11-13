@@ -2,6 +2,7 @@
 
 Videos:
 Grant Burk: https://www.loom.com/share/7fe7cc1c159b4cf0b7c498503c9edb0a?sid=dd5dea37-54e7-457b-bd34-e5b23c23c118 
+Gabriel Marcelino: https://www.loom.com/share/0e306929bff14a7e8ae29038ff2d9a15
 
 Compiler rules:
 

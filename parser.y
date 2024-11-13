@@ -66,6 +66,7 @@ ArraySymbolTable* arraySymTab = NULL;
 %token <string> RETURN
 %token <keyword> MAIN
 %token <string> BASECONDITIONAL
+%token <string> IF
 
 %left ADD SUB MUL DIV
 
@@ -268,7 +269,16 @@ Stmt: ID EQ Expr SEMICOLON {
         $$ = createNode(NodeType_Print);
         $$->value.print.expr = $3;
     }
+    | IF LPAREN ConditionalStmt RPAREN LBRACE StmtList RBRACE {
+        printf("PARSER: Recognized if statement\n");
+        $$ = createNode(NodeType_If);
+        $$->value.If.condition = $3;
+        $$->value.If.ifBody = $6;
+    }
+
+
     // Handle missng semicolon  
+
     | PRINT LPAREN Expr RPAREN { 
         printf ("Missing semicolon after print statement: %s\n", $3);
         // stop compilation

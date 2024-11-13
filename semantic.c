@@ -513,6 +513,19 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
             appendTAC(&tacHead, instruction);
 
             break;
+    
+            
+        case NodeType_If:
+            printf("Semantic Analysis on If node\n");
+            // Check if the condition is boolean
+            if (node->value.If.condition->type != NodeType_BooleanValue) {
+                printf("Error: If condition must be boolean.\n");
+                return;
+            }
+            semanticAnalysis(node->value.If.condition, symTab, functionBST, arraySymTab);
+            semanticAnalysis(node->value.If.ifBody, symTab, functionBST, arraySymTab);
+            break;
+
     }
 
     if (node->type == NodeType_ParamDecl ||
@@ -861,6 +874,15 @@ TAC* generateTACForExpr(ASTNode* expr) {
             break;
         }
 
+        case NodeType_If: {
+            printf("Generating TAC for If\n");
+            instruction->arg1 = strdup(expr->value.If.condition->value.booleanValue.value);
+            instruction->arg2 = strdup("");
+            instruction->op = strdup("If");
+            instruction->result = strdup("");
+            break;
+        }
+
         default:
             free(instruction);
             return NULL;
@@ -948,6 +970,9 @@ void printTAC(TAC* tac) {
     } else if (strcmp(tac->op, "FloatToInt") == 0) {
         printf("\tFloat to int: %s ==> %s\n", tac->arg1, tac->result);
     }
+    else if (strcmp(tac->op, "If") == 0) {
+        printf("\tIf: %s\n", tac->arg1);
+    }
 }
 
 void printTACToFile(const char* filename, TAC* current) {
@@ -1010,6 +1035,9 @@ void printTACToFile(const char* filename, TAC* current) {
         fprintf(file, "\tInt to float: %s ==> %s\n", tac->arg1, tac->result);
     } else if (strcmp(tac->op, "FloatToInt") == 0) {
         fprintf(file, "\tFloat to int: %s ==> %s\n", tac->arg1, tac->result);
+    }
+    else if (strcmp(tac->op, "If") == 0) {
+        fprintf(file, "\tIf: %s\n", tac->arg1);
     }
         tac = tac->next;
     }   

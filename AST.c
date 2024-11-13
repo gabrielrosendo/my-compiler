@@ -128,6 +128,10 @@ struct ASTNode* createNode(NodeType type) {
             newNode->value.FuncTail.expr = NULL;
             newNode->value.FuncTail.type = NULL;
             break;
+        case NodeType_If:
+            newNode->value.If.condition = NULL;
+            newNode->value.If.ifBody = NULL;
+            break;
         default:
             fprintf(stderr, "ERROR: unknown AST node type AST.c->createNode()\n");
             printf("node type: %d\n", type);
@@ -283,6 +287,10 @@ void freeAST(struct ASTNode* node) {
         case NodeType_CallParamList:
             freeAST(node->value.CallParamList.expr);
             freeAST(node->value.CallParamList.nextParam);
+            break;
+        case NodeType_If:
+            freeAST(node->value.If.condition);
+            freeAST(node->value.If.ifBody);
             break;
         default:
             fprintf(stderr, "ERROR: unknown AST node type AST.c->freeAST()\n");

@@ -82,6 +82,12 @@ BAD_ID {NUMBER}{ID}
     return BASECONDITIONAL;
 }
 
+"if" { 
+    words++; chars += strlen(yytext);
+    printf("%-10s | %-10s\n", yytext, "IF");
+    return IF;
+}
+
 {CHARVALUE} {
     words++; chars += strlen(yytext);
     printf("%-10s | %-10s\n", yytext, "CHARACTER");
