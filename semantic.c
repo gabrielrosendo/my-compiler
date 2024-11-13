@@ -522,9 +522,14 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
                 printf("Error: If condition must be boolean.\n");
                 return;
             }
-            semanticAnalysis(node->value.If.condition, symTab, functionBST, arraySymTab);
-            semanticAnalysis(node->value.If.ifBody, symTab, functionBST, arraySymTab);
-            break;
+            // Directly access the boolean value for the condition
+            if (strcmp(node->value.If.condition->value.booleanValue.value, "true") == 0) {
+                printf("If condition is true\n");
+                semanticAnalysis(node->value.If.ifBody, symTab, functionBST, arraySymTab);
+
+            } else {
+                printf("If condition is false\n");
+            }
 
     }
 

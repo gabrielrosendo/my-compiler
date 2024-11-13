@@ -1,5 +1,4 @@
 Main Function:
-	$t5 = false
 	$t1 = 6
 	Print($t1)
 	Return: void void
