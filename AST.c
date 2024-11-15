@@ -543,6 +543,28 @@ void printAST(struct ASTNode* node, int indent) {
             printf("AST Print: funcName = %s\n", node->value.FunctionCall.funcName);
             printAST(node->value.FunctionCall.CallParamList, indent);
             break;
+        case NodeType_If:
+            spaceOut(indent);
+            printf("AST Print: NodeType_If\n");
+            printAST(node->value.If.condition, indent);
+            printAST(node->value.If.ifBody, indent);
+            break;
+        case NodeType_Comparison:
+            spaceOut(indent);
+            printf("AST Print: NodeType_Comparison\n");
+            spaceOut(indent);
+            printf("AST Print: op = %s\n", node->value.Comparison.op);
+            printAST(node->value.Comparison.left, indent);
+            printAST(node->value.Comparison.right, indent);
+            break;
+        case NodeType_LogicalOp:
+            spaceOut(indent);
+            printf("AST Print: NodeType_LogicalOp\n");
+            spaceOut(indent);
+            printf("AST Print: op = %s\n", node->value.LogicalOp.op);
+            printAST(node->value.LogicalOp.left, indent);
+            printAST(node->value.LogicalOp.right, indent);
+            break;
         default:
             break;
     }
