@@ -517,19 +517,28 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
             
         case NodeType_If:
             printf("Semantic Analysis on If node\n");
-            // Check if the condition is boolean
-            if (node->value.If.condition->type != NodeType_BooleanValue) {
-                printf("Error: If condition must be boolean.\n");
-                return;
+            semanticAnalysis(node->value.If.condition, symTab, functionBST, arraySymTab);
+            if(strcmp(currentExpressionType, "bool") != 0) {
+                // If condition is a comparison statement
+                if(node->value.If.condition->type == NodeType_Comparison) {
+                    semanticAnalysis(node->value.If.condition->value.Comparison.left, symTab, functionBST, arraySymTab);
+                    semanticAnalysis(node->value.If.condition->value.Comparison.right, symTab, functionBST, arraySymTab);
+                } else {
+                    fprintf(stderr, "Error: If condition is not a boolean expression\n");
+                    exit(0);
+                }
             }
-            // Directly access the boolean value for the condition
-            if (strcmp(node->value.If.condition->value.booleanValue.value, "true") == 0) {
-                printf("If condition is true\n");
-                semanticAnalysis(node->value.If.ifBody, symTab, functionBST, arraySymTab);
-
-            } else {
-                printf("If condition is false\n");
-            }
+        case NodeType_Comparison:
+            printf("Semantic Analysis on Comparison node\n");
+            semanticAnalysis(node->value.Comparison.left, symTab, functionBST, arraySymTab);
+            semanticAnalysis(node->value.Comparison.right, symTab, functionBST, arraySymTab);
+            break;
+        case NodeType_LogicalOp:
+            printf("Semantic Analysis on LogicalOp node\n");
+            semanticAnalysis(node->value.LogicalOp.left, symTab, functionBST, arraySymTab);
+            semanticAnalysis(node->value.LogicalOp.right, symTab, functionBST, arraySymTab);
+            break;  
+            
 
     }
 
@@ -547,7 +556,13 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
         node->type == NodeType_FloatNumber ||
         node->type == NodeType_Print || 
         node->type == NodeType_Identifier ||
-        node->type == NodeType_ArrayAccess
+        node->type == NodeType_ArrayAccess||
+        node->type == NodeType_BinaryOp ||
+        node->type == NodeType_FunctionCall ||
+        node->type == NodeType_Expression ||
+        node->type == NodeType_If ||
+        node->type == NodeType_Comparison ||
+        node->type == NodeType_LogicalOp
         ) {
         tac = generateTACForExpr(node);
     }
@@ -881,9 +896,25 @@ TAC* generateTACForExpr(ASTNode* expr) {
 
         case NodeType_If: {
             printf("Generating TAC for If\n");
-            instruction->arg1 = strdup(expr->value.If.condition->value.booleanValue.value);
+            instruction->arg1 = strdup("");
             instruction->arg2 = strdup("");
             instruction->op = strdup("If");
+            instruction->result = strdup("");
+            break;
+        }
+        case NodeType_Comparison: {
+            printf("Generating TAC for Comparison\n");
+            instruction->arg1 = strdup("");
+            instruction->arg2 = strdup("");
+            instruction->op = strdup("Comparison");
+            instruction->result = strdup("");
+            break;
+        }
+        case NodeType_LogicalOp: {
+            printf("Generating TAC for LogicalOp\n");
+            instruction->arg1 = strdup("");
+            instruction->arg2 = strdup("");
+            instruction->op = strdup("LogicalOp");
             instruction->result = strdup("");
             break;
         }
@@ -978,6 +1009,15 @@ void printTAC(TAC* tac) {
     else if (strcmp(tac->op, "If") == 0) {
         printf("\tIf: %s\n", tac->arg1);
     }
+    else if (strcmp(tac->op, "Comparison") == 0) {
+        printf("\tComparison: %s %s %s\n", tac->arg1, tac->arg2, tac->result);
+    }
+    else if (strcmp(tac->op, "LogicalOp") == 0) {
+        printf("\tLogicalOp: %s %s %s\n", tac->arg1, tac->arg2, tac->result);
+    }
+    else {
+        printf("Unknown TAC operation\n");
+    }
 }
 
 void printTACToFile(const char* filename, TAC* current) {
@@ -1043,6 +1083,12 @@ void printTACToFile(const char* filename, TAC* current) {
     }
     else if (strcmp(tac->op, "If") == 0) {
         fprintf(file, "\tIf: %s\n", tac->arg1);
+    }
+    else if (strcmp(tac->op, "Comparison") == 0) {
+        fprintf(file, "\tComparison: %s %s %s\n", tac->arg1, tac->arg2, tac->result);
+    }
+    else if (strcmp(tac->op, "LogicalOp") == 0) {
+        fprintf(file, "\tLogicalOp: %s %s %s\n", tac->arg1, tac->arg2, tac->result);
     }
         tac = tac->next;
     }   

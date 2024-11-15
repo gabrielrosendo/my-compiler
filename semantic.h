@@ -15,6 +15,7 @@ typedef struct TAC {
     char arg4;
     char *result;
     struct TAC *next;
+    int label;
 } TAC;
 
 extern TAC* tacHead;

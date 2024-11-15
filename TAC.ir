@@ -1,5 +1,13 @@
 Main Function:
+	$t5 = true
+	$t5 = true
 	$t1 = 6
 	Print($t1)
+	If: 
+	$t5 = false
+	$t5 = false
+	$t1 = 5
+	Print($t1)
+	If: 
 	Return: void void
 

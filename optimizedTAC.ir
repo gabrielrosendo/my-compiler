@@ -1,5 +1,13 @@
 Main Function:
+	$t5 = 
+	$t5 = 
 	$t1 = 6
 	Print(6)
+	If: 
+	$t5 = 
+	$t5 = 
+	$t1 = 5
+	Print(5)
+	If: 
 	Return: void void
 

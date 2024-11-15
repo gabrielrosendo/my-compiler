@@ -1,73 +1,8 @@
-int addOne(int a) {
-	return a + 1;
-}
-
-float something(int a, float b, bool c, char d) {
-	print(a);
-	print(b);
-	print(c);
-	print(d);
-	b =  a + b + 3.14;
-	return b;
-}
-
 void main() {
-	int a;
-	float fta;
-	bool bla;
-	char chra;
-
-	int x[5];
-	float ftx[5];
-	bool blx[5];
-	char chrx[5];
-	
-	a = 1;
-	a = addOne(a);
-	print(a);
-
-	fta = 3.2;
-	print(fta);
-
-	bla = true;
-	print(bla);
-
-	chra = 'a';
-	print(chra);
-
-	fta = fta / 3 + 2 * 8.3 - 5;
-	print(fta);
-
-	a = 3 - 2 * 5 + 1;
-	print(a);
-
-	x[0] = 1 + 1;
-	x[1] = x[0] - 1;	
-	print(x[1]);
-
-	ftx[0] = 1;
-	print(ftx[0]);
-	ftx[1] = ftx[0] * 2 + 1.5;   
-	print(ftx[1]);
-
-	blx[0] = true;
-	blx[1] = blx[0];
-	print(blx[1]);
-
-	chrx[0] = 'b';
-	chrx[1] = chrx[0];
-	print(chrx[1]);
-
-	a = 1;
-	fta = 1.1;
-	bla = true;
-	chra = 'a';
-
-	fta = something(a, fta, bla, chra);
-
-	print(a);
-	print(fta);
-	print(bla);
-	print(chra);
-	
+    if(true){
+        print(6);
+    }
+    if(false){
+        print(5);
+    }
 }

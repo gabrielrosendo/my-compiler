@@ -67,10 +67,17 @@ ArraySymbolTable* arraySymTab = NULL;
 %token <keyword> MAIN
 %token <string> BASECONDITIONAL
 %token <string> IF
+%token <keyword> AND
+%token <keyword> OR
+%token <keyword> GT
+%token <keyword> LT
+%token <keyword> GE
+%token <keyword> LE
+
 
 %left ADD SUB MUL DIV
 
-%type <ast> Program FuncDeclList FuncDecl MainFunc ParamList ParamDecl ParamArrayDecl Body VarDeclList VarDecl ArrayDecl StmtList Stmt ConditionalStmt Expr HighExpr BinOp HighBinOp CallParamList FuncTail FunctionCall
+%type <ast> Program FuncDeclList FuncDecl MainFunc ParamList ParamDecl ParamArrayDecl Body VarDeclList VarDecl ArrayDecl StmtList Stmt ConditionalStmt Expr HighExpr BinOp HighBinOp CallParamList FuncTail FunctionCall ComparisonStmt LogicalOp ComparisonOp Operand
 
 %%
 
@@ -269,7 +276,15 @@ Stmt: ID EQ Expr SEMICOLON {
         $$ = createNode(NodeType_Print);
         $$->value.print.expr = $3;
     }
+    // If with boolean value
     | IF LPAREN ConditionalStmt RPAREN LBRACE StmtList RBRACE {
+        printf("PARSER: Recognized if statement\n");
+        $$ = createNode(NodeType_If);
+        $$->value.If.condition = $3;
+        $$->value.If.ifBody = $6;
+    }
+    // If with comparison
+    | IF LPAREN ComparisonStmt RPAREN LBRACE StmtList RBRACE {
         printf("PARSER: Recognized if statement\n");
         $$ = createNode(NodeType_If);
         $$->value.If.condition = $3;
@@ -311,6 +326,64 @@ Stmt: ID EQ Expr SEMICOLON {
     }
 ;
 
+ComparisonStmt:
+    ComparisonStmt LogicalOp ComparisonStmt {
+        printf("PARSER: Recognized logical comparison statement\n");
+        $$ = createNode(NodeType_LogicalOp);
+    }
+    | Operand ComparisonOp Operand {
+        printf("PARSER: Recognized comparison statement\n");
+        $$ = createNode(NodeType_Comparison);
+    }
+;
+
+LogicalOp:
+    AND { $$ = "&&"; }
+    | OR { $$ = "||"; }
+;
+
+ComparisonOp:
+    EQ EQ { $$ = "=="; }
+    | GT { $$ = ">"; }
+    | LT { $$ = "<"; }
+    | GE { $$ = ">="; }
+    | LE { $$ = "<="; }
+;
+
+Operand:
+    ID { 
+        printf("PARSER: Recognized operand\n");
+        $$ = createNode(NodeType_Identifier);
+        $$->value.identifier.name = $1;
+    }
+    | NUMBER { 
+        printf("PARSER: Recognized operand\n");
+        $$ = createNode(NodeType_Number);
+        $$->value.Number.number = $1;
+    }
+    | FLOATNUMBER { 
+        printf("PARSER: Recognized operand\n");
+        $$ = createNode(NodeType_FloatNumber);
+        $$->value.FloatNumber.value = $1;
+    }
+    | CHARACTER {
+        printf("PARSER: Recognized operand\n");
+        $$ = createNode(NodeType_Character);
+        $$->value.Character.character = $1[1];
+    }
+    | ID LBRACKET NUMBER RBRACKET {
+        printf("PARSER: Recognized Array Access\n");
+        $$ = createNode(NodeType_ArrayAccess);
+        $$->value.ArrayAccess.name = $1;
+        $$->value.ArrayAccess.index = $3;
+    }
+    | ID LPAREN CallParamList RPAREN {
+        printf("PARSER: Recognized function call\n");
+        $$ = createNode(NodeType_FunctionCall);
+        $$->value.FunctionCall.funcName = $1;
+        $$->value.FunctionCall.CallParamList = $3;
+    }
+;
 ConditionalStmt : BASECONDITIONAL {
         printf("PARSER: Recognized Base conditional\n");
         $$ = createNode(NodeType_BooleanValue);

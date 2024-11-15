@@ -132,6 +132,16 @@ struct ASTNode* createNode(NodeType type) {
             newNode->value.If.condition = NULL;
             newNode->value.If.ifBody = NULL;
             break;
+        case NodeType_Comparison:
+            newNode->value.Comparison.left = NULL;
+            newNode->value.Comparison.right = NULL;
+            newNode->value.Comparison.op = '\0';
+            break;
+        case NodeType_LogicalOp:
+            newNode->value.LogicalOp.left = NULL;
+            newNode->value.LogicalOp.right = NULL;
+            newNode->value.LogicalOp.op = '\0';
+            break;
         default:
             fprintf(stderr, "ERROR: unknown AST node type AST.c->createNode()\n");
             printf("node type: %d\n", type);
@@ -291,6 +301,18 @@ void freeAST(struct ASTNode* node) {
         case NodeType_If:
             freeAST(node->value.If.condition);
             freeAST(node->value.If.ifBody);
+            break;
+        case NodeType_Comparison:
+            freeAST(node->value.Comparison.left);
+            freeAST(node->value.Comparison.right);
+            free(node->value.Comparison.op);
+            node->value.Comparison.op = NULL;  // Prevent double free
+            break;
+        case NodeType_LogicalOp:
+            freeAST(node->value.LogicalOp.left);
+            freeAST(node->value.LogicalOp.right);
+            free(node->value.LogicalOp.op);
+            node->value.LogicalOp.op = NULL;  // Prevent double free
             break;
         default:
             fprintf(stderr, "ERROR: unknown AST node type AST.c->freeAST()\n");
@@ -513,6 +535,13 @@ void printAST(struct ASTNode* node, int indent) {
             printf("AST Print: NodeType_BinaryOp\n");
             spaceOut(indent);
             printf("AST Print: op = %s\n", node->value.binaryOp.op);
+            break;
+        case NodeType_FunctionCall:
+            spaceOut(indent);
+            printf("AST Print: NodeType_FunctionCall\n");
+            spaceOut(indent);
+            printf("AST Print: funcName = %s\n", node->value.FunctionCall.funcName);
+            printAST(node->value.FunctionCall.CallParamList, indent);
             break;
         default:
             break;

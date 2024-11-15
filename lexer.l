@@ -194,6 +194,26 @@ BAD_ID {NUMBER}{ID}
     printf("%-10s | %-10s\n", yytext, "RBRACE");
     return RBRACE;
 }
+">" { 
+    chars++;
+    printf("%-10s | %-10s\n", yytext, "GT");
+    return GT;
+}
+"<" { 
+    chars++;
+    printf("%-10s | %-10s\n", yytext, "LT");
+    return LT;
+}
+">=" { 
+    chars++;
+    printf("%-10s | %-10s\n", yytext, "GE");
+    return GE;
+}
+"<=" { 
+    chars++;
+    printf("%-10s | %-10s\n", yytext, "LE");
+    return LE;
+}
 
 {BAD_ID} {
     words++; chars += strlen(yytext);
