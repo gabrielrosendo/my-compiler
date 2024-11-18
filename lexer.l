@@ -211,6 +211,20 @@ BAD_ID {NUMBER}{ID}
     return NOT;
 }
 
+"&&" { 
+    chars++;
+    printf("%-10s | %-10s\n", yytext, "AND");
+    yylval.string = strdup(yytext);
+    return AND;
+}
+
+"||" { 
+    chars++;
+    printf("%-10s | %-10s\n", yytext, "OR");
+    yylval.string = strdup(yytext);
+    return OR;
+}
+
 {BAD_ID} {
     words++; chars += strlen(yytext);
     printf("|ERROR| %s : Bad Identifier at line %d char %d\n", yytext, lines, chars);

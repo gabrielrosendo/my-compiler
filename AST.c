@@ -88,6 +88,11 @@ struct ASTNode* createNode(NodeType type) {
         case NodeType_Print:
             newNode->value.print.expr = NULL;
             break;
+        case NodeType_ConditionalExpression:
+            newNode->value.ConditionalExpression.left = NULL;
+            newNode->value.ConditionalExpression.right = NULL;
+            newNode->value.ConditionalExpression.op = '\0';
+            break;
         case NodeType_BooleanExpression:
             newNode->value.BooleanExpression.left = NULL;
             newNode->value.BooleanExpression.right = NULL;
@@ -234,6 +239,12 @@ void freeAST(struct ASTNode* node) {
             break;
         case NodeType_Print:
             freeAST(node->value.print.expr);
+            break;
+        case NodeType_ConditionalExpression:
+            freeAST(node->value.ConditionalExpression.left);
+            freeAST(node->value.ConditionalExpression.right);
+            free(node->value.ConditionalExpression.op);
+            node->value.ConditionalExpression.op = NULL;  // Prevent double free
             break;
         case NodeType_BooleanExpression:
             freeAST(node->value.BooleanExpression.left);
@@ -444,6 +455,18 @@ void printAST(struct ASTNode* node, int indent) {
         case NodeType_Print:
             spaceOut(indent);
             printf("AST Print: NodeType_Print\n");
+            break;
+        case NodeType_ConditionalExpression:
+            spaceOut(indent);
+            printf("AST Print: NodeType_ConditionalExpression\n");
+            if(node->value.ConditionalExpression.op != NULL) {
+                spaceOut(indent);
+                printf("AST Print: op = %s\n", node->value.ConditionalExpression.op);
+            }
+            printAST(node->value.ConditionalExpression.left, indent);
+            if(node->value.ConditionalExpression.right != NULL) {
+                printAST(node->value.ConditionalExpression.right, indent);
+            }
             break;
         case NodeType_BooleanExpression:
             spaceOut(indent);

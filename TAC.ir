@@ -1,45 +1,21 @@
 Main Function:
 	Variable: bool test ==> maintest
 	Variable: bool test1 ==> maintest1
-	Variable: bool test2 ==> maintest2
-	Variable: bool test3 ==> maintest3
-	Variable: bool test4 ==> maintest4
-	Variable: bool test5 ==> maintest5
-	$t1 = 2
-	$t1 --> $t6
-	$t1 = 1
+	$t5 = false
+	$t5 --> $t6
+	$t5 = false
+	$t5 --> $t6
+	$t5 = true
 	maintest (test) = $t5
-	$t1 = 2
-	$t1 --> $t6
-	$t1 = 1
+	$t5 = true
+	$t5 --> $t6
+	$t5 = true
+	$t5 --> $t6
+	$t5 = false
 	maintest1 (test1) = $t5
-	$t1 = 2
-	$t1 --> $t6
-	$t1 = 1
-	maintest2 (test2) = $t5
-	$t1 = 2
-	$t1 --> $t6
-	$t1 = 3
-	maintest3 (test3) = $t5
-	$t1 = 2
-	$t1 --> $t6
-	$t1 = 3
-	maintest4 (test4) = $t5
-	$t1 = 1
-	$t1 --> $t6
-	$t1 = 2
-	maintest5 (test5) = $t5
 	$t5 = maintest (test)
 	Print($t5)
 	$t5 = maintest1 (test1)
-	Print($t5)
-	$t5 = maintest2 (test2)
-	Print($t5)
-	$t5 = maintest3 (test3)
-	Print($t5)
-	$t5 = maintest4 (test4)
-	Print($t5)
-	$t5 = maintest5 (test5)
 	Print($t5)
 	Return: void void
 

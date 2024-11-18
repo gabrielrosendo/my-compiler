@@ -206,6 +206,14 @@ void generateMIPS(TAC* tacInstructions) {
             fprintf(outputFile, "\tli $v0, 4\t\t# Load syscall code for print string\n");
             fprintf(outputFile, "\tla $a0, print\t\t# Load address of print into $a0\n");
             fprintf(outputFile, "\tsyscall\t\t# Syscall to print string\n\n");
+        
+        } else if (strcmp(tac->op, "&&") == 0) {
+            printf("\t%s = %s %s %s\n", tac->result, tac->arg1, tac->op, tac->arg2);
+            fprintf(outputFile, "\tand %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
+
+        } else if (strcmp(tac->op, "||") == 0) {
+            printf("\t%s = %s %s %s\n", tac->result, tac->arg1, tac->op, tac->arg2);
+            fprintf(outputFile, "\tor %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
 
         } else if (strcmp(tac->op, "==") == 0) {
             printf("\t%s = %s %s %s\n", tac->result, tac->arg1, tac->op, tac->arg2);
@@ -289,7 +297,7 @@ void generateMIPS(TAC* tacInstructions) {
             
         } else if (strcmp(tac->op, "move") == 0) {
             printf("Generating MIPS for move\n");
-            if (strcmp(tac->arg1, "$t0") == 0 || strcmp(tac->arg1, "$t1") == 0 || strcmp(tac->arg1, "$t4") == 0) {
+            if (strcmp(tac->arg1, "$t0") == 0 || strcmp(tac->arg1, "$t1") == 0 || strcmp(tac->arg1, "$t4") == 0 || strcmp(tac->arg1, "$t5") == 0 || strcmp(tac->arg1, "$t6") == 0 || strcmp(tac->arg1, "$t7") == 0) {
                 fprintf(outputFile, "\tmove %s, %s\n", tac->result, tac->arg1);
             } else if (strcmp(tac->arg1, "$f0") == 0 || strcmp(tac->arg1, "$f1") == 0 || strcmp(tac->arg1, "$f4") == 0) {
                 fprintf(outputFile, "\tmov.s %s, %s\n", tac->result, tac->arg1);
