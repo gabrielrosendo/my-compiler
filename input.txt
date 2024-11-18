@@ -1,11 +1,16 @@
+bool function() {
+	bool aaa;
+	aaa = false;
+	return aaa;
+}
+
 void main() {
 	bool test;
 	bool test1;
 
-	test = false || false || true;
-	test1 = true && true || false;
+	test = !true;
+	test1 = function() || !false;
 
-	
 	print(test);
 	print(test1);
 }

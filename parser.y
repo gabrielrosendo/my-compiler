@@ -311,40 +311,66 @@ ConditionalExpr : ConditionalStmt {
         $$ = createNode(NodeType_ConditionalExpression);
         $$->value.ConditionalExpression.left = $1;
     }
-    | ConditionalStmt AND ConditionalStmt {
+    | ConditionalExpr AND ConditionalExpr {
         printf("PARSER: Recognized AND in ConditionalExpr\n");
         $$ = createNode(NodeType_ConditionalExpression);
         $$->value.ConditionalExpression.left = $1;
         $$->value.ConditionalExpression.right = $3;
         $$->value.ConditionalExpression.op = strdup("&&");
     }
-    | ConditionalExpr AND ConditionalStmt {
+    | Expr AND ConditionalExpr {
         printf("PARSER: Recognized AND in ConditionalExpr\n");
         $$ = createNode(NodeType_ConditionalExpression);
         $$->value.ConditionalExpression.left = $1;
         $$->value.ConditionalExpression.right = $3;
         $$->value.ConditionalExpression.op = strdup("&&");
     }
-    | ConditionalStmt OR ConditionalStmt {
+    | ConditionalExpr AND Expr {
+        printf("PARSER: Recognized AND in ConditionalExpr\n");
+        $$ = createNode(NodeType_ConditionalExpression);
+        $$->value.ConditionalExpression.left = $1;
+        $$->value.ConditionalExpression.right = $3;
+        $$->value.ConditionalExpression.op = strdup("&&");
+    }
+    | ConditionalExpr OR ConditionalExpr {
         printf("PARSER: Recognized OR in ConditionalExpr\n");
         $$ = createNode(NodeType_ConditionalExpression);
         $$->value.ConditionalExpression.left = $1;
         $$->value.ConditionalExpression.right = $3;
         $$->value.ConditionalExpression.op = strdup("||");
     }
-    | ConditionalExpr OR ConditionalStmt {
+    | Expr OR ConditionalExpr {
         printf("PARSER: Recognized OR in ConditionalExpr\n");
         $$ = createNode(NodeType_ConditionalExpression);
         $$->value.ConditionalExpression.left = $1;
         $$->value.ConditionalExpression.right = $3;
         $$->value.ConditionalExpression.op = strdup("||");
     }
-    // | NOT ConditionalStmt {
-
-    //}
-    // | Expr { // Check for boolean type
-
-    //}
+    | ConditionalExpr OR Expr {
+        printf("PARSER: Recognized OR in ConditionalExpr\n");
+        $$ = createNode(NodeType_ConditionalExpression);
+        $$->value.ConditionalExpression.left = $1;
+        $$->value.ConditionalExpression.right = $3;
+        $$->value.ConditionalExpression.op = strdup("||");
+    }
+    | NOT ConditionalStmt {
+        printf("PARSER: Recognized NOT in ConditionalExpr\n");
+        $$ = createNode(NodeType_ConditionalExpression);
+        $$->value.ConditionalExpression.left = $2;
+        $$->value.ConditionalExpression.op = strdup("!");
+    }
+    | NOT Expr {
+        printf("PARSER: Recognized NOT in ConditionalExpr\n");
+        $$ = createNode(NodeType_ConditionalExpression);
+        $$->value.ConditionalExpression.left = $2;
+        $$->value.ConditionalExpression.op = strdup("!");
+    }
+    | NOT ConditionalExpr {
+        printf("PARSER: Recognized NOT in ConditionalExpr\n");
+        $$ = createNode(NodeType_ConditionalExpression);
+        $$->value.ConditionalExpression.left = $2;
+        $$->value.ConditionalExpression.op = strdup("!");
+    }
 ;
 
 ConditionalStmt : BASECONDITIONAL {

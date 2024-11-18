@@ -1,15 +1,17 @@
+Function: bool function :
+	Variable: bool aaa ==> functionaaa
+	$t5 = false
+	functionaaa (aaa) = $t5
+	$t5 = functionaaa (aaa)
+	Return: bool void
+
 Main Function:
 	Variable: bool test ==> maintest
 	Variable: bool test1 ==> maintest1
-	$t5 = false
-	$t5 --> $t6
-	$t5 = false
-	$t5 --> $t6
 	$t5 = true
 	maintest (test) = $t5
-	$t5 = true
-	$t5 --> $t6
-	$t5 = true
+	Function Call: function => $t1
+	Function Call End: function => $t5
 	$t5 --> $t6
 	$t5 = false
 	maintest1 (test1) = $t5

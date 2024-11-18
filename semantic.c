@@ -296,9 +296,20 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
         case NodeType_ConditionalExpression:
             printf("Semantic Analysis running on node of type: NodeType_ConditionalExpression\n");
             semanticAnalysis(node->value.ConditionalExpression.left, symTab, functionBST, arraySymTab);
+
+            if(strcmp(currentExpressionType, "bool") != 0) {
+                printf("Cannot compare non numberical expression in boolean expression. Expression type: %s\n", currentExpressionType);
+                exit(0);
+            }
+
             if(node->value.ConditionalExpression.right != NULL) {
                 moveRegisters("$t5", "$t6");
                 semanticAnalysis(node->value.ConditionalExpression.right, symTab, functionBST, arraySymTab);
+            }
+
+            if(strcmp(currentExpressionType, "bool") != 0) {
+                printf("Cannot compare non numberical expression in boolean expression. Expression type: %s\n", currentExpressionType);
+                exit(0);
             }
 
             if (node->value.ConditionalExpression.op != NULL) {
@@ -970,6 +981,8 @@ void printTAC(TAC* tac) {
         printf("\t%s (%s[%d]) = %s\n", tac->result, tac->arg1, tac->arg3, tac->arg2);
     } else if (strcmp(tac->op, "Print") == 0) {
         printf("\tPrint(%s)\n", tac->arg1);
+    } else if (strcmp(tac->op, "!") == 0) {
+        printf("\t%s = %s%s\n", tac->result, tac->op, tac->arg2);
     } else if (strcmp(tac->op, "&&") == 0) {
         printf("\t%s = %s %s %s\n", tac->result, tac->arg1, tac->op, tac->arg2);
     } else if (strcmp(tac->op, "||") == 0) {

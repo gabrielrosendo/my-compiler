@@ -207,6 +207,10 @@ void generateMIPS(TAC* tacInstructions) {
             fprintf(outputFile, "\tla $a0, print\t\t# Load address of print into $a0\n");
             fprintf(outputFile, "\tsyscall\t\t# Syscall to print string\n\n");
         
+        } else if (strcmp(tac->op, "!") == 0) {
+            printf("\t%s = %s%s\n", tac->result, tac->op, tac->arg2);
+            fprintf(outputFile, "\txori %s, %s, 1\n", tac->result, tac->arg2);
+
         } else if (strcmp(tac->op, "&&") == 0) {
             printf("\t%s = %s %s %s\n", tac->result, tac->arg1, tac->op, tac->arg2);
             fprintf(outputFile, "\tand %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
