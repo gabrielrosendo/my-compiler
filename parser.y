@@ -66,6 +66,9 @@ ArraySymbolTable* arraySymTab = NULL;
 %token <string> RETURN
 %token <keyword> MAIN
 %token <string> BASECONDITIONAL
+%token <string> GREATER
+%token <string> LESS
+%token <string> NOT
 
 %left ADD SUB MUL DIV
 
@@ -306,6 +309,48 @@ ConditionalStmt : BASECONDITIONAL {
         $$ = createNode(NodeType_BooleanValue);
         $$->value.booleanValue.value = $1;
     } 
+    | Expr EQ EQ Expr {
+        printf("PARSER: Recognized == conditional\n");
+        $$ = createNode(NodeType_BooleanExpression);
+        $$->value.BooleanExpression.op = strdup("==");
+        $$->value.BooleanExpression.right = $1;
+        $$->value.BooleanExpression.left = $4;
+    }
+    | Expr LESS Expr {
+        printf("PARSER: Recognized == conditional\n");
+        $$ = createNode(NodeType_BooleanExpression);
+        $$->value.BooleanExpression.op = strdup("<");
+        $$->value.BooleanExpression.right = $1;
+        $$->value.BooleanExpression.left = $3;
+    }
+    | Expr GREATER Expr {
+        printf("PARSER: Recognized == conditional\n");
+        $$ = createNode(NodeType_BooleanExpression);
+        $$->value.BooleanExpression.op = strdup(">");
+        $$->value.BooleanExpression.right = $1;
+        $$->value.BooleanExpression.left = $3;
+    }
+    | Expr LESS EQ Expr {
+        printf("PARSER: Recognized == conditional\n");
+        $$ = createNode(NodeType_BooleanExpression);
+        $$->value.BooleanExpression.op = strdup("<=");
+        $$->value.BooleanExpression.right = $1;
+        $$->value.BooleanExpression.left = $4;
+    }
+    | Expr GREATER EQ Expr {
+        printf("PARSER: Recognized == conditional\n");
+        $$ = createNode(NodeType_BooleanExpression);
+        $$->value.BooleanExpression.op = strdup(">=");
+        $$->value.BooleanExpression.right = $1;
+        $$->value.BooleanExpression.left = $4;
+    }
+    | Expr NOT EQ Expr {
+        printf("PARSER: Recognized == conditional\n");
+        $$ = createNode(NodeType_BooleanExpression);
+        $$->value.BooleanExpression.op = strdup("!=");
+        $$->value.BooleanExpression.right = $1;
+        $$->value.BooleanExpression.left = $4;
+    }
 ;
 
 Expr: Expr BinOp Expr { 

@@ -207,6 +207,33 @@ void generateMIPS(TAC* tacInstructions) {
             fprintf(outputFile, "\tla $a0, print\t\t# Load address of print into $a0\n");
             fprintf(outputFile, "\tsyscall\t\t# Syscall to print string\n\n");
 
+        } else if (strcmp(tac->op, "==") == 0) {
+            printf("\t%s = %s %s %s\n", tac->result, tac->arg1, tac->op, tac->arg2);
+            fprintf(outputFile, "\tseq %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
+        
+        } else if (strcmp(tac->op, "<") == 0) {
+            printf("\t%s = %s %s %s\n", tac->result, tac->arg1, tac->op, tac->arg2);
+            fprintf(outputFile, "\tslt %s, %s, %s\n", tac->result, tac->arg2, tac->arg1);
+
+        } else if (strcmp(tac->op, ">") == 0) {
+            printf("\t%s = %s %s %s\n", tac->result, tac->arg1, tac->op, tac->arg2);
+            fprintf(outputFile, "\tslt %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
+        
+        } else if (strcmp(tac->op, "<=") == 0) {
+            printf("\t%s = %s %s %s\n", tac->result, tac->arg1, tac->op, tac->arg2);
+            fprintf(outputFile, "\tslt %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
+            fprintf(outputFile, "\txori %s, %s, 1\n", tac->result, tac->result);
+
+        } else if (strcmp(tac->op, ">=") == 0) {
+            printf("\t%s = %s %s %s\n", tac->result, tac->arg1, tac->op, tac->arg2);
+            fprintf(outputFile, "\tslt %s, %s, %s\n", tac->result, tac->arg2, tac->arg1);
+            fprintf(outputFile, "\txori %s, %s, 1\n", tac->result, tac->result);
+
+        } else if (strcmp(tac->op, "!=") == 0) {
+            printf("\t%s = %s %s %s\n", tac->result, tac->arg1, tac->op, tac->arg2);
+            fprintf(outputFile, "\tseq %s, %s, %s\n", tac->result, tac->arg1, tac->arg2);
+            fprintf(outputFile, "\txori %s, %s, 1\n", tac->result, tac->result);
+
         } else if (strcmp(tac->op, "BooleanValue") == 0) {
             printf("Generating MIPS for BooleanValue\n");
             printf("\t%s = %s\n", tac->result, tac->arg1);

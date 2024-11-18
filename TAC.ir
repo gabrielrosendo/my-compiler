@@ -1,153 +1,45 @@
-Function: int addOne :
-	Parameter: int a ==> addOnea
-	$t1 = addOnea (a)
-	$t0 = 1
-	$t1 = $t0 + $t1
-	Return: int $t1
-
-Function: float something :
-	Parameter: int a ==> somethinga
-	Parameter: float b ==> somethingb
-	Parameter: bool c ==> somethingc
-	Parameter: char d ==> somethingd
-	$t1 = somethinga (a)
-	Print($t1)
-	$f1 = somethingb (b)
-	Print($f1)
-	$t5 = somethingc (c)
-	Print($t5)
-	$t7 = somethingd (d)
-	Print($t7)
-	$f1 = somethingb (b)
-	$f0 = 3.140000
-	$f1 = $f0 + $f1
-	$t0 = somethinga (a)
-	Int to float: $t0 ==> $f0
-	$f1 = $f0 + $f1
-	somethingb (b) = $f1
-	$f1 = somethingb (b)
-	Return: float $f1
-
 Main Function:
-	Variable: int a ==> maina
-	Variable: float fta ==> mainfta
-	Variable: bool bla ==> mainbla
-	Variable: char chra ==> mainchra
-	Array: int x[5] ==> mainx[5]
-	Array: float ftx[5] ==> mainftx[5]
-	Array: bool blx[5] ==> mainblx[5]
-	Array: char chrx[5] ==> mainchrx[5]
-	$t1 = 1
-	maina (a) = $t1
-	Function Call: addOne => $t1
-	$t1 = maina (a)
-	Parameter Call: $t1
-	Function Call End: addOne => $t1
-	maina (a) = $t1
-	$t1 = maina (a)
-	Print($t1)
-	$f1 = 3.200000
-	mainfta (fta) = $f1
-	$f1 = mainfta (fta)
-	Print($f1)
-	$t5 = true
-	mainbla (bla) = $t5
-	$t5 = mainbla (bla)
-	Print($t5)
-	$t7 = 'a'
-	mainchra (chra) = $t7
-	$t7 = mainchra (chra)
-	Print($t7)
-	$f1 = 8.300000
-	$t0 = 2
-	Int to float: $t0 ==> $f0
-	$f1 = $f0 * $f1
-	$t0 = 5
-	Int to float: $t0 ==> $f0
-	$f1 = $f1 - $f0
-	$f1 --> $f4
-	$t1 = 3
-	$f0 = mainfta (fta)
-	Int to float: $t1 ==> $f1
-	$f1 = $f0 / $f1
-	$f1 --> $f0
-	$f4 --> $f1
-	$f1 = $f0 + $f1
-	mainfta (fta) = $f1
-	$f1 = mainfta (fta)
-	Print($f1)
-	$t1 = 5
-	$t0 = 2
-	$t1 = $t0 * $t1
-	$t0 = 1
-	$t1 = $t0 + $t1
-	$t0 = 3
-	$t1 = $t1 - $t0
-	maina (a) = $t1
-	$t1 = maina (a)
-	Print($t1)
-	$t1 = 1
-	$t0 = 1
-	$t1 = $t0 + $t1
-	mainx (x[0]) = $t1
-	$t1 = mainx (x[0])
-	$t0 = 1
-	$t1 = $t1 - $t0
-	mainx (x[1]) = $t1
-	$t1 = mainx (x[1])
-	Print($t1)
-	$t1 = 1
-	Int to float: $t1 ==> $f1
-	mainftx (ftx[0]) = $f1
-	$f1 = mainftx (ftx[0])
-	Print($f1)
+	Variable: bool test ==> maintest
+	Variable: bool test1 ==> maintest1
+	Variable: bool test2 ==> maintest2
+	Variable: bool test3 ==> maintest3
+	Variable: bool test4 ==> maintest4
+	Variable: bool test5 ==> maintest5
 	$t1 = 2
-	$f0 = mainftx (ftx[0])
-	Int to float: $t1 ==> $f1
-	$f1 = $f0 * $f1
-	$f0 = 1.500000
-	$f1 = $f0 + $f1
-	mainftx (ftx[1]) = $f1
-	$f1 = mainftx (ftx[1])
-	Print($f1)
-	$t5 = true
-	mainblx (blx[0]) = $t5
-	$t5 = mainblx (blx[0])
-	mainblx (blx[1]) = $t5
-	$t5 = mainblx (blx[1])
-	Print($t5)
-	$t7 = 'b'
-	mainchrx (chrx[0]) = $t7
-	$t7 = mainchrx (chrx[0])
-	mainchrx (chrx[1]) = $t7
-	$t7 = mainchrx (chrx[1])
-	Print($t7)
+	$t1 --> $t6
 	$t1 = 1
-	maina (a) = $t1
-	$f1 = 1.100000
-	mainfta (fta) = $f1
-	$t5 = true
-	mainbla (bla) = $t5
-	$t7 = 'a'
-	mainchra (chra) = $t7
-	Function Call: something => $t1
-	$t1 = maina (a)
-	Parameter Call: $t1
-	$f1 = mainfta (fta)
-	Parameter Call: $f1
-	$t5 = mainbla (bla)
-	Parameter Call: $t5
-	$t7 = mainchra (chra)
-	Parameter Call: $t7
-	Function Call End: something => $f1
-	mainfta (fta) = $f1
-	$t1 = maina (a)
-	Print($t1)
-	$f1 = mainfta (fta)
-	Print($f1)
-	$t5 = mainbla (bla)
+	maintest (test) = $t5
+	$t1 = 2
+	$t1 --> $t6
+	$t1 = 1
+	maintest1 (test1) = $t5
+	$t1 = 2
+	$t1 --> $t6
+	$t1 = 1
+	maintest2 (test2) = $t5
+	$t1 = 2
+	$t1 --> $t6
+	$t1 = 3
+	maintest3 (test3) = $t5
+	$t1 = 2
+	$t1 --> $t6
+	$t1 = 3
+	maintest4 (test4) = $t5
+	$t1 = 1
+	$t1 --> $t6
+	$t1 = 2
+	maintest5 (test5) = $t5
+	$t5 = maintest (test)
 	Print($t5)
-	$t7 = mainchra (chra)
-	Print($t7)
+	$t5 = maintest1 (test1)
+	Print($t5)
+	$t5 = maintest2 (test2)
+	Print($t5)
+	$t5 = maintest3 (test3)
+	Print($t5)
+	$t5 = maintest4 (test4)
+	Print($t5)
+	$t5 = maintest5 (test5)
+	Print($t5)
 	Return: void void
 

@@ -293,10 +293,35 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
             semanticAnalysis(node->value.print.expr, symTab, functionBST, arraySymTab);
             break;
 
+        case NodeType_BooleanExpression:
+            printf("Semantic Analysis running on node of type: NodeType_BooleanExpression\n");
+            printf("Op: %s\n", node->value.BooleanExpression.op);
+            semanticAnalysis(node->value.BooleanExpression.left, symTab, functionBST, arraySymTab);
+            if(strcmp(currentExpressionType, "float") == 0) {
+                TACConvertFloatToInt("$f1");
+            }
+            if(strcmp(currentExpressionType, "bool") == 0 || strcmp(currentExpressionType, "char") == 0) {
+                printf("Cannot compare non numberical expression in boolean expression. Expression type: %s\n", currentExpressionType);
+                exit(0);
+            }
+            moveRegisters("$t1", "$t6");
+            isRight = true;
+
+            semanticAnalysis(node->value.BooleanExpression.right, symTab, functionBST, arraySymTab);
+            if(strcmp(currentExpressionType, "float") == 0) {
+                TACConvertFloatToInt("$f1");
+            }
+            if(strcmp(currentExpressionType, "bool") == 0 || strcmp(currentExpressionType, "char") == 0) {
+                printf("Cannot compare non numberical expression in boolean expression. Expression type: %s\n", currentExpressionType);
+                exit(0);
+            }
+            isRight = true;
+
+            break;
+        
         case NodeType_BooleanValue:
             printf("Semantic Analysis running on node of type: NodeType_BooleanValue\n");
             printf("Value: %s\n", node->value.booleanValue.value);
-            break;
 
             if(strcmp(currentExpressionType, "bool") != 0) {
                 printf("Boolean expression does not have boolean result, actual result: %s\n", currentExpressionType);
@@ -523,6 +548,7 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
         node->type == NodeType_ConditionalAssignment ||
         node->type == NodeType_ArrayAssignment ||
         node->type == NodeType_ConditionalArrayAssignment ||
+        node->type == NodeType_BooleanExpression ||
         node->type == NodeType_BooleanValue || 
         node->type == NodeType_Number || 
         node->type == NodeType_Character ||
@@ -681,6 +707,16 @@ TAC* generateTACForExpr(ASTNode* expr) {
             instruction->op = strdup("Print");
             instruction->result = NULL;
             isRight = true;
+            break;
+        }
+
+        case NodeType_BooleanExpression: {
+            printf("Generating TAC for Boolean Expression\n");
+            instruction->arg1 = strdup("$t6");
+            instruction->arg2 = strdup("$t1");
+            instruction->op = strdup(expr->value.BooleanExpression.op);
+            instruction->result = strdup("$t5");
+            currentExpressionType = strdup("bool");
             break;
         }
 
@@ -917,6 +953,18 @@ void printTAC(TAC* tac) {
         printf("\t%s (%s[%d]) = %s\n", tac->result, tac->arg1, tac->arg3, tac->arg2);
     } else if (strcmp(tac->op, "Print") == 0) {
         printf("\tPrint(%s)\n", tac->arg1);
+    } else if (strcmp(tac->op, "==") == 0) {
+        printf("\t%s = %s %s %s\n", tac->result, tac->arg1, tac->op, tac->arg2);
+    } else if (strcmp(tac->op, ">") == 0) {
+        printf("\t%s = %s %s %s\n", tac->result, tac->arg1, tac->op, tac->arg2);
+    } else if (strcmp(tac->op, "<") == 0) {
+        printf("\t%s = %s %s %s\n", tac->result, tac->arg1, tac->op, tac->arg2);
+    } else if (strcmp(tac->op, ">=") == 0) {
+        printf("\t%s = %s %s %s\n", tac->result, tac->arg1, tac->op, tac->arg2);
+    } else if (strcmp(tac->op, "<=") == 0) {
+        printf("\t%s = %s %s %s\n", tac->result, tac->arg1, tac->op, tac->arg2);
+    } else if (strcmp(tac->op, "!=") == 0) {
+        printf("\t%s = %s %s %s\n", tac->result, tac->arg1, tac->op, tac->arg2);
     } else if (strcmp(tac->op, "BooleanValue") == 0) {
         printf("\t%s = %s\n", tac->result, tac->arg1);
     } else if (strcmp(tac->op, "+") == 0) {

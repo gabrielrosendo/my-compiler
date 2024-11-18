@@ -147,6 +147,7 @@ BAD_ID {NUMBER}{ID}
     yylval.string = strdup(yytext);
     return EQ;
 }
+
 "," { 
     chars++;
     printf("%-10s | %-10s\n", yytext, "COMMA");
@@ -187,6 +188,27 @@ BAD_ID {NUMBER}{ID}
     chars++;
     printf("%-10s | %-10s\n", yytext, "RBRACE");
     return RBRACE;
+}
+
+">" { 
+    chars++;
+    printf("%-10s | %-10s\n", yytext, "GREATER");
+    yylval.string = strdup(yytext);
+    return GREATER;
+}
+
+"<" { 
+    chars++;
+    printf("%-10s | %-10s\n", yytext, "LESS");
+    yylval.string = strdup(yytext);
+    return LESS;
+}
+
+"!" { 
+    chars++;
+    printf("%-10s | %-10s\n", yytext, "NOT");
+    yylval.string = strdup(yytext);
+    return NOT;
 }
 
 {BAD_ID} {
