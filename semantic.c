@@ -586,6 +586,33 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
             appendTAC(&tacHead, instruction);
 
             break;
+    
+            
+        case NodeType_If:
+            printf("Semantic Analysis on If node\n");
+            semanticAnalysis(node->value.If.condition, symTab, functionBST, arraySymTab);
+            if(strcmp(currentExpressionType, "bool") != 0) {
+                // If condition is a comparison statement
+                if(node->value.If.condition->type == NodeType_Comparison) {
+                    semanticAnalysis(node->value.If.condition->value.Comparison.left, symTab, functionBST, arraySymTab);
+                    semanticAnalysis(node->value.If.condition->value.Comparison.right, symTab, functionBST, arraySymTab);
+                } else {
+                    fprintf(stderr, "Error: If condition is not a boolean expression\n");
+                    exit(0);
+                }
+            }
+        case NodeType_Comparison:
+            printf("Semantic Analysis on Comparison node\n");
+            semanticAnalysis(node->value.Comparison.left, symTab, functionBST, arraySymTab);
+            semanticAnalysis(node->value.Comparison.right, symTab, functionBST, arraySymTab);
+            break;
+        case NodeType_LogicalOp:
+            printf("Semantic Analysis on LogicalOp node\n");
+            semanticAnalysis(node->value.LogicalOp.left, symTab, functionBST, arraySymTab);
+            semanticAnalysis(node->value.LogicalOp.right, symTab, functionBST, arraySymTab);
+            break;  
+            
+
     }
 
     if (node->type == NodeType_ParamDecl ||
@@ -954,6 +981,31 @@ TAC* generateTACForExpr(ASTNode* expr) {
             break;
         }
 
+        case NodeType_If: {
+            printf("Generating TAC for If\n");
+            instruction->arg1 = strdup("");
+            instruction->arg2 = strdup("");
+            instruction->op = strdup("If");
+            instruction->result = strdup("");
+            break;
+        }
+        case NodeType_Comparison: {
+            printf("Generating TAC for Comparison\n");
+            instruction->arg1 = strdup("");
+            instruction->arg2 = strdup("");
+            instruction->op = strdup("Comparison");
+            instruction->result = strdup("");
+            break;
+        }
+        case NodeType_LogicalOp: {
+            printf("Generating TAC for LogicalOp\n");
+            instruction->arg1 = strdup("");
+            instruction->arg2 = strdup("");
+            instruction->op = strdup("LogicalOp");
+            instruction->result = strdup("");
+            break;
+        }
+
         default:
             free(instruction);
             return NULL;
@@ -1066,6 +1118,18 @@ void printTAC(TAC* tac) {
     } else if (strcmp(tac->op, "FloatToInt") == 0) {
         printf("\tFloat to int: %s ==> %s\n", tac->arg1, tac->result);
     }
+    else if (strcmp(tac->op, "If") == 0) {
+        printf("\tIf: %s\n", tac->arg1);
+    }
+    else if (strcmp(tac->op, "Comparison") == 0) {
+        printf("\tComparison: %s %s %s\n", tac->arg1, tac->arg2, tac->result);
+    }
+    else if (strcmp(tac->op, "LogicalOp") == 0) {
+        printf("\tLogicalOp: %s %s %s\n", tac->arg1, tac->arg2, tac->result);
+    }
+    else {
+        printf("Unknown TAC operation\n");
+    }
 }
 
 void printTACToFile(const char* filename, TAC* current) {
@@ -1128,6 +1192,15 @@ void printTACToFile(const char* filename, TAC* current) {
         fprintf(file, "\tInt to float: %s ==> %s\n", tac->arg1, tac->result);
     } else if (strcmp(tac->op, "FloatToInt") == 0) {
         fprintf(file, "\tFloat to int: %s ==> %s\n", tac->arg1, tac->result);
+    }
+    else if (strcmp(tac->op, "If") == 0) {
+        fprintf(file, "\tIf: %s\n", tac->arg1);
+    }
+    else if (strcmp(tac->op, "Comparison") == 0) {
+        fprintf(file, "\tComparison: %s %s %s\n", tac->arg1, tac->arg2, tac->result);
+    }
+    else if (strcmp(tac->op, "LogicalOp") == 0) {
+        fprintf(file, "\tLogicalOp: %s %s %s\n", tac->arg1, tac->arg2, tac->result);
     }
         tac = tac->next;
     }   

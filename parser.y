@@ -282,6 +282,7 @@ Stmt: ID EQ Expr SEMICOLON {
         $$->value.IfStatementInit.IfStatement = $1;
     }
     // Handle missng semicolon  
+
     | PRINT LPAREN Expr RPAREN { 
         printf ("Missing semicolon after print statement: %s\n", $3);
         // stop compilation

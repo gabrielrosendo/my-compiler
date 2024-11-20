@@ -430,7 +430,55 @@ void generateMIPS(TAC* tacInstructions) {
             fprintf(outputFile, "\tcvt.w.s %s, %s\n", tac->arg1, tac->arg1);
             fprintf(outputFile, "\tmfc1 %s, %s\n", tac->result, tac->arg1);
 
-        } else {
+        } 
+        else if (strcmp(tac->op, "If") == 0) {
+            printf("Generating MIPS for If statement\n");
+            fprintf(outputFile, "\t# If statement\n");
+            // Generate code for the condition
+            fprintf(outputFile, "\t%s\n", tac->arg1);
+            // Branch to end if condition is false
+            fprintf(outputFile, "\tbeq $t0, $zero, end_if_label_%d\n", tac->label);
+            // Generate code for the if block
+            fprintf(outputFile, "\t# If block\n");
+            fprintf(outputFile, "\t%s\n", tac->arg2);
+            // End if label
+            fprintf(outputFile, "end_if_label_%d:\n", tac->label);
+        } else if (strcmp(tac->op, "Comparison") == 0) {
+            printf("Generating MIPS for Comparison operation\n");
+            fprintf(outputFile, "\t# Comparison operation\n");
+            // Generate code for the left operand
+            fprintf(outputFile, "\t%s\n", tac->arg1);
+            // Generate code for the right operand
+            fprintf(outputFile, "\t%s\n", tac->arg2);
+            if (strcmp(tac->result, "==") == 0) {
+                fprintf(outputFile, "\tseq $t0, $t1, $t2\n");  // Set $t0 to 1 if $t1 == $t2, else 0
+            } else if (strcmp(tac->result, ">") == 0) {
+                fprintf(outputFile, "\tsgt $t0, $t1, $t2\n");  // Set $t0 to 1 if $t1 > $t2, else 0
+            } else if (strcmp(tac->result, "<") == 0) {
+                fprintf(outputFile, "\tslt $t0, $t1, $t2\n");  // Set $t0 to 1 if $t1 < $t2, else 0
+            } else if (strcmp(tac->result, ">=") == 0) {
+                fprintf(outputFile, "\tsge $t0, $t1, $t2\n");  // Set $t0 to 1 if $t1 >= $t2, else 0
+            } else if (strcmp(tac->result, "<=") == 0) {
+                fprintf(outputFile, "\tsle $t0, $t1, $t2\n");  // Set $t0 to 1 if $t1 <= $t2, else 0
+            }
+        } else if (strcmp(tac->op, "LogicalOp") == 0) {
+            printf("Generating MIPS for Logical operation\n");
+            fprintf(outputFile, "\t# Logical operation\n");
+            // Generate code for the left operand
+            fprintf(outputFile, "\t%s\n", tac->arg1);
+            // Generate code for the right operand
+            fprintf(outputFile, "\t%s\n", tac->arg2);
+            if (strcmp(tac->result, "&&") == 0) {
+                fprintf(outputFile, "\tand $t0, $t1, $t2\n");  // Logical AND
+            } else if (strcmp(tac->result, "||") == 0) {
+                fprintf(outputFile, "\tor $t0, $t1, $t2\n");  // Logical OR
+            }
+        } else if (strcmp(tac->op, "IntToFloat") == 0) {
+            printf("Generating MIPS for Int to Float register\n");
+            fprintf(outputFile, "\tmtc1 %s, %s\n", tac->arg1, tac->result);
+            fprintf(outputFile, "\tcvt.s.w %s, %s\n", tac->result, tac->result);
+        } 
+        else {
             printf("Unknown TAC operation: %s\n", tac->op);
         }
 

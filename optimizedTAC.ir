@@ -1,11 +1,11 @@
 Main Function:
-	$t5 = 5Á
+	$t5 = 5ï¿½
 	maintest (test) = $t5
 	$t5 = false
 	$t5 --> $t6
-	$t5 = ÀvÁ
+	$t5 = ï¿½vï¿½
 	$t5 = false
-	$t5 = ˆÁ
+	$t5 = ï¿½ï¿½
 	$t7 = 'b'
 	Print($t7)
 	$t7 = 'd'
