@@ -1,16 +1,20 @@
-bool function() {
-	bool aaa;
-	aaa = false;
-	return aaa;
-}
-
 void main() {
 	bool test;
-	bool test1;
 
-	test = !true;
-	test1 = function() || !false;
+	test = true;
 
-	print(test);
-	print(test1);
+	if (false || true) {
+		print('a');
+	} else if (false) {
+		print('c');
+	} else if (true) {
+		print('d');
+	} else {
+		print('b');
+	}
+
+	if (test) {
+		print('a');
+	}
+
 }

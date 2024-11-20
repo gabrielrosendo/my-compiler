@@ -88,6 +88,14 @@ struct ASTNode* createNode(NodeType type) {
         case NodeType_Print:
             newNode->value.print.expr = NULL;
             break;
+        case NodeType_IfStatementInit:
+            newNode->value.IfStatementInit.IfStatement = NULL;
+            break;
+        case NodeType_IfStatement:
+            newNode->value.IfStatement.block = NULL;
+            newNode->value.IfStatement.conditional = NULL;
+            newNode->value.IfStatement.next = NULL;
+            break;
         case NodeType_ConditionalExpression:
             newNode->value.ConditionalExpression.left = NULL;
             newNode->value.ConditionalExpression.right = NULL;
@@ -239,6 +247,14 @@ void freeAST(struct ASTNode* node) {
             break;
         case NodeType_Print:
             freeAST(node->value.print.expr);
+            break;
+        case NodeType_IfStatementInit:
+            freeAST(node->value.IfStatementInit.IfStatement);
+            break;
+        case NodeType_IfStatement:
+            freeAST(node->value.IfStatement.conditional);
+            freeAST(node->value.IfStatement.block);
+            freeAST(node->value.IfStatement.next);
             break;
         case NodeType_ConditionalExpression:
             freeAST(node->value.ConditionalExpression.left);
@@ -455,6 +471,22 @@ void printAST(struct ASTNode* node, int indent) {
         case NodeType_Print:
             spaceOut(indent);
             printf("AST Print: NodeType_Print\n");
+            break;
+        case NodeType_IfStatementInit:
+            spaceOut(indent);
+            printf("AST Print: NodeType_IfStatementInit\n");
+            printAST(node->value.IfStatementInit.IfStatement, indent);
+            break;
+        case NodeType_IfStatement:
+            spaceOut(indent);
+            printf("AST Print: NodeType_IfStatement\n");
+            if(node->value.IfStatement.conditional != NULL) {
+                printAST(node->value.IfStatement.conditional, indent);
+            }
+            printAST(node->value.IfStatement.block, indent);
+            if(node->value.IfStatement.next != NULL) {
+                printAST(node->value.IfStatement.next, indent);
+            }
             break;
         case NodeType_ConditionalExpression:
             spaceOut(indent);

@@ -25,6 +25,8 @@ typedef enum {
     NodeType_ArrayAssignment,
     NodeType_ConditionalArrayAssignment,
     NodeType_Print,
+    NodeType_IfStatementInit,
+    NodeType_IfStatement,
     NodeType_ConditionalExpression,
     NodeType_BooleanExpression,
     NodeType_BooleanValue,
@@ -143,6 +145,16 @@ typedef struct ASTNode {
         struct{
             struct ASTNode* expr;
         } print;
+
+        struct {
+            struct ASTNode* IfStatement;
+        } IfStatementInit;
+
+        struct {
+            struct ASTNode* block;
+            struct ASTNode* next;
+            struct ASTNode* conditional;
+        } IfStatement;
 
         struct {
             struct ASTNode* left;

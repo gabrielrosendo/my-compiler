@@ -40,6 +40,9 @@ void moveRegisters(char* from, char* to);
 char* processExpressionTypes(char* type1, char* type2);
 void TACConvertIntToFloat(char* curRegister);
 void TACConvertFloatToInt(char* curRegister);
+void TACForIfStart(ASTNode* node);
+void TACForIfEnd(ASTNode* node);
+void TACForIfSkip(ASTNode* node);
 
 #endif // SEMANTIC_H
 

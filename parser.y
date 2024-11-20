@@ -71,10 +71,13 @@ ArraySymbolTable* arraySymTab = NULL;
 %token <string> NOT
 %token <string> AND
 %token <string> OR
+%token <string> IF
+%token <string> ELSE
 
 %left ADD SUB MUL DIV
 
-%type <ast> Program FuncDeclList FuncDecl MainFunc ParamList ParamDecl ParamArrayDecl Body VarDeclList VarDecl ArrayDecl StmtList Stmt ConditionalExpr ConditionalStmt Expr HighExpr BinOp HighBinOp CallParamList FuncTail FunctionCall
+%type <ast> Program FuncDeclList FuncDecl MainFunc ParamList ParamDecl ParamArrayDecl Body VarDeclList VarDecl ArrayDecl StmtList Stmt ConditionalExpr ConditionalStmt Expr HighExpr BinOp HighBinOp CallParamList FuncTail FunctionCall 
+%type <ast> IFSTATEMENT IFELSESTATEMENT ELSESTATEMENT
 
 %%
 
@@ -273,6 +276,11 @@ Stmt: ID EQ Expr SEMICOLON {
         $$ = createNode(NodeType_Print);
         $$->value.print.expr = $3;
     }
+    | IFSTATEMENT { 
+        printf("PARSER: Recognized initial if statement\n"); 
+        $$ = createNode(NodeType_IfStatementInit);
+        $$->value.IfStatementInit.IfStatement = $1;
+    }
     // Handle missng semicolon  
     | PRINT LPAREN Expr RPAREN { 
         printf ("Missing semicolon after print statement: %s\n", $3);
@@ -303,6 +311,97 @@ Stmt: ID EQ Expr SEMICOLON {
         printf ("Missing semicolon after assignment statement: %s\n", $1);
         // stop compilation
         exit(1);
+    }
+;
+
+IFSTATEMENT: IF LPAREN ConditionalExpr RPAREN LBRACE StmtList RBRACE { 
+        printf("PARSER: Recognized Conditional IF Statement\n"); 
+        $$ = createNode(NodeType_IfStatement);
+        $$->value.IfStatement.conditional = $3;
+        $$->value.IfStatement.block = $6;
+    }
+    | IF LPAREN Expr RPAREN LBRACE StmtList RBRACE { 
+        printf("PARSER: Recognized Expr IF Statement\n"); 
+        $$ = createNode(NodeType_IfStatement);
+        $$->value.IfStatement.conditional = $3;
+        $$->value.IfStatement.block = $6;
+    }
+    | IF LPAREN ConditionalExpr RPAREN LBRACE StmtList RBRACE IFELSESTATEMENT { 
+        printf("PARSER: Recognized Conditional IF Statement\n"); 
+        $$ = createNode(NodeType_IfStatement);
+        $$->value.IfStatement.conditional = $3;
+        $$->value.IfStatement.block = $6;
+        $$->value.IfStatement.next = $8;
+    }
+    | IF LPAREN Expr RPAREN LBRACE StmtList RBRACE IFELSESTATEMENT { 
+        printf("PARSER: Recognized Expr IF Statement\n"); 
+        $$ = createNode(NodeType_IfStatement);
+        $$->value.IfStatement.conditional = $3;
+        $$->value.IfStatement.block = $6;
+        $$->value.IfStatement.next = $8;
+    }
+    | IF LPAREN ConditionalExpr RPAREN LBRACE StmtList RBRACE ELSESTATEMENT { 
+        printf("PARSER: Recognized Conditional IF Statement\n"); 
+        $$ = createNode(NodeType_IfStatement);
+        $$->value.IfStatement.conditional = $3;
+        $$->value.IfStatement.block = $6;
+        $$->value.IfStatement.next = $8;
+    }
+    | IF LPAREN Expr RPAREN LBRACE StmtList RBRACE ELSESTATEMENT { 
+        printf("PARSER: Recognized Expr IF Statement\n"); 
+        $$ = createNode(NodeType_IfStatement);
+        $$->value.IfStatement.conditional = $3;
+        $$->value.IfStatement.block = $6;
+        $$->value.IfStatement.next = $8;
+    }
+;
+
+IFELSESTATEMENT: ELSE IF LPAREN ConditionalExpr RPAREN LBRACE StmtList RBRACE { 
+        printf("PARSER: Recognized Conditional ELSE IF Statement\n"); 
+        $$ = createNode(NodeType_IfStatement);
+        $$->value.IfStatement.conditional = $4;
+        $$->value.IfStatement.block = $7;
+    }
+    | ELSE IF LPAREN Expr RPAREN LBRACE StmtList RBRACE { 
+        printf("PARSER: Recognized Expr ELSE IF Statement\n"); 
+        $$ = createNode(NodeType_IfStatement);
+        $$->value.IfStatement.conditional = $4;
+        $$->value.IfStatement.block = $7;
+    }
+    | ELSE IF LPAREN ConditionalExpr RPAREN LBRACE StmtList RBRACE IFELSESTATEMENT { 
+        printf("PARSER: Recognized Conditional ELSE IF Statement\n"); 
+        $$ = createNode(NodeType_IfStatement);
+        $$->value.IfStatement.conditional = $4;
+        $$->value.IfStatement.block = $7;
+        $$->value.IfStatement.next = $9;
+    }
+    | ELSE IF LPAREN Expr RPAREN LBRACE StmtList RBRACE IFELSESTATEMENT { 
+        printf("PARSER: Recognized Expr ELSE IF Statement\n"); 
+        $$ = createNode(NodeType_IfStatement);
+        $$->value.IfStatement.conditional = $4;
+        $$->value.IfStatement.block = $7;
+        $$->value.IfStatement.next = $9;
+    }
+    | ELSE IF LPAREN ConditionalExpr RPAREN LBRACE StmtList RBRACE ELSESTATEMENT { 
+        printf("PARSER: Recognized Conditional ELSE IF Statement\n"); 
+        $$ = createNode(NodeType_IfStatement);
+        $$->value.IfStatement.conditional = $4;
+        $$->value.IfStatement.block = $7;
+        $$->value.IfStatement.next = $9;
+    }
+    | ELSE IF LPAREN Expr RPAREN LBRACE StmtList RBRACE ELSESTATEMENT { 
+        printf("PARSER: Recognized Expr ELSE IF Statement\n"); 
+        $$ = createNode(NodeType_IfStatement);
+        $$->value.IfStatement.conditional = $4;
+        $$->value.IfStatement.block = $7;
+        $$->value.IfStatement.next = $9;
+    }
+;
+
+ELSESTATEMENT: ELSE LBRACE StmtList RBRACE { 
+        printf("PARSER: Recognized ELSE Statement\n"); 
+        $$ = createNode(NodeType_IfStatement);
+        $$->value.IfStatement.block = $3;
     }
 ;
 

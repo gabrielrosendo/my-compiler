@@ -1,0 +1,21 @@
+Main Function:
+	$t5 = 5¡
+	maintest (test) = $t5
+	$t5 = false
+	$t5 --> $t6
+	$t5 = ¿v¡
+	$t5 = false
+	$t5 = à¡
+	$t7 = 'b'
+	Print($t7)
+	$t7 = 'd'
+	Print($t7)
+	$t7 = 'c'
+	Print($t7)
+	$t7 = 'a'
+	Print($t7)
+	$t5 = maintest (test)
+	$t7 = 'a'
+	Print($t7)
+	Return: void void
+
