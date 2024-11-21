@@ -1,12 +1,36 @@
+bool isTrue() {
+	bool x;
+	x = true;
+	return x;
+}
+
+bool isFalse() {
+	bool x;
+	x = false;
+	return x;
+}
+
+bool isLess(int less, int more) {
+	bool toBack;
+	if (less < more) {
+		toBack = true;
+	} else {
+		toBack = false;
+	}
+	return toBack;
+}
+
 void main() {
-	bool x[10];
+	bool test;
+	bool test1;
+	bool test2;
 
-	x[1] = true;
-	x[2] = false;
+	test = isTrue();
+	test1 = isFalse() || true;
+	test2 = !false && isLess(1, 2) && test1;
 
-	x[0] = x[1];
-	
-	print(x[0]);
-	print(x[2]);
+	print(test);
+	print(test1);
+	print(test2);
 }
 

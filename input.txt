@@ -1,20 +1,86 @@
+bool isTrue() {
+	bool x;
+	x = true;
+	return x;
+}
+
+bool isFalse() {
+	bool x;
+	x = false;
+	return x;
+}
+
+bool isLess(int less, int more) {
+	bool toBack;
+	if (less < more) {
+		toBack = true;
+	} else {
+		toBack = false;
+	}
+	return toBack;
+}
+
 void main() {
 	bool test;
+	bool test1;
+	bool test2;
+	int x;
 
-	test = true;
+	test = isTrue();
+	test1 = isFalse() || true;
+	test2 = !false && isLess(1, 2) && test1;
+	x = 5;
 
-	if (false || true) {
+	if(true) {
 		print('a');
-	} else if (false) {
-		print('c');
+	}
+
+	if(false) {
+		print('b');
+	}
+
+	if(false) {
+		print('b');
+	} else {
+		print('a');
+	}
+
+	if(false) {
+		print('b');
 	} else if (true) {
-		print('d');
+		print('a');
 	} else {
 		print('b');
 	}
 
-	if (test) {
+	if(false) {
+		print('b');
+	} else if (true) {
 		print('a');
 	}
 
+	if(test && true) {
+		print('a');
+	}
+
+	if(isFalse() || isTrue() && true) {
+		print('a');
+	}
+
+	if(isLess(1, 2) && 5 < 20 && true) {
+		print('a');
+	}
+
+	if(test2) {
+		print('a');
+	}
+
+	if(isFalse()) {
+		print('b');
+	}
+
+
+	print(test);
+	print(test1);
+	print(test2);
 }

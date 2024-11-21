@@ -18,6 +18,8 @@ int ifJumpLoc = 0;
 int lastIfJumpLoc = 0;
 int prevLastIfJumpLoc = 0;
 
+bool isInIfStatement = false;
+
 void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* functionBST, ArraySymbolTable* arraySymTab) {
 
     TAC* tac = NULL;
@@ -299,7 +301,13 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
         
         case NodeType_IfStatementInit:
             printf("Semantic Analysis running on node of type: NodeType_IfStatementInit\n");
+            if(isInIfStatement) {
+                printf("Complier doesnt support nesting if statements!!!\n");
+                exit(1);
+            }
+            isInIfStatement = true;
             semanticAnalysis(node->value.IfStatementInit.IfStatement, symTab, functionBST, arraySymTab);
+            isInIfStatement = false;
             break;
         
         case NodeType_IfStatement:
@@ -324,17 +332,17 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
 
         case NodeType_ConditionalExpression:
             printf("Semantic Analysis running on node of type: NodeType_ConditionalExpression\n");
-            semanticAnalysis(node->value.ConditionalExpression.left, symTab, functionBST, arraySymTab);
-
-            if(strcmp(currentExpressionType, "bool") != 0) {
-                printf("Cannot compare non numberical expression in boolean expression. Expression type: %s\n", currentExpressionType);
-                exit(0);
-            }
 
             if(node->value.ConditionalExpression.right != NULL) {
-                moveRegisters("$t5", "$t6");
                 semanticAnalysis(node->value.ConditionalExpression.right, symTab, functionBST, arraySymTab);
+                moveRegisters("$t5", "$t6");
+                if(strcmp(currentExpressionType, "bool") != 0) {
+                    printf("Cannot compare non numberical expression in boolean expression. Expression type: %s\n", currentExpressionType);
+                    exit(0);
+                }
             }
+            
+            semanticAnalysis(node->value.ConditionalExpression.left, symTab, functionBST, arraySymTab);
 
             if(strcmp(currentExpressionType, "bool") != 0) {
                 printf("Cannot compare non numberical expression in boolean expression. Expression type: %s\n", currentExpressionType);
@@ -357,7 +365,7 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
                 printf("Cannot compare non numberical expression in boolean expression. Expression type: %s\n", currentExpressionType);
                 exit(0);
             }
-            moveRegisters("$t1", "$t6");
+            moveRegisters("$t1", "$t5");
             isRight = true;
 
             semanticAnalysis(node->value.BooleanExpression.right, symTab, functionBST, arraySymTab);
@@ -796,7 +804,7 @@ TAC* generateTACForExpr(ASTNode* expr) {
 
         case NodeType_BooleanExpression: {
             printf("Generating TAC for Boolean Expression\n");
-            instruction->arg1 = strdup("$t6");
+            instruction->arg1 = strdup("$t5");
             instruction->arg2 = strdup("$t1");
             instruction->op = strdup(expr->value.BooleanExpression.op);
             instruction->result = strdup("$t5");

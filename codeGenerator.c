@@ -375,9 +375,13 @@ void generateMIPS(TAC* tacInstructions) {
             printf("\tFunction Call: %s => %s\n", tac->arg1, tac->result);
             fprintf(outputFile, "\taddi $sp, $sp, -4\n");
             fprintf(outputFile, "\tsw $t1, 0($sp)\n\n");
+
             fprintf(outputFile, "\taddi $sp, $sp, -4\n");
             fprintf(outputFile, "\tmfc1 $t1, $f1\n");
             fprintf(outputFile, "\tsw $t1, 0($sp)\n\n");
+
+            fprintf(outputFile, "\taddi $sp, $sp, -4\n");
+            fprintf(outputFile, "\tsw $t6, 0($sp)\n\n");
             stackAllVariable();
 
         } else if (strcmp(tac->op, "FuncCallEnd") == 0) {
@@ -387,9 +391,13 @@ void generateMIPS(TAC* tacInstructions) {
             fprintf(outputFile, "\tlw $t3, 0($sp)\n");
             fprintf(outputFile, "\taddi $sp, $sp, 4\n\n");
             unStackAllVariable(currentFunctionTACHead->next);
+            fprintf(outputFile, "\tlw $t6, 0($sp)\n");
+            fprintf(outputFile, "\taddi $sp, $sp, 4\n\n");
+
             fprintf(outputFile, "\tlw $t1, 0($sp)\n");
             fprintf(outputFile, "\tmtc1 $t1, $f1\n");
             fprintf(outputFile, "\taddi $sp, $sp, 4\n\n");
+
             fprintf(outputFile, "\tlw $t1, 0($sp)\n");
             fprintf(outputFile, "\taddi $sp, $sp, 4\n\n");
             if (strcmp(tac->result, "$t0") == 0 || strcmp(tac->result, "$t1") == 0) {

@@ -1,22 +1,122 @@
+Function: bool isTrue :
+	Variable: bool x ==> isTruex
+	$t5 = true
+	isTruex (x) = $t5
+	$t5 = isTruex (x)
+	Return: bool void
+
+Function: bool isFalse :
+	Variable: bool x ==> isFalsex
+	$t5 = false
+	isFalsex (x) = $t5
+	$t5 = isFalsex (x)
+	Return: bool void
+
+Function: bool isLess :
+	Parameter: int less ==> isLessless
+	Parameter: int more ==> isLessmore
+	Variable: bool toBack ==> isLesstoBack
+	$t1 = isLessmore (more)
+	$t1 --> $t5
+	$t1 = isLessless (less)
+	$t5 = false
+	isLesstoBack (toBack) = $t5
+	$t5 = true
+	isLesstoBack (toBack) = $t5
+	$t5 = isLesstoBack (toBack)
+	Return: bool void
+
 Main Function:
 	Variable: bool test ==> maintest
-	$t5 = true
+	Variable: bool test1 ==> maintest1
+	Variable: bool test2 ==> maintest2
+	Variable: int x ==> mainx
+	Function Call: isTrue => $t1
+	Function Call End: isTrue => $t5
 	maintest (test) = $t5
-	$t5 = false
-	$t5 --> $t6
 	$t5 = true
+	$t5 --> $t6
+	Function Call: isFalse => $t1
+	Function Call End: isFalse => $t5
+	maintest1 (test1) = $t5
+	$t5 = maintest1 (test1)
+	$t5 --> $t6
+	Function Call: isLess => $t0
+	$t1 = 1
+	Parameter Call: $t1
+	$t1 = 2
+	Parameter Call: $t1
+	Function Call End: isLess => $t5
+	$t5 --> $t6
+	$t5 = false
+	maintest2 (test2) = $t5
+	$t1 = 5
+	mainx (x) = $t1
+	$t5 = true
+	$t7 = 'a'
+	Print($t7)
+	$t5 = false
+	$t7 = 'b'
+	Print($t7)
+	$t5 = false
+	$t7 = 'a'
+	Print($t7)
+	$t7 = 'b'
+	Print($t7)
 	$t5 = false
 	$t5 = true
 	$t7 = 'b'
 	Print($t7)
-	$t7 = 'd'
-	Print($t7)
-	$t7 = 'c'
-	Print($t7)
 	$t7 = 'a'
 	Print($t7)
+	$t7 = 'b'
+	Print($t7)
+	$t5 = false
+	$t5 = true
+	$t7 = 'a'
+	Print($t7)
+	$t7 = 'b'
+	Print($t7)
+	$t5 = true
+	$t5 --> $t6
 	$t5 = maintest (test)
 	$t7 = 'a'
 	Print($t7)
+	$t5 = true
+	$t5 --> $t6
+	Function Call: isTrue => $t1
+	Function Call End: isTrue => $t5
+	$t5 --> $t6
+	Function Call: isFalse => $t0
+	Function Call End: isFalse => $t5
+	$t7 = 'a'
+	Print($t7)
+	$t5 = true
+	$t5 --> $t6
+	$t1 = 20
+	$t1 --> $t5
+	$t1 = 5
+	$t5 --> $t6
+	Function Call: isLess => $t1
+	$t1 = 1
+	Parameter Call: $t1
+	$t1 = 2
+	Parameter Call: $t1
+	Function Call End: isLess => $t5
+	$t7 = 'a'
+	Print($t7)
+	$t5 = maintest2 (test2)
+	$t7 = 'a'
+	Print($t7)
+	Function Call: isFalse => $t1
+	Function Call End: isFalse => $t5
+	$t7 = 'b'
+	Print($t7)
+	$t5 = maintest (test)
+	Print($t5)
+	$t5 = maintest1 (test1)
+	Print($t5)
+	$t5 = maintest2 (test2)
+	Print($t5)
 	Return: void void
 

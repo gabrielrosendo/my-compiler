@@ -406,7 +406,25 @@ ELSESTATEMENT: ELSE LBRACE StmtList RBRACE {
     }
 ;
 
-ConditionalExpr : ConditionalStmt {
+ConditionalExpr : NOT ConditionalStmt {
+        printf("PARSER: Recognized NOT in ConditionalExpr\n");
+        $$ = createNode(NodeType_ConditionalExpression);
+        $$->value.ConditionalExpression.left = $2;
+        $$->value.ConditionalExpression.op = strdup("!");
+    }
+    | NOT Expr {
+        printf("PARSER: Recognized NOT in ConditionalExpr\n");
+        $$ = createNode(NodeType_ConditionalExpression);
+        $$->value.ConditionalExpression.left = $2;
+        $$->value.ConditionalExpression.op = strdup("!");
+    }
+    | NOT ConditionalExpr {
+        printf("PARSER: Recognized NOT in ConditionalExpr\n");
+        $$ = createNode(NodeType_ConditionalExpression);
+        $$->value.ConditionalExpression.left = $2;
+        $$->value.ConditionalExpression.op = strdup("!");
+    }
+    | ConditionalStmt {
         printf("PARSER: Recognized ConditionalStmt inside of ConditionalExpr\n");
         $$ = createNode(NodeType_ConditionalExpression);
         $$->value.ConditionalExpression.left = $1;
@@ -426,6 +444,13 @@ ConditionalExpr : ConditionalStmt {
         $$->value.ConditionalExpression.op = strdup("&&");
     }
     | ConditionalExpr AND Expr {
+        printf("PARSER: Recognized AND in ConditionalExpr\n");
+        $$ = createNode(NodeType_ConditionalExpression);
+        $$->value.ConditionalExpression.left = $1;
+        $$->value.ConditionalExpression.right = $3;
+        $$->value.ConditionalExpression.op = strdup("&&");
+    }
+    | Expr AND Expr {
         printf("PARSER: Recognized AND in ConditionalExpr\n");
         $$ = createNode(NodeType_ConditionalExpression);
         $$->value.ConditionalExpression.left = $1;
@@ -453,23 +478,12 @@ ConditionalExpr : ConditionalStmt {
         $$->value.ConditionalExpression.right = $3;
         $$->value.ConditionalExpression.op = strdup("||");
     }
-    | NOT ConditionalStmt {
-        printf("PARSER: Recognized NOT in ConditionalExpr\n");
+    | Expr OR Expr {
+        printf("PARSER: Recognized OR in ConditionalExpr\n");
         $$ = createNode(NodeType_ConditionalExpression);
-        $$->value.ConditionalExpression.left = $2;
-        $$->value.ConditionalExpression.op = strdup("!");
-    }
-    | NOT Expr {
-        printf("PARSER: Recognized NOT in ConditionalExpr\n");
-        $$ = createNode(NodeType_ConditionalExpression);
-        $$->value.ConditionalExpression.left = $2;
-        $$->value.ConditionalExpression.op = strdup("!");
-    }
-    | NOT ConditionalExpr {
-        printf("PARSER: Recognized NOT in ConditionalExpr\n");
-        $$ = createNode(NodeType_ConditionalExpression);
-        $$->value.ConditionalExpression.left = $2;
-        $$->value.ConditionalExpression.op = strdup("!");
+        $$->value.ConditionalExpression.left = $1;
+        $$->value.ConditionalExpression.right = $3;
+        $$->value.ConditionalExpression.op = strdup("||");
     }
 ;
 
@@ -718,7 +732,7 @@ int main(int argc, char **argv) {
     printf("\n=== CODE OPTIMIZATION ===\n");
     // Traverse the linked list of TAC entries and optimize
     // But - you MIGHT need to traverse the AST again to optimize
-    optimizeTAC(&tacHead);
+    //optimizeTAC(&tacHead);
     // Output optimized TAC to file
     FILE* optimizedTacFile = fopen("optimizedTAC.ir", "w");
     freeSymbolTable(symbolBST);

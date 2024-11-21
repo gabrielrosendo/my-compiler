@@ -1,38 +1,28 @@
-
-
-float subtract(float a, float b) {
-    float z;
-    z = a - b;
-    return z;
-    }
-
-float multiply(float a, float b) {
-    float z;
-    z = a * b;
-    return z;
-}
-
-float divide(float a, float b) {
-    float z;
-    z = a / b;
-    return z;
-}
-
 void main() {
-    float x;
-    float y;
-    int result;
+	bool test;
+	bool test1;
+	bool test2;
+	bool test3;
+	bool test4;
+	bool test5;
+	bool test6;
+	bool test7;
 
-    x = 5.5;
-    y = 2.2;
+	test = true && false;
+	test1 = true || false;
+	test2 = 1 < 2;
+	test3 = 1 > 2;
+	test4 = 1 <= 2;
+	test5 = 1 >= 2;
+	test6 = 1 != 2;
+	test7 = !true;
 
-
-    result = subtract(y,x);
-    print(result);  
-
-    result = multiply(x, y);
-    print(result); 
-
-    result = divide(x, y);
-    print(result);  
+	print(test);
+	print(test1);
+	print(test2);
+	print(test3);
+	print(test4);
+	print(test5);
+	print(test6);
+	print(test7);
 }
