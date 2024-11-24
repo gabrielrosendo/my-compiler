@@ -29,7 +29,7 @@ int allocateNextAvailableTempVar();
 void deallocateTempVar(int index);
 
 // Semantic analysis functions
-void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* functionBST, ArraySymbolTable* arrayTable);
+void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* functionBST, ArraySymbolTable* arraySymTab);
 TAC* generateTACForExpr(ASTNode* expr);
 char* getVariableReference(char* variable);
 char* createTempVar();
@@ -41,9 +41,10 @@ void moveRegisters(char* from, char* to);
 char* processExpressionTypes(char* type1, char* type2);
 void TACConvertIntToFloat(char* curRegister);
 void TACConvertFloatToInt(char* curRegister);
-void TACForIfStart(ASTNode* node);
-void TACForIfEnd(ASTNode* node);
-void TACForIfSkip(ASTNode* node);
+void semanticAnalysisForIfStatements(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* functionBST, ArraySymbolTable* arraySymTab, char* finalJumpLoc);
+void TACForIfStart(ASTNode* node, char* jumpLoc);
+void TACForIfEnd(ASTNode* node, char* ifJumpLoc1, char* ifJumpFinalLoc);
+void TACForIfSkip(char* ifJumpLoc2);
 
 #endif // SEMANTIC_H
 

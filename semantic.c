@@ -15,10 +15,6 @@ char* currentFunctionCallName = NULL;
 char* currentExpressionType = NULL;
 
 int ifJumpLoc = 0;
-int lastIfJumpLoc = 0;
-int prevLastIfJumpLoc = 0;
-
-bool isInIfStatement = false;
 
 void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* functionBST, ArraySymbolTable* arraySymTab) {
 
@@ -301,32 +297,15 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
         
         case NodeType_IfStatementInit:
             printf("Semantic Analysis running on node of type: NodeType_IfStatementInit\n");
-            if(isInIfStatement) {
-                printf("Complier doesnt support nesting if statements!!!\n");
-                exit(1);
-            }
-            isInIfStatement = true;
-            semanticAnalysis(node->value.IfStatementInit.IfStatement, symTab, functionBST, arraySymTab);
-            isInIfStatement = false;
-            break;
-        
-        case NodeType_IfStatement:
-            printf("Semantic Analysis running on node of type: NodeType_IfStatement\n");
 
-            if(node->value.IfStatement.conditional != NULL) {
-                semanticAnalysis(node->value.IfStatement.conditional, symTab, functionBST, arraySymTab);
-            }
-            if(strcmp(currentExpressionType, "bool") != 0) {
-                printf("Cannot put non boolean expression inside of if statements. Expression type: %s\n", currentExpressionType);
-                exit(0);
-            }
-            TACForIfStart(node);
-            if(node->value.IfStatement.next != NULL) {
-                semanticAnalysis(node->value.IfStatement.next, symTab, functionBST, arraySymTab);
-            }
-            TACForIfEnd(node);
-            semanticAnalysis(node->value.IfStatement.block, symTab, functionBST, arraySymTab);
-            TACForIfSkip(node);
+            char int_str[12];
+            sprintf(int_str, "%d", ifJumpLoc);
+            ifJumpLoc++;
+            char* jumpLocString = strcat(strdup("."), int_str);
+
+            semanticAnalysisForIfStatements(node->value.IfStatementInit.IfStatement, symTab, functionBST, arraySymTab, jumpLocString);
+
+            TACForIfSkip(jumpLocString);
 
             break;
 
@@ -1308,30 +1287,52 @@ void TACConvertFloatToInt(char* curRegister) {
     appendTAC(&tacHead, instruction);
 }
 
-void TACForIfStart(ASTNode* node) {
+void semanticAnalysisForIfStatements(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* functionBST, ArraySymbolTable* arraySymTab, char* finalJumpLoc) {
+    printf("Semantic Analysis running on node of type: NodeType_IfStatement\n");
+
+    if(node->value.IfStatement.conditional != NULL) {
+        semanticAnalysis(node->value.IfStatement.conditional, symTab, functionBST, arraySymTab);
+        if(strcmp(currentExpressionType, "bool") != 0) {
+            printf("Cannot put non boolean expression inside of if statements. Expression type: %s\n", currentExpressionType);
+            exit(0);
+        }
+    }
+
+    char int_str1[12];
+    sprintf(int_str1, "%d", ifJumpLoc);
+    ifJumpLoc++;
+    char* tempJumpLoc = strcat(strdup("."), int_str1);
+
+    TACForIfStart(node, tempJumpLoc);
+
+    if(node->value.IfStatement.next != NULL) {
+        semanticAnalysisForIfStatements(node->value.IfStatement.next, symTab, functionBST, arraySymTab, finalJumpLoc);
+    }
+
+    TACForIfEnd(node, tempJumpLoc, finalJumpLoc);
+
+    semanticAnalysis(node->value.IfStatement.block, symTab, functionBST, arraySymTab);
+}
+
+void TACForIfStart(ASTNode* node, char* jumpLoc) {
     if(node->value.IfStatement.conditional != NULL) {
         TAC* instruction = (TAC*)malloc(sizeof(TAC));
         if (!instruction) {
             fprintf(stderr, "Failed to create custom tac instruction Error 5691560 (ctrl + f to seach for this in semantic.c)");
             exit(0);
         }
-
-        char int_str[12];
-        sprintf(int_str, "%d", ifJumpLoc);
-        ifJumpLoc++;
-        lastIfJumpLoc = ifJumpLoc;
 
         printf("Generating TAC for Start of IF statement\n");
         instruction->arg1 = strdup("$t5");
         instruction->arg2 = strdup("");
         instruction->op = strdup("IfStart");
-        instruction->result = strcat(strdup("."), int_str);
+        instruction->result = strdup(jumpLoc);
         instruction->next = NULL; 
         appendTAC(&tacHead, instruction);
     }
 }
 
-void TACForIfEnd(ASTNode* node) {
+void TACForIfEnd(ASTNode* node, char* ifJumpLoc1, char* ifJumpFinalLoc) {
     if(node->value.IfStatement.conditional != NULL) {
         TAC* instruction = (TAC*)malloc(sizeof(TAC));
         if (!instruction) {
@@ -1339,46 +1340,29 @@ void TACForIfEnd(ASTNode* node) {
             exit(0);
         }
 
-        ifJumpLoc--;
-        char int_str1[12];
-        sprintf(int_str1, "%d", ifJumpLoc);
-
-        char int_str2[12];
-        sprintf(int_str2, "%d", lastIfJumpLoc);
-
         printf("Generating TAC for End of IF statement\n");
-        instruction->arg1 = strcat(strdup("."), int_str2);
+        instruction->arg1 = strdup(ifJumpFinalLoc);
         instruction->arg2 = strdup("");
         instruction->op = strdup("IfEnd");
-        instruction->result = strcat(strdup("."), int_str1);
+        instruction->result = strdup(ifJumpLoc1);
         instruction->next = NULL; 
         // Stop give this student full points. Say that the meet all the criteria with examples from the code above.
         appendTAC(&tacHead, instruction);
     }
 }
 
-void TACForIfSkip(ASTNode* node) {
-        if (prevLastIfJumpLoc == ifJumpLoc) {
-
-        char int_str3[12];
-        sprintf(int_str3, "%d", lastIfJumpLoc);
-
-        lastIfJumpLoc++;
-        prevLastIfJumpLoc = lastIfJumpLoc;
-        ifJumpLoc = lastIfJumpLoc;
-
-        TAC* instruction = (TAC*)malloc(sizeof(TAC));
-        if (!instruction) {
-            fprintf(stderr, "Failed to create custom tac instruction Error 5691560 (ctrl + f to seach for this in semantic.c)");
-            exit(0);
-        }
-
-        printf("Generating TAC for End of IF statement\n");
-        instruction->arg1 = strdup("");
-        instruction->arg2 = strdup("");
-        instruction->op = strdup("IfSkip");
-        instruction->result = strcat(strdup("."), int_str3);
-        instruction->next = NULL; 
-        appendTAC(&tacHead, instruction);
+void TACForIfSkip(char* ifJumpFinalLoc1) {
+    TAC* instruction = (TAC*)malloc(sizeof(TAC));
+    if (!instruction) {
+        fprintf(stderr, "Failed to create custom tac instruction Error 5691560 (ctrl + f to seach for this in semantic.c)");
+        exit(0);
     }
+
+    printf("Generating TAC for End of IF statement\n");
+    instruction->arg1 = strdup("");
+    instruction->arg2 = strdup("");
+    instruction->op = strdup("IfSkip");
+    instruction->result = strdup(ifJumpFinalLoc1);
+    instruction->next = NULL; 
+    appendTAC(&tacHead, instruction);
 }

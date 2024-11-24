@@ -1,0 +1,14 @@
+Main Function:
+	$t5 = /À
+	$t7 = 'x'
+	Print($t7)
+	$t5 = false
+	$t5 = false
+	$t7 = 'c'
+	Print($t7)
+	$t7 = 'b'
+	Print($t7)
+	$t7 = 'a'
+	Print($t7)
+	Return: void void
+
