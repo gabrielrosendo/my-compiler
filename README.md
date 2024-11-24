@@ -60,3 +60,59 @@ Expressions:
         ID[index]
         - ID has to be a delcared array
         - index has to be 0 <= index < size
+
+Conditional Expressions:
+
+    Use operators: <, >, ==, <=, >=, and !=
+
+    Format:
+        (Expression) (Conditional operator) (Expression)
+
+    Uses: 
+        Assign to a varible:
+            bool x;
+            x = Conditional Expression;
+
+        If Statement:
+            if (Conditional Expression) {} 
+            else if (Conditional Expression) {}
+
+Conditional Expression Expansion:
+
+    Use Operators: ||, &&
+    
+    Format:
+        (Conditional Expression) (Conditional Expansion Operator) (Conditional Expression)
+        also: (Conditional Expression Expansion) (Conditional Expansion Operator) (Conditional Expression)
+
+    Uses: 
+        Assign to a varible:
+            bool x;
+            x = Conditional Expression Expansion;
+
+        If Statement:
+            if (Conditional Expression Expansion) {} 
+            else if (Conditional Expression Expansion) {}
+
+If Statements: 
+
+    Starts with if:
+        if (Conditional Statement) { Statements }
+
+    Can be expanded:
+        if (Conditional Statement) {
+        } else if (Conditional Statement) { Statements }
+
+    Also:
+        if (Conditional Statement) {
+        } else { Statements }
+
+    So, start with if, then there can be as many else if statements after the initial if. Else statements only come at the end of the if statement.
+
+    Conditional Statements are expression and conditional expressions that have boolean values
+        - basic vales (true, false)
+        - variable with bool type
+        - fuctions with bool type
+        - Conditional Expression
+        - Conditional Expression Expansions
+    

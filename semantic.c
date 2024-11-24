@@ -1019,7 +1019,6 @@ char* getVariableReference(char* variable) {
     return  strcat(strdup(currentFunctionName), variable);
 }
 
-// TODO: make algo for if the number of temperary registers is exceeded
 char* createTempVar() {
     char* tempVar = malloc(10); // Enough space for "t" + number
     sprintf(tempVar, "$t%d", count++);
@@ -1127,68 +1126,93 @@ void printTACToFile(const char* filename, TAC* current) {
     }   
     TAC* tac = current;
     while (tac != NULL) {
-     if (strcmp(tac->op, "FuncDecl") == 0) {
-        fprintf(file, "Function: %s %s %s:\n", tac->arg1, tac->arg2, tac->result);
-    } else if (strcmp(tac->op, "Main") == 0) {
-        fprintf(file, "Main Function:\n");
-    } else if (strcmp(tac->op, "ParamDecl") == 0) {
-        fprintf(file, "\tParameter: %s %s ==> %s\n", tac->arg1, tac->arg2, tac->result);
-    } else if (strcmp(tac->op, "return") == 0) {
-        fprintf(file, "\tReturn: %s %s\n\n", tac->arg1, tac->arg2);
-    } else if (strcmp(tac->op, "VarDecl") == 0) {
-        fprintf(file, "\tVariable: %s %s ==> %s\n", tac->arg1, tac->arg2, tac->result);
-    } else if (strcmp(tac->op, "ArrayDecl") == 0) {
-        fprintf(file, "\tArray: %s %s[%d] ==> %s[%d]\n", tac->arg1, tac->arg2,  tac->arg3, tac->result, tac->arg3);
-    } else if (strcmp(tac->op, "=") == 0) {
-        fprintf(file, "\t%s (%s) = %s\n", tac->result, tac->arg1, tac->arg2);
-    } else if (strcmp(tac->op, "ConditionalAssignment") == 0) {
-        fprintf(file, "\t%s (%s) = %s\n", tac->result, tac->arg1, tac->arg2);
-    } else if (strcmp(tac->op, "ArrayAssingment") == 0) {
-        fprintf(file, "\t%s (%s[%d]) = %s\n", tac->result, tac->arg1, tac->arg3, tac->arg2);
-    } else if (strcmp(tac->op, "ConditionalArrayAssingment") == 0) {
-        fprintf(file, "\t%s (%s[%d]) = %s\n", tac->result, tac->arg1, tac->arg3, tac->arg2);
-    } else if (strcmp(tac->op, "Print") == 0) {
-        fprintf(file, "\tPrint(%s)\n", tac->arg1);
-    } else if (strcmp(tac->op, "BooleanValue") == 0) {
-        fprintf(file, "\t%s = %s\n", tac->result, tac->arg1);
-    } else if (strcmp(tac->op, "+") == 0) {
-        fprintf(file, "\t%s = %s + %s\n", tac->result, tac->arg1, tac->arg2);
-    } else if (strcmp(tac->op, "-") == 0) {
-        fprintf(file, "\t%s = %s - %s\n", tac->result, tac->arg1, tac->arg2);
-    } else if (strcmp(tac->op, "*") == 0) {
-        fprintf(file, "\t%s = %s * %s\n", tac->result, tac->arg1, tac->arg2);
-    } else if (strcmp(tac->op, "/") == 0) {
-        fprintf(file, "\t%s = %s / %s\n", tac->result, tac->arg1, tac->arg2);
-    } else if (strcmp(tac->op, "move") == 0) {
-        fprintf(file, "\t%s --> %s\n", tac->arg1, tac->result);
-    } else if (strcmp(tac->op, "Num") == 0) {
-        fprintf(file, "\t%s = %s\n", tac->result, tac->arg1);
-    } else if (strcmp(tac->op, "Char") == 0) {
-        fprintf(file, "\t%s = '%c'\n", tac->result, tac->arg4);   
-    } else if (strcmp(tac->op, "ID") == 0) {
-        fprintf(file, "\t%s = %s (%s)\n", tac->result, tac->arg2, tac->arg1);
-    } else if (strcmp(tac->op, "ArrayAccess") == 0) {
-        fprintf(file, "\t%s = %s (%s[%d])\n", tac->result, tac->arg2, tac->arg1, tac->arg3);
-    }  else if (strcmp(tac->op, "FuncCall") == 0) {
-        fprintf(file, "\tFunction Call: %s => %s\n", tac->arg1, tac->result);
-    }  else if (strcmp(tac->op, "FuncCallEnd") == 0) {
-        fprintf(file, "\tFunction Call End: %s => %s\n", tac->arg1, tac->result);
-    }else if (strcmp(tac->op, "ParamCall") == 0) {
-        fprintf(file, "\tParameter Call: %s\n", tac->arg1);
-    } else if (strcmp(tac->op, "IntToFloat") == 0) {
-        fprintf(file, "\tInt to float: %s ==> %s\n", tac->arg1, tac->result);
-    } else if (strcmp(tac->op, "FloatToInt") == 0) {
-        fprintf(file, "\tFloat to int: %s ==> %s\n", tac->arg1, tac->result);
-    }
-    else if (strcmp(tac->op, "If") == 0) {
-        fprintf(file, "\tIf: %s\n", tac->arg1);
-    }
-    else if (strcmp(tac->op, "Comparison") == 0) {
-        fprintf(file, "\tComparison: %s %s %s\n", tac->arg1, tac->arg2, tac->result);
-    }
-    else if (strcmp(tac->op, "LogicalOp") == 0) {
-        fprintf(file, "\tLogicalOp: %s %s %s\n", tac->arg1, tac->arg2, tac->result);
-    }
+        if (strcmp(tac->op, "FuncDecl") == 0) {
+            fprintf(file, "Function: %s %s %s:\n", tac->arg1, tac->arg2, tac->result);
+        } else if (strcmp(tac->op, "Main") == 0) {
+            fprintf(file, "Main Function:\n");
+        } else if (strcmp(tac->op, "ParamDecl") == 0) {
+            fprintf(file, "\tParameter: %s %s ==> %s\n", tac->arg1, tac->arg2, tac->result);
+        } else if (strcmp(tac->op, "return") == 0) {
+            fprintf(file, "\tReturn: %s %s\n\n", tac->arg1, tac->arg2);
+        } else if (strcmp(tac->op, "VarDecl") == 0) {
+            fprintf(file, "\tVariable: %s %s ==> %s\n", tac->arg1, tac->arg2, tac->result);
+        } else if (strcmp(tac->op, "ArrayDecl") == 0) {
+            fprintf(file, "\tArray: %s %s[%d] ==> %s[%d]\n", tac->arg1, tac->arg2, tac->arg3, tac->result, tac->arg3);
+        } else if (strcmp(tac->op, "=") == 0) {
+            fprintf(file, "\t%s (%s) = %s\n", tac->result, tac->arg1, tac->arg2);
+        } else if (strcmp(tac->op, "ConditionalAssignment") == 0) {
+            fprintf(file, "\t%s (%s) = %s\n", tac->result, tac->arg1, tac->arg2);
+        } else if (strcmp(tac->op, "ArrayAssingment") == 0) {
+            fprintf(file, "\t%s (%s[%d]) = %s\n", tac->result, tac->arg1, tac->arg3, tac->arg2);
+        } else if (strcmp(tac->op, "ConditionalArrayAssingment") == 0) {
+            fprintf(file, "\t%s (%s[%d]) = %s\n", tac->result, tac->arg1, tac->arg3, tac->arg2);
+        } else if (strcmp(tac->op, "Print") == 0) {
+            fprintf(file, "\tPrint(%s)\n", tac->arg1);
+        } else if (strcmp(tac->op, "IfStart") == 0) {
+            fprintf(file, "\tif(%s) -> jump %s\n", tac->arg1, tac->result);
+        } else if (strcmp(tac->op, "IfEnd") == 0) {
+            fprintf(file, "\tjump %s\n", tac->arg1);
+            fprintf(file, "jal %s\n", tac->result);
+        } else if (strcmp(tac->op, "IfSkip") == 0) {
+            fprintf(file, "jal %s\n", tac->result);
+        } else if (strcmp(tac->op, "!") == 0) {
+            fprintf(file, "\t%s = %s%s\n", tac->result, tac->op, tac->arg2);
+        } else if (strcmp(tac->op, "&&") == 0) {
+            fprintf(file, "\t%s = %s %s %s\n", tac->result, tac->arg1, tac->op, tac->arg2);
+        } else if (strcmp(tac->op, "||") == 0) {
+            fprintf(file, "\t%s = %s %s %s\n", tac->result, tac->arg1, tac->op, tac->arg2);
+        } else if (strcmp(tac->op, "==") == 0) {
+            fprintf(file, "\t%s = %s %s %s\n", tac->result, tac->arg1, tac->op, tac->arg2);
+        } else if (strcmp(tac->op, ">") == 0) {
+            fprintf(file, "\t%s = %s %s %s\n", tac->result, tac->arg1, tac->op, tac->arg2);
+        } else if (strcmp(tac->op, "<") == 0) {
+            fprintf(file, "\t%s = %s %s %s\n", tac->result, tac->arg1, tac->op, tac->arg2);
+        } else if (strcmp(tac->op, ">=") == 0) {
+            fprintf(file, "\t%s = %s %s %s\n", tac->result, tac->arg1, tac->op, tac->arg2);
+        } else if (strcmp(tac->op, "<=") == 0) {
+            fprintf(file, "\t%s = %s %s %s\n", tac->result, tac->arg1, tac->op, tac->arg2);
+        } else if (strcmp(tac->op, "!=") == 0) {
+            fprintf(file, "\t%s = %s %s %s\n", tac->result, tac->arg1, tac->op, tac->arg2);
+        } else if (strcmp(tac->op, "BooleanValue") == 0) {
+            fprintf(file, "\t%s = %s\n", tac->result, tac->arg1);
+        } else if (strcmp(tac->op, "+") == 0) {
+            fprintf(file, "\t%s = %s + %s\n", tac->result, tac->arg1, tac->arg2);
+        } else if (strcmp(tac->op, "-") == 0) {
+            fprintf(file, "\t%s = %s - %s\n", tac->result, tac->arg1, tac->arg2);
+        } else if (strcmp(tac->op, "*") == 0) {
+            fprintf(file, "\t%s = %s * %s\n", tac->result, tac->arg1, tac->arg2);
+        } else if (strcmp(tac->op, "/") == 0) {
+            fprintf(file, "\t%s = %s / %s\n", tac->result, tac->arg1, tac->arg2);
+        } else if (strcmp(tac->op, "move") == 0) {
+            fprintf(file, "\t%s --> %s\n", tac->arg1, tac->result);
+        } else if (strcmp(tac->op, "Num") == 0) {
+            fprintf(file, "\t%s = %s\n", tac->result, tac->arg1);
+        } else if (strcmp(tac->op, "Char") == 0) {
+            fprintf(file, "\t%s = '%c'\n", tac->result, tac->arg4);
+        } else if (strcmp(tac->op, "ID") == 0) {
+            fprintf(file, "\t%s = %s (%s)\n", tac->result, tac->arg2, tac->arg1);
+        } else if (strcmp(tac->op, "ArrayAccess") == 0) {
+            fprintf(file, "\t%s = %s (%s[%d])\n", tac->result, tac->arg2, tac->arg1, tac->arg3);
+        } else if (strcmp(tac->op, "FuncCall") == 0) {
+            fprintf(file, "\tFunction Call: %s => %s\n", tac->arg1, tac->result);
+        } else if (strcmp(tac->op, "FuncCallEnd") == 0) {
+            fprintf(file, "\tFunction Call End: %s => %s\n", tac->arg1, tac->result);
+        } else if (strcmp(tac->op, "ParamCall") == 0) {
+            fprintf(file, "\tParameter Call: %s\n", tac->arg1);
+        } else if (strcmp(tac->op, "IntToFloat") == 0) {
+            fprintf(file, "\tInt to float: %s ==> %s\n", tac->arg1, tac->result);
+        } else if (strcmp(tac->op, "FloatToInt") == 0) {
+            fprintf(file, "\tFloat to int: %s ==> %s\n", tac->arg1, tac->result);
+        } else if (strcmp(tac->op, "If") == 0) {
+            fprintf(file, "\tIf: %s\n", tac->arg1);
+        } else if (strcmp(tac->op, "Comparison") == 0) {
+            fprintf(file, "\tComparison: %s %s %s\n", tac->arg1, tac->arg2, tac->result);
+        } else if (strcmp(tac->op, "LogicalOp") == 0) {
+            fprintf(file, "\tLogicalOp: %s %s %s\n", tac->arg1, tac->arg2, tac->result);
+        } else {
+            fprintf(file, "Unknown TAC operation\n");
+        }
+        
         tac = tac->next;
     }   
     fclose(file);

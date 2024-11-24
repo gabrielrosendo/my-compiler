@@ -1,14 +1,25 @@
 Main Function:
-	$t5 = /À
+	$t5 = /Â
+	if($t5) -> jump .1
 	$t7 = 'x'
 	Print($t7)
+	jump .0
+jal .1
 	$t5 = false
+	if($t5) -> jump .4
 	$t5 = false
+	if($t5) -> jump .5
 	$t7 = 'c'
 	Print($t7)
+	jump .3
+jal .5
 	$t7 = 'b'
 	Print($t7)
+	jump .3
+jal .4
 	$t7 = 'a'
 	Print($t7)
+jal .3
+jal .0
 	Return: void void
 
