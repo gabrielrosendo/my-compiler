@@ -1,80 +1,100 @@
 Main Function:
-	Variable: bool condition1 ==> maincondition1
-	Variable: bool condition2 ==> maincondition2
-	Variable: int x ==> mainx
-	Variable: int y ==> mainy
+	Variable: bool test1 ==> maintest1
+	Variable: bool test2 ==> maintest2
+	Variable: bool test3 ==> maintest3
+	Variable: bool test4 ==> maintest4
+	Variable: bool test5 ==> maintest5
+	Variable: bool test6 ==> maintest6
+	Variable: bool test7 ==> maintest7
+	Variable: bool temp1 ==> maintemp1
+	Variable: bool temp2 ==> maintemp2
 	$t5 = true
-	maincondition1 (condition1) = $t5
-	$t5 = false
-	maincondition2 (condition2) = $t5
-	$t1 = 5
-	mainx (x) = $t1
-	$t1 = 10
-	mainy (y) = $t1
-	$t1 = 0
-	$t1 --> $t5
-	$t1 = 1
-	$t5 = $t5 > $t1
-	if($t5) -> jump .1
-	jump .0
-jal .1
-	$t7 = 'A'
-	Print($t7)
-jal .0
-	$t1 = mainy (y)
-	$t1 --> $t5
-	$t1 = mainx (x)
-	$t5 = $t5 > $t1
-	if($t5) -> jump .3
-	$t7 = 'C'
-	Print($t7)
-	jump .2
-jal .3
-	$t7 = 'B'
-	Print($t7)
-jal .2
-	$t1 = mainy (y)
-	$t1 --> $t5
-	$t1 = mainx (x)
-	$t5 = $t5 < $t1
-	$t5 --> $t6
-	$t5 = maincondition1 (condition1)
-	$t5 = $t6 && $t5
-	if($t5) -> jump .6
-	jump .5
-jal .6
-	$t7 = 'D'
-	Print($t7)
-jal .5
-	$t5 = maincondition2 (condition2)
 	$t5 = !$t5
-	if($t5) -> jump .8
-	jump .7
-jal .8
-	$t7 = 'E'
-	Print($t7)
-jal .7
-	$t1 = mainy (y)
+	maintest1 (test1) = $t5
+	$t1 = 10
 	$t1 --> $t5
-	$t1 = mainx (x)
+	$t1 = 5
 	$t5 = $t5 < $t1
-	if($t5) -> jump .10
-	jump .9
-jal .10
+	maintemp1 (temp1) = $t5
+	$t5 = maintemp1 (temp1)
+	$t5 = !$t5
+	maintest2 (test2) = $t5
+	$t5 = true
+	maintest3 (test3) = $t5
+	$t5 = false
+	maintemp1 (temp1) = $t5
+	$t5 = maintemp1 (temp1)
+	$t5 --> $t6
+	$t5 = maintest3 (test3)
+	$t5 = $t6 && $t5
+	maintest3 (test3) = $t5
+	$t1 = 3
+	$t1 --> $t5
+	$t1 = 5
+	$t5 = $t5 > $t1
+	maintemp1 (temp1) = $t5
+	$t1 = 2
+	$t1 --> $t5
+	$t1 = 2
+	$t5 = $t5 <= $t1
+	maintemp2 (temp2) = $t5
+	$t5 = maintemp2 (temp2)
+	$t5 --> $t6
+	$t5 = maintemp1 (temp1)
+	$t5 = $t6 && $t5
+	maintest4 (test4) = $t5
+	$t5 = false
+	maintest5 (test5) = $t5
+	$t5 = true
+	maintemp1 (temp1) = $t5
+	$t5 = maintemp1 (temp1)
+	$t5 --> $t6
+	$t5 = maintest5 (test5)
+	$t5 = $t6 || $t5
+	maintest5 (test5) = $t5
+	$t1 = 7
+	$t1 --> $t5
+	$t1 = 7
+	$t5 = $t5 == $t1
+	maintemp1 (temp1) = $t5
 	$t1 = 5
 	$t1 --> $t5
-	$t1 = mainy (y)
-	$t0 = mainx (x)
-	$t1 = $t1 - $t0
-	$t5 = $t5 == $t1
-	if($t5) -> jump .12
-	$t7 = 'G'
-	Print($t7)
-	jump .11
-jal .12
-	$t7 = 'F'
-	Print($t7)
-jal .11
-jal .9
+	$t1 = 10
+	$t5 = $t5 < $t1
+	maintemp2 (temp2) = $t5
+	$t5 = maintemp2 (temp2)
+	$t5 --> $t6
+	$t5 = maintemp1 (temp1)
+	$t5 = $t6 || $t5
+	maintest6 (test6) = $t5
+	$t5 = false
+	$t5 --> $t6
+	$t5 = true
+	$t5 = $t6 || $t5
+	maintemp1 (temp1) = $t5
+	$t1 = 2
+	$t1 --> $t5
+	$t1 = 5
+	$t5 = $t5 > $t1
+	maintemp2 (temp2) = $t5
+	$t5 = maintemp2 (temp2)
+	$t5 --> $t6
+	$t5 = maintemp1 (temp1)
+	$t5 = $t6 && $t5
+	$t5 = !$t5
+	maintest7 (test7) = $t5
+	$t5 = maintest1 (test1)
+	Print($t5)
+	$t5 = maintest2 (test2)
+	Print($t5)
+	$t5 = maintest3 (test3)
+	Print($t5)
+	$t5 = maintest4 (test4)
+	Print($t5)
+	$t5 = maintest5 (test5)
+	Print($t5)
+	$t5 = maintest6 (test6)
+	Print($t5)
+	$t5 = maintest7 (test7)
+	Print($t5)
 	Return: void void
-

@@ -1,4 +1,5 @@
 # my-compiler
+For part 3, we added support for if, else if, and else constructs with both ConditionalExpr and general expressions (Expr). Logical Operators were also implemented. See below for more information about improvements.
 
 Videos:
 Grant Burk: https://www.loom.com/share/1937df6e04a94d91a454d45fda6c4cca?sid=ed101db7-8458-4084-bd73-fbb27b1b548e
