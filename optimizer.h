@@ -23,5 +23,6 @@ void copyPropagation(TAC** head);
 void deadCodeElimination(TAC** head);
 void printOptimizedTAC(const char* filename, TAC* head);
 void printCurrentOptimizedTAC(TAC* current);
+void optimizeIfs(TAC** head);
 
 #endif // OPTIMIZER_H

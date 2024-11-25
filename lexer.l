@@ -37,7 +37,6 @@ BAD_ID {NUMBER}{ID}
 \"(\\\"|[^\"\n])*\" { 
     words++; chars += strlen(yytext);
     printf("%-10s | %-10s\n", yytext, "STRING");
-    // You might want to add a STRING token if you need it in your grammar
 }
 
 "int"|"float"|"char"|"bool" { 
@@ -165,6 +164,8 @@ BAD_ID {NUMBER}{ID}
     printf("%-10s | %-10s\n", yytext, "COMMA");
     return COMMA;
 }
+
+"//".*                { /* Ignore single-line comments */ }
 
 "(" { 
     chars++;

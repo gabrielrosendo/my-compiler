@@ -1,86 +1,44 @@
-bool isTrue() {
-	bool x;
-	x = true;
-	return x;
-}
-
-bool isFalse() {
-	bool x;
-	x = false;
-	return x;
-}
-
-bool isLess(int less, int more) {
-	bool toBack;
-	if (less < more) {
-		toBack = true;
-	} else {
-		toBack = false;
-	}
-	return toBack;
-}
-
 void main() {
-	bool test;
-	bool test1;
-	bool test2;
-	int x;
+    // Variable Declarations
+    bool condition1;
+    bool condition2;
+    int x;
+    int y;
 
-	test = isTrue();
-	test1 = isFalse() || true;
-	test2 = !false && isLess(1, 2) && test1;
-	x = 5;
+    // Assignments
+    condition1 = true;
+    condition2 = false;
+    x = 5;
+    y = 10;
 
-	if(true) {
-		print('a');
-	}
+    // Simple comparison
+    if (1 > 0) {
+        print('A'); // 'A' represents "1 is greater than 0"
+    }
 
-	if(false) {
-		print('b');
-	}
+    // Comparison involving variables
+    if (x > y) {
+        print('B'); // 'B' represents "x is greater than y"
+    } else {
+        print('C'); // 'C' represents "x is not greater than y"
+    }
 
-	if(false) {
-		print('b');
-	} else {
-		print('a');
-	}
+    // Boolean condition with comparison
+    if (condition1 && x < y) {
+        print('D'); // 'D' represents "Condition1 is true and x is less than y"
+    }
 
-	if(false) {
-		print('b');
-	} else if (true) {
-		print('a');
-	} else {
-		print('b');
-	}
+    // Boolean condition with direct negation
+    if (!condition2) {
+        print('E'); // 'E' represents "Condition2 is false"
+    }
 
-	if(false) {
-		print('b');
-	} else if (true) {
-		print('a');
-	}
-
-	if(test && true) {
-		print('a');
-	}
-
-	if(isFalse() || isTrue() && true) {
-		print('a');
-	}
-
-	if(isLess(1, 2) && 5 < 20 && true) {
-		print('a');
-	}
-
-	if(test2) {
-		print('a');
-	}
-
-	if(isFalse()) {
-		print('b');
-	}
-
-
-	print(test);
-	print(test1);
-	print(test2);
+    // Nested if with a comparison
+    if (x < y) {
+        if (y - x == 5) {
+            print('F'); // 'F' represents "y - x equals 5"
+        } else {
+            print('G'); // 'G' represents "y - x does not equal 5"
+        }
+    }
 }

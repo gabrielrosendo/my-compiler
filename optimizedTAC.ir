@@ -1,25 +1,78 @@
 Main Function:
-	$t5 = /Â
+	Variable: int x ==> mainx
+	Variable: int y ==> mainy
+	$t5 = 
+	maincondition1 (condition1) = $t5
+	$t5 = 
+	maincondition2 (condition2) = $t5
+	$t1 = 5
+	mainx (x) = 5
+	$t1 = 10
+	mainy (y) = 10
+	$t1 = 0
+	0 --> $t5
+	$t1 = 1
+	$t5 = $t5 > 1
 	if($t5) -> jump .1
-	$t7 = 'x'
-	Print($t7)
 	jump .0
 jal .1
-	$t5 = false
-	if($t5) -> jump .4
-	$t5 = false
-	if($t5) -> jump .5
-	$t7 = 'c'
+	$t7 = 'A'
 	Print($t7)
-	jump .3
-jal .5
-	$t7 = 'b'
-	Print($t7)
-	jump .3
-jal .4
-	$t7 = 'a'
-	Print($t7)
-jal .3
 jal .0
+	$t1 = y (y)
+	$t1 --> $t5
+	$t1 = x (x)
+	$t5 = $t5 > $t1
+	if($t5) -> jump .3
+	$t7 = 'C'
+	Print($t7)
+	jump .2
+jal .3
+	$t7 = 'B'
+	Print($t7)
+jal .2
+	$t1 = y (y)
+	$t1 --> $t5
+	$t1 = x (x)
+	$t5 = $t5 < $t1
+	$t5 --> $t6
+	$t5 = maincondition1 (condition1)
+	$t5 = $t6 && $t5
+	if($t5) -> jump .6
+	jump .5
+jal .6
+	$t7 = 'D'
+	Print($t7)
+jal .5
+	$t5 = maincondition2 (condition2)
+	$t5 = !$t5
+	if($t5) -> jump .8
+	jump .7
+jal .8
+	$t7 = 'E'
+	Print($t7)
+jal .7
+	$t1 = y (y)
+	$t1 --> $t5
+	$t1 = x (x)
+	$t5 = $t5 < $t1
+	if($t5) -> jump .10
+	jump .9
+jal .10
+	$t1 = 5
+	5 --> $t5
+	$t1 = y (y)
+	$t0 = x (x)
+	$t1 = $t1 - $t0
+	$t5 = $t5 == $t1
+	if($t5) -> jump .12
+	$t7 = 'G'
+	Print($t7)
+	jump .11
+jal .12
+	$t7 = 'F'
+	Print($t7)
+jal .11
+jal .9
 	Return: void void
 

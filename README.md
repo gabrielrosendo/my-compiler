@@ -1,8 +1,52 @@
 # my-compiler
 
 Videos:
-Grant Burk: https://www.loom.com/share/7fe7cc1c159b4cf0b7c498503c9edb0a?sid=dd5dea37-54e7-457b-bd34-e5b23c23c118 
-Gabriel Marcelino: https://www.loom.com/share/0e306929bff14a7e8ae29038ff2d9a15
+Grant Burk: https://www.loom.com/share/1937df6e04a94d91a454d45fda6c4cca?sid=ed101db7-8458-4084-bd73-fbb27b1b548e
+Gabriel Marcelino: 
+pt 1: https://www.loom.com/share/e1cc89d0cefe418b9d4a24df5604ece4
+pt 2(ran out of time for last test): https://www.loom.com/share/74d489c7b80f499abe341840b3ef7467 
+
+## Improvements Made (Part 3)
+Conditional Expression Expansion:
+
+    Use Operators: ||, &&
+    
+    Format:
+        (Conditional Expression) (Conditional Expansion Operator) (Conditional Expression)
+        also: (Conditional Expression Expansion) (Conditional Expansion Operator) (Conditional Expression)
+
+    Uses: 
+        Assign to a varible:
+            bool x;
+            x = Conditional Expression Expansion;
+
+        If Statement:
+            if (Conditional Expression Expansion) {} 
+            else if (Conditional Expression Expansion) {}
+
+If Statements: 
+
+    Starts with if:
+        if (Conditional Statement) { Statements }
+
+    Can be expanded:
+        if (Conditional Statement) {
+        } else if (Conditional Statement) { Statements }
+
+    Also:
+        if (Conditional Statement) {
+        } else { Statements }
+
+    So, start with if, then there can be as many else if statements after the initial if. Else statements only come at the end of the if statement.
+
+    Conditional Statements are expression and conditional expressions that have boolean values
+        - basic vales (true, false)
+        - variable with bool type
+        - fuctions with bool type
+        - Conditional Expression
+        - Conditional Expression Expansions
+    
+
 
 Compiler rules:
 
@@ -77,42 +121,3 @@ Conditional Expressions:
             if (Conditional Expression) {} 
             else if (Conditional Expression) {}
 
-Conditional Expression Expansion:
-
-    Use Operators: ||, &&
-    
-    Format:
-        (Conditional Expression) (Conditional Expansion Operator) (Conditional Expression)
-        also: (Conditional Expression Expansion) (Conditional Expansion Operator) (Conditional Expression)
-
-    Uses: 
-        Assign to a varible:
-            bool x;
-            x = Conditional Expression Expansion;
-
-        If Statement:
-            if (Conditional Expression Expansion) {} 
-            else if (Conditional Expression Expansion) {}
-
-If Statements: 
-
-    Starts with if:
-        if (Conditional Statement) { Statements }
-
-    Can be expanded:
-        if (Conditional Statement) {
-        } else if (Conditional Statement) { Statements }
-
-    Also:
-        if (Conditional Statement) {
-        } else { Statements }
-
-    So, start with if, then there can be as many else if statements after the initial if. Else statements only come at the end of the if statement.
-
-    Conditional Statements are expression and conditional expressions that have boolean values
-        - basic vales (true, false)
-        - variable with bool type
-        - fuctions with bool type
-        - Conditional Expression
-        - Conditional Expression Expansions
-    

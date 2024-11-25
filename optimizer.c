@@ -7,7 +7,97 @@ void optimizeTAC(TAC** head) {
     constantPropagation(head);
     copyPropagation(head);
     deadCodeElimination(head);
+    optimizeIfs(head);
 }
+void optimizeIfs(TAC** head) {
+    if (!head || !*head) return;
+    
+    TAC* current = *head;
+    TAC* prev = NULL;
+    
+    while (current) {
+        // Case 1: Constant condition jumps
+        if (current->op && strcmp(current->op, "if") == 0) {
+            if (current->next && current->arg1) {
+                // If we have a constant true condition
+                if (strcmp(current->arg1, "true") == 0) {
+                    // Convert to direct jump
+                    free(current->op);
+                    current->op = strdup("jump");
+                    free(current->arg1);
+                    current->arg1 = NULL;
+                    
+                    // Remove the following jump if it exists
+                    if (current->next && strcmp(current->next->op, "jump") == 0) {
+                        TAC* temp = current->next;
+                        current->next = temp->next;
+                        free(temp);
+                    }
+                }
+                // If we have a constant false condition
+                else if (strcmp(current->arg1, "false") == 0) {
+                    // Remove the if statement and keep the following jump
+                    if (prev) {
+                        prev->next = current->next;
+                        free(current);
+                        current = prev->next;
+                        continue;
+                    } else {
+                        *head = current->next;
+                        free(current);
+                        current = *head;
+                        continue;
+                    }
+                }
+            }
+        }
+        
+        // Case 2: Remove redundant jal-jump sequences
+        if (current->op && strcmp(current->op, "jal") == 0 && current->next) {
+            TAC* next = current->next;
+            if (strcmp(next->op, "jump") == 0 && 
+                current->label == next->label) {
+                // Remove the redundant jump
+                current->next = next->next;
+                free(next);
+                continue;
+            }
+        }
+        
+        // Case 3: Remove jump to next instruction
+        if (current->op && strcmp(current->op, "jump") == 0 && current->next) {
+            if (current->next->label == current->label) {
+                // Remove the jump
+                if (prev) {
+                    prev->next = current->next;
+                    free(current);
+                    current = prev->next;
+                    continue;
+                } else {
+                    *head = current->next;
+                    free(current);
+                    current = *head;
+                    continue;
+                }
+            }
+        }
+
+        // Case 4: Remove empty jal blocks
+        if (current->op && strcmp(current->op, "jal") == 0 && 
+            current->next && current->next->op && 
+            strcmp(current->next->op, "jal") == 0) {
+            // Remove empty block
+            TAC* temp = current->next;
+            current->next = temp->next;
+            free(temp);
+            continue;
+        }
+
+        prev = current;
+        current = current->next;
+    }
+}
+
 bool isConstant(const char* str) {
     if (str == NULL || *str == '\0') {
         return false; // Empty string is not a constant
