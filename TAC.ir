@@ -1,100 +1,25 @@
 Main Function:
-	Variable: bool test1 ==> maintest1
-	Variable: bool test2 ==> maintest2
-	Variable: bool test3 ==> maintest3
-	Variable: bool test4 ==> maintest4
-	Variable: bool test5 ==> maintest5
-	Variable: bool test6 ==> maintest6
-	Variable: bool test7 ==> maintest7
-	Variable: bool temp1 ==> maintemp1
-	Variable: bool temp2 ==> maintemp2
-	$t5 = true
-	$t5 = !$t5
-	maintest1 (test1) = $t5
+	Variable: int x ==> mainx
+	$t1 = 0
+	mainx (x) = $t1
 	$t1 = 10
 	$t1 --> $t5
-	$t1 = 5
+	$t1 = mainx (x)
 	$t5 = $t5 < $t1
-	maintemp1 (temp1) = $t5
-	$t5 = maintemp1 (temp1)
-	$t5 = !$t5
-	maintest2 (test2) = $t5
-	$t5 = true
-	maintest3 (test3) = $t5
-	$t5 = false
-	maintemp1 (temp1) = $t5
-	$t5 = maintemp1 (temp1)
-	$t5 --> $t6
-	$t5 = maintest3 (test3)
-	$t5 = $t6 && $t5
-	maintest3 (test3) = $t5
-	$t1 = 3
-	$t1 --> $t5
-	$t1 = 5
-	$t5 = $t5 > $t1
-	maintemp1 (temp1) = $t5
-	$t1 = 2
-	$t1 --> $t5
-	$t1 = 2
-	$t5 = $t5 <= $t1
-	maintemp2 (temp2) = $t5
-	$t5 = maintemp2 (temp2)
-	$t5 --> $t6
-	$t5 = maintemp1 (temp1)
-	$t5 = $t6 && $t5
-	maintest4 (test4) = $t5
-	$t5 = false
-	maintest5 (test5) = $t5
-	$t5 = true
-	maintemp1 (temp1) = $t5
-	$t5 = maintemp1 (temp1)
-	$t5 --> $t6
-	$t5 = maintest5 (test5)
-	$t5 = $t6 || $t5
-	maintest5 (test5) = $t5
-	$t1 = 7
-	$t1 --> $t5
-	$t1 = 7
-	$t5 = $t5 == $t1
-	maintemp1 (temp1) = $t5
-	$t1 = 5
-	$t1 --> $t5
+Unknown TAC operation
+Unknown TAC operation
+Unknown TAC operation
+	$t7 = 'a'
+	Print($t7)
+	$t1 = mainx (x)
+	$t0 = 1
+	$t1 = $t0 + $t1
+	mainx (x) = $t1
 	$t1 = 10
-	$t5 = $t5 < $t1
-	maintemp2 (temp2) = $t5
-	$t5 = maintemp2 (temp2)
-	$t5 --> $t6
-	$t5 = maintemp1 (temp1)
-	$t5 = $t6 || $t5
-	maintest6 (test6) = $t5
-	$t5 = false
-	$t5 --> $t6
-	$t5 = true
-	$t5 = $t6 || $t5
-	maintemp1 (temp1) = $t5
-	$t1 = 2
 	$t1 --> $t5
-	$t1 = 5
-	$t5 = $t5 > $t1
-	maintemp2 (temp2) = $t5
-	$t5 = maintemp2 (temp2)
-	$t5 --> $t6
-	$t5 = maintemp1 (temp1)
-	$t5 = $t6 && $t5
-	$t5 = !$t5
-	maintest7 (test7) = $t5
-	$t5 = maintest1 (test1)
-	Print($t5)
-	$t5 = maintest2 (test2)
-	Print($t5)
-	$t5 = maintest3 (test3)
-	Print($t5)
-	$t5 = maintest4 (test4)
-	Print($t5)
-	$t5 = maintest5 (test5)
-	Print($t5)
-	$t5 = maintest6 (test6)
-	Print($t5)
-	$t5 = maintest7 (test7)
-	Print($t5)
+	$t1 = mainx (x)
+	$t5 = $t5 < $t1
+Unknown TAC operation
+Unknown TAC operation
 	Return: void void
+

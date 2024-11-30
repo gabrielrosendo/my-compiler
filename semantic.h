@@ -45,6 +45,8 @@ void semanticAnalysisForIfStatements(ASTNode* node, SymbolBST* symTab, FunctionS
 void TACForIfStart(ASTNode* node, char* jumpLoc);
 void TACForIfEnd(ASTNode* node, char* ifJumpLoc1, char* ifJumpFinalLoc);
 void TACForIfSkip(char* ifJumpLoc2);
+void TACForWhileLoopStart(char* whileJumpLocStart, char* whileJumpLocEnd);
+void TACForWhileLoopEnd(char* whileJumpLocStart, char* whileJumpLocEnd);
 
 #endif // SEMANTIC_H
 

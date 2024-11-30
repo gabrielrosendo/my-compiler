@@ -207,6 +207,18 @@ void generateMIPS(TAC* tacInstructions) {
             fprintf(outputFile, "\tla $a0, print\t\t# Load address of print into $a0\n");
             fprintf(outputFile, "\tsyscall\t\t# Syscall to print string\n\n");
         
+        }else if (strcmp(tac->op, "WhileStartConditional") == 0) {
+            printf("\tWhile (%s) ==> (jump) ==> %s\n", tac->arg1, tac->result);
+            fprintf(outputFile, "\tbeq %s, 1, %s\n\n", tac->arg1, tac->result);
+
+        }else if (strcmp(tac->op, "WhileStartElse") == 0) {
+            printf("\tJump ==> %s\n", tac->result);
+            fprintf(outputFile, "\tj %s\n\n", tac->result);
+
+        }else if (strcmp(tac->op, "WhileStart") == 0) {
+            printf("jal %s\n", tac->result);
+            fprintf(outputFile, "%s:\n", tac->result);
+        
         } else if (strcmp(tac->op, "IfStart") == 0) {
             printf("\tif(%s) -> jump %s\n", tac->arg1, tac->result);
             fprintf(outputFile, "\tbeq %s, 1, %s\n\n", tac->arg1, tac->result);

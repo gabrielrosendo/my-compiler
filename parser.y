@@ -73,6 +73,7 @@ ArraySymbolTable* arraySymTab = NULL;
 %token <string> OR
 %token <string> IF
 %token <string> ELSE
+%token <string> WHILE
 
 %left ADD SUB MUL DIV
 
@@ -275,6 +276,12 @@ Stmt: ID EQ Expr SEMICOLON {
         printf("PARSER: Recognized print statement\n"); 
         $$ = createNode(NodeType_Print);
         $$->value.print.expr = $3;
+    }
+    | WHILE LPAREN ConditionalExpr RPAREN LBRACE StmtList RBRACE { 
+        printf("PARSER: Recognized while loop statement\n"); 
+        $$ = createNode(NodeType_WhileLoop);
+        $$->value.WhileLoop.conditional = $3;
+        $$->value.WhileLoop.block = $6;
     }
     | IFSTATEMENT { 
         printf("PARSER: Recognized initial if statement\n"); 

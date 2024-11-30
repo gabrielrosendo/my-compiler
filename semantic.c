@@ -294,7 +294,31 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
             printf("Semantic Analysis running on node of type: NodeType_Print\n");
             semanticAnalysis(node->value.print.expr, symTab, functionBST, arraySymTab);
             break;
-        
+
+        case NodeType_WhileLoop:
+            printf("Semantic Analysis running on node of type: NodeType_WhileLoop\n");
+
+            char while_int_str[12];
+            sprintf(while_int_str, "%d", ifJumpLoc);
+            ifJumpLoc++;
+            char* whileStartJumpLocString = strcat(strdup("."), while_int_str);
+
+            char while_int_str2[12];
+            sprintf(while_int_str2, "%d", ifJumpLoc);
+            ifJumpLoc++;
+            char* whileEndJumpLocString = strcat(strdup("."), while_int_str2);
+
+            semanticAnalysis(node->value.WhileLoop.conditional, symTab, functionBST, arraySymTab);
+
+            TACForWhileLoopStart(whileStartJumpLocString, whileEndJumpLocString);
+
+            semanticAnalysis(node->value.WhileLoop.block, symTab, functionBST, arraySymTab);
+            semanticAnalysis(node->value.WhileLoop.conditional, symTab, functionBST, arraySymTab);
+
+            TACForWhileLoopEnd(whileStartJumpLocString, whileEndJumpLocString);
+
+            break;
+
         case NodeType_IfStatementInit:
             printf("Semantic Analysis running on node of type: NodeType_IfStatementInit\n");
 
@@ -1103,17 +1127,19 @@ void printTAC(TAC* tac) {
         printf("\tInt to float: %s ==> %s\n", tac->arg1, tac->result);
     } else if (strcmp(tac->op, "FloatToInt") == 0) {
         printf("\tFloat to int: %s ==> %s\n", tac->arg1, tac->result);
-    }
-    else if (strcmp(tac->op, "If") == 0) {
+    }else if (strcmp(tac->op, "If") == 0) {
         printf("\tIf: %s\n", tac->arg1);
-    }
-    else if (strcmp(tac->op, "Comparison") == 0) {
+    }else if (strcmp(tac->op, "Comparison") == 0) {
         printf("\tComparison: %s %s %s\n", tac->arg1, tac->arg2, tac->result);
-    }
-    else if (strcmp(tac->op, "LogicalOp") == 0) {
+    }else if (strcmp(tac->op, "LogicalOp") == 0) {
         printf("\tLogicalOp: %s %s %s\n", tac->arg1, tac->arg2, tac->result);
-    }
-    else {
+    }else if (strcmp(tac->op, "WhileStartConditional") == 0) {
+        printf("\tWhile (%s) ==> (jump) ==> %s\n", tac->arg1, tac->result);
+    }else if (strcmp(tac->op, "WhileStartElse") == 0) {
+        printf("\tJump ==> %s\n", tac->result);
+    }else if (strcmp(tac->op, "WhileStart") == 0) {
+        printf("jal %s\n", tac->result);
+    }else {
         printf("Unknown TAC operation\n");
     }
 }
@@ -1389,4 +1415,78 @@ void TACForIfSkip(char* ifJumpFinalLoc1) {
     instruction->result = strdup(ifJumpFinalLoc1);
     instruction->next = NULL; 
     appendTAC(&tacHead, instruction);
+}
+
+void TACForWhileLoopStart(char* whileJumpLocStart, char* whileJumpLocEnd) {
+    TAC* instruction = (TAC*)malloc(sizeof(TAC));
+    if (!instruction) {
+        fprintf(stderr, "Failed to create custom tac instruction Error 7548659 (ctrl + f to seach for this in semantic.c)");
+        exit(0);
+    }
+
+    printf("Generating TAC for start of while loop\n");
+    instruction->arg1 = strdup("$t5");
+    instruction->arg2 = strdup("");
+    instruction->op = strdup("WhileStartConditional");
+    instruction->result = strdup(whileJumpLocStart);
+    instruction->next = NULL; 
+    appendTAC(&tacHead, instruction);
+
+    TAC* instruction1 = (TAC*)malloc(sizeof(TAC));
+    if (!instruction1) {
+        fprintf(stderr, "Failed to create custom tac instruction Error 038745 (ctrl + f to seach for this in semantic.c)");
+        exit(0);
+    }
+
+    printf("Generating TAC for start of while loop\n");
+    instruction1->arg1 = strdup("");
+    instruction1->arg2 = strdup("");
+    instruction1->op = strdup("WhileStartElse");
+    instruction1->result = strdup(whileJumpLocEnd);
+    instruction1->next = NULL; 
+    appendTAC(&tacHead, instruction1);
+
+    TAC* instruction2 = (TAC*)malloc(sizeof(TAC));
+    if (!instruction2) {
+        fprintf(stderr, "Failed to create custom tac instruction Error 209476 (ctrl + f to seach for this in semantic.c)");
+        exit(0);
+    }
+
+    printf("Generating TAC for start of while loop\n");
+    instruction2->arg1 = strdup("");
+    instruction2->arg2 = strdup("");
+    instruction2->op = strdup("WhileStart");
+    instruction2->result = strdup(whileJumpLocStart);
+    instruction2->next = NULL; 
+    appendTAC(&tacHead, instruction2);
+}
+
+void TACForWhileLoopEnd(char* whileJumpLocStart, char* whileJumpLocEnd) {
+        TAC* instruction = (TAC*)malloc(sizeof(TAC));
+    if (!instruction) {
+        fprintf(stderr, "Failed to create custom tac instruction Error 309764 (ctrl + f to seach for this in semantic.c)");
+        exit(0);
+    }
+
+    printf("Generating TAC for start of while loop\n");
+    instruction->arg1 = strdup("$t5");
+    instruction->arg2 = strdup("");
+    instruction->op = strdup("WhileStartConditional");
+    instruction->result = strdup(whileJumpLocStart);
+    instruction->next = NULL; 
+    appendTAC(&tacHead, instruction);
+
+    TAC* instruction2 = (TAC*)malloc(sizeof(TAC));
+    if (!instruction2) {
+        fprintf(stderr, "Failed to create custom tac instruction Error 93743 (ctrl + f to seach for this in semantic.c)");
+        exit(0);
+    }
+
+    printf("Generating TAC for start of while loop\n");
+    instruction2->arg1 = strdup("");
+    instruction2->arg2 = strdup("");
+    instruction2->op = strdup("WhileStart");
+    instruction2->result = strdup(whileJumpLocEnd);
+    instruction2->next = NULL; 
+    appendTAC(&tacHead, instruction2);
 }

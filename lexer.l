@@ -93,6 +93,12 @@ BAD_ID {NUMBER}{ID}
     return ELSE;
 }
 
+"while" { 
+    words++; chars += strlen(yytext);
+    printf("%-10s | %-10s\n", yytext, "WHILE");
+    return WHILE;
+}
+
 {CHARVALUE} {
     words++; chars += strlen(yytext);
     printf("%-10s | %-10s\n", yytext, "CHARACTER");

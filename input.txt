@@ -1,48 +1,8 @@
 void main() {
-    // Variable Declarations
-    bool test1;
-    bool test2;
-    bool test3;
-    bool test4;
-    bool test5;
-    bool test6;
-    bool test7;
-
-    bool temp1; // Intermediate variables for complex expressions
-    bool temp2;
-
-    // Assignments
-    test1 = !true;   // Simple NOT operation
-
-    temp1 = 5 < 10;  // Break down the comparison
-    test2 = !temp1;  // Use the result for NOT
-
-    test3 = true;
-    temp1 = false;
-    test3 = test3 && temp1; // Simple AND
-
-    temp1 = 5 > 3;
-    temp2 = 2 <= 2;
-    test4 = temp1 && temp2; // AND with expressions
-
-    test5 = false;
-    temp1 = true;
-    test5 = test5 || temp1; // Simple OR
-
-    temp1 = 7 == 7;
-    temp2 = 10 < 5;
-    test6 = temp1 || temp2; // OR with expressions
-
-    temp1 = true || false;
-    temp2 = 5 > 2;
-    test7 = !temp1 && temp2; // Complex conditional
-
-    // Replace with your print method
-    print(test1); // prints 0
-    print(test2); // prints 0
-    print(test3); // prints 0
-    print(test4); // prints 1
-    print(test5); // prints 1
-    print(test6); // prints 1
-    print(test7); // prints 0
+	int x;
+	x = 0;
+	while (x < 10) {
+		print ('a');
+		x = x + 1;
+	}
 }

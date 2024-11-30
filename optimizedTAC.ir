@@ -1,92 +1,25 @@
 Main Function:
-	$t5 = 
-	$t5 = !$t5
-	maintest1 (test1) = $t5
+	Variable: int x ==> mainx
+	$t1 = 0
+	mainx (x) = 0
 	$t1 = 10
 	10 --> $t5
-	$t1 = 5
-	$t5 = $t5 < 5
-	maintemp1 (temp1) = $t5
-	$t5 = maintemp1 (temp1)
-	$t5 = !$t5
-	maintest2 (test2) = $t5
-	$t5 = 
-	maintest3 (test3) = $t5
-	$t5 = 
-	maintemp1 (temp1) = $t5
-	$t5 = maintemp1 (temp1)
-	$t5 --> $t6
-	$t5 = maintest3 (test3)
-	$t5 = $t6 && $t5
-	maintest3 (test3) = $t5
-	$t1 = 3
-	3 --> $t5
-	$t1 = 5
-	$t5 = $t5 > 5
-	maintemp1 (temp1) = $t5
-	$t1 = 2
-	2 --> $t5
-	$t1 = 2
-	$t5 = $t5 <= 2
-	maintemp2 (temp2) = $t5
-	$t5 = maintemp2 (temp2)
-	$t5 --> $t6
-	$t5 = maintemp1 (temp1)
-	$t5 = $t6 && $t5
-	maintest4 (test4) = $t5
-	$t5 = 
-	maintest5 (test5) = $t5
-	$t5 = 
-	maintemp1 (temp1) = $t5
-	$t5 = maintemp1 (temp1)
-	$t5 --> $t6
-	$t5 = maintest5 (test5)
-	$t5 = $t6 || $t5
-	maintest5 (test5) = $t5
-	$t1 = 7
-	7 --> $t5
-	$t1 = 7
-	$t5 = $t5 == 7
-	maintemp1 (temp1) = $t5
-	$t1 = 5
-	5 --> $t5
+	$t1 = x (x)
+	$t5 = $t5 < $t1
+Unknown TAC operation
+Unknown TAC operation
+Unknown TAC operation
+	$t7 = 'a'
+	Print($t7)
+	$t1 = x (x)
+	$t0 = 1
+	$t1 = 1 + $t1
+	mainx (x) = $t1
 	$t1 = 10
-	$t5 = $t5 < 10
-	maintemp2 (temp2) = $t5
-	$t5 = maintemp2 (temp2)
-	$t5 --> $t6
-	$t5 = maintemp1 (temp1)
-	$t5 = $t6 || $t5
-	maintest6 (test6) = $t5
-	$t5 = 
-	$t5 --> $t6
-	$t5 = 
-	$t5 = $t6 || $t5
-	maintemp1 (temp1) = $t5
-	$t1 = 2
-	2 --> $t5
-	$t1 = 5
-	$t5 = $t5 > 5
-	maintemp2 (temp2) = $t5
-	$t5 = maintemp2 (temp2)
-	$t5 --> $t6
-	$t5 = maintemp1 (temp1)
-	$t5 = $t6 && $t5
-	$t5 = !$t5
-	maintest7 (test7) = $t5
-	$t5 = maintest1 (test1)
-	Print($t5)
-	$t5 = maintest2 (test2)
-	Print($t5)
-	$t5 = maintest3 (test3)
-	Print($t5)
-	$t5 = maintest4 (test4)
-	Print($t5)
-	$t5 = maintest5 (test5)
-	Print($t5)
-	$t5 = maintest6 (test6)
-	Print($t5)
-	$t5 = maintest7 (test7)
-	Print($t5)
+	10 --> $t5
+	$t1 = x (x)
+	$t5 = $t5 < $t1
+Unknown TAC operation
+Unknown TAC operation
 	Return: void void
 

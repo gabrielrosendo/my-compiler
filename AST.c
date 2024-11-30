@@ -88,6 +88,10 @@ struct ASTNode* createNode(NodeType type) {
         case NodeType_Print:
             newNode->value.print.expr = NULL;
             break;
+        case NodeType_WhileLoop:
+            newNode->value.WhileLoop.block = NULL;
+            newNode->value.WhileLoop.conditional = NULL;
+            break;
         case NodeType_IfStatementInit:
             newNode->value.IfStatementInit.IfStatement = NULL;
             break;
@@ -261,6 +265,10 @@ void freeAST(struct ASTNode* node) {
             break;
         case NodeType_Print:
             freeAST(node->value.print.expr);
+            break;
+        case NodeType_WhileLoop:
+            freeAST(node->value.WhileLoop.conditional);
+            freeAST(node->value.WhileLoop.block);
             break;
         case NodeType_IfStatementInit:
             freeAST(node->value.IfStatementInit.IfStatement);
@@ -501,6 +509,12 @@ void printAST(struct ASTNode* node, int indent) {
         case NodeType_Print:
             spaceOut(indent);
             printf("AST Print: NodeType_Print\n");
+            break;
+        case NodeType_WhileLoop:
+            spaceOut(indent);
+            printf("AST Print: NodeType_WhileLoop\n");
+            printAST(node->value.WhileLoop.conditional, indent);
+            printAST(node->value.WhileLoop.block, indent);
             break;
         case NodeType_IfStatementInit:
             spaceOut(indent);
