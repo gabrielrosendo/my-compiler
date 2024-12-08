@@ -2,10 +2,11 @@
 For part 3, we added support for if, else if, and else constructs with both ConditionalExpr and general expressions (Expr). Logical Operators were also implemented. See below for more information about improvements.
 
 Videos:
-Grant Burk: https://www.loom.com/share/1937df6e04a94d91a454d45fda6c4cca?sid=ed101db7-8458-4084-bd73-fbb27b1b548e
+Grant Burk: https://www.loom.com/share/d66ec9eafb674157bc3bea63b961759e?sid=4ac04077-d0e8-4888-989a-ba08b0a67d46 
 Gabriel Marcelino: 
-pt 1: https://www.loom.com/share/e1cc89d0cefe418b9d4a24df5604ece4
-pt 2(ran out of time for last test): https://www.loom.com/share/74d489c7b80f499abe341840b3ef7467 
+
+## Comand to combile code from the input.txt file:
+make parser
 
 ## Improvements Made (Part 3)
 Conditional Expression Expansion:
@@ -122,3 +123,16 @@ Conditional Expressions:
             if (Conditional Expression) {} 
             else if (Conditional Expression) {}
 
+While Loops:
+
+    Format:
+        While ((Conditional Expression Expansion)) {(statements)}
+    Or:
+        While ((Expression)) {(statements)}
+    where the expression results in a boolean value
+
+    Uses:
+        Use anywhere statements are allowed
+            - Inside functions after variable declaration
+            - Inside if statments
+            - Inside other while loops

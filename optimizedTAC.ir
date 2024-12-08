@@ -6,9 +6,9 @@ Main Function:
 	10 --> $t5
 	$t1 = x (x)
 	$t5 = $t5 < $t1
-Unknown TAC operation
-Unknown TAC operation
-Unknown TAC operation
+	While ($t5) ==> (jump) ==> .0
+	Jump ==> .1
+jal .0
 	$t7 = 'a'
 	Print($t7)
 	$t1 = x (x)
@@ -19,16 +19,16 @@ Unknown TAC operation
 	10 --> $t5
 	$t1 = x (x)
 	$t5 = $t5 < $t1
-Unknown TAC operation
-Unknown TAC operation
+	While ($t5) ==> (jump) ==> .0
+jal .1
 	$t5 = true
 	mainy (y) = $t5
 	$t1 = 0
 	mainx (x) = 0
 	$t5 = mainy (y)
-Unknown TAC operation
-Unknown TAC operation
-Unknown TAC operation
+	While ($t5) ==> (jump) ==> .2
+	Jump ==> .3
+jal .2
 	$t7 = 'b'
 	Print($t7)
 	$t1 = x (x)
@@ -41,7 +41,7 @@ Unknown TAC operation
 	$t5 = $t5 < $t1
 	mainy (y) = $t5
 	$t5 = mainy (y)
-Unknown TAC operation
-Unknown TAC operation
+	While ($t5) ==> (jump) ==> .2
+jal .3
 	Return: void void
 

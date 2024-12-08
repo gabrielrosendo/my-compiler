@@ -1245,7 +1245,13 @@ void printTACToFile(const char* filename, TAC* current) {
             fprintf(file, "\tComparison: %s %s %s\n", tac->arg1, tac->arg2, tac->result);
         } else if (strcmp(tac->op, "LogicalOp") == 0) {
             fprintf(file, "\tLogicalOp: %s %s %s\n", tac->arg1, tac->arg2, tac->result);
-        } else {
+        }else if (strcmp(tac->op, "WhileStartConditional") == 0) {
+            fprintf(file, "\tWhile (%s) ==> (jump) ==> %s\n", tac->arg1, tac->result);
+        }else if (strcmp(tac->op, "WhileStartElse") == 0) {
+            fprintf(file, "\tJump ==> %s\n", tac->result);
+        }else if (strcmp(tac->op, "WhileStart") == 0) {
+            fprintf(file, "jal %s\n", tac->result);
+        }else {
             fprintf(file, "Unknown TAC operation\n");
         }
         
