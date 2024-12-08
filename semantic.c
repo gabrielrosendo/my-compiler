@@ -310,10 +310,20 @@ void semanticAnalysis(ASTNode* node, SymbolBST* symTab, FunctionSymbolBST* funct
 
             semanticAnalysis(node->value.WhileLoop.conditional, symTab, functionBST, arraySymTab);
 
+            if(strcmp(currentExpressionType, "bool") != 0) {
+                printf("Cannot have non boolean expression in while loop conditional. Expression type: %s\n", currentExpressionType);
+                exit(0);
+            }
+
             TACForWhileLoopStart(whileStartJumpLocString, whileEndJumpLocString);
 
             semanticAnalysis(node->value.WhileLoop.block, symTab, functionBST, arraySymTab);
             semanticAnalysis(node->value.WhileLoop.conditional, symTab, functionBST, arraySymTab);
+
+            if(strcmp(currentExpressionType, "bool") != 0) {
+                printf("Cannot have non boolean expression in while loop conditional. Expression type: %s\n", currentExpressionType);
+                exit(0);
+            }
 
             TACForWhileLoopEnd(whileStartJumpLocString, whileEndJumpLocString);
 

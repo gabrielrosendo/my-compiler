@@ -1,5 +1,6 @@
 Main Function:
 	Variable: int x ==> mainx
+	Variable: bool y ==> mainy
 	$t1 = 0
 	mainx (x) = $t1
 	$t1 = 10
@@ -19,6 +20,28 @@ Unknown TAC operation
 	$t1 --> $t5
 	$t1 = mainx (x)
 	$t5 = $t5 < $t1
+Unknown TAC operation
+Unknown TAC operation
+	$t5 = true
+	mainy (y) = $t5
+	$t1 = 0
+	mainx (x) = $t1
+	$t5 = mainy (y)
+Unknown TAC operation
+Unknown TAC operation
+Unknown TAC operation
+	$t7 = 'b'
+	Print($t7)
+	$t1 = mainx (x)
+	$t0 = 1
+	$t1 = $t0 + $t1
+	mainx (x) = $t1
+	$t1 = 10
+	$t1 --> $t5
+	$t1 = mainx (x)
+	$t5 = $t5 < $t1
+	mainy (y) = $t5
+	$t5 = mainy (y)
 Unknown TAC operation
 Unknown TAC operation
 	Return: void void

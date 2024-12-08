@@ -1,8 +1,19 @@
 void main() {
 	int x;
+	bool y;
+	
 	x = 0;
 	while (x < 10) {
 		print ('a');
 		x = x + 1;
+	}
+
+	y = true;
+	x = 0;
+
+	while (y) {
+		print ('b');
+		x = x + 1;
+		y = x < 10;
 	}
 }

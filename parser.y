@@ -283,6 +283,12 @@ Stmt: ID EQ Expr SEMICOLON {
         $$->value.WhileLoop.conditional = $3;
         $$->value.WhileLoop.block = $6;
     }
+    | WHILE LPAREN Expr RPAREN LBRACE StmtList RBRACE { 
+        printf("PARSER: Recognized while loop statement with expression\n"); 
+        $$ = createNode(NodeType_WhileLoop);
+        $$->value.WhileLoop.conditional = $3;
+        $$->value.WhileLoop.block = $6;
+    }
     | IFSTATEMENT { 
         printf("PARSER: Recognized initial if statement\n"); 
         $$ = createNode(NodeType_IfStatementInit);
