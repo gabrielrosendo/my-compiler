@@ -1,14 +1,37 @@
 # my-compiler
-For part 3, we added support for if, else if, and else constructs with both ConditionalExpr and general expressions (Expr). Logical Operators were also implemented. See below for more information about improvements.
+For this final version, we have added support for while loops
 
 Videos:
 Grant Burk: https://www.loom.com/share/d66ec9eafb674157bc3bea63b961759e?sid=4ac04077-d0e8-4888-989a-ba08b0a67d46 
-Gabriel Marcelino: 
+Gabriel Marcelino: https://www.loom.com/share/af0a103ac47f4f889d03a65d9f6833ea
 
-## Comand to combile code from the input.txt file:
+## Comand to compile code from the input.txt file:
 make parser
 
-## Improvements Made (Part 3)
+## Improvements Made (Part 4)
+While Loops:
+
+Format:
+    While ((Conditional Expression Expansion)) { (Code Block) }
+    or:
+    While ((Expression)) { (Code Block) }
+    - The condition must result in a boolean value.
+
+Uses:
+    - Inside functions after variable declarations:
+        while (x < 10) { Code Block }
+    - Inside if statements:
+        if (x > 5) { while (y < 10) { Code Block } }
+    - Nested inside other while loops:
+        while (x < 10) { while (y > 5) { Code Block } }
+
+** Can Use Logical operators: 
+    - ex: while (x && y) { Code Block }
+         or while (x || y) { Code Block }
+
+
+
+## Usage and Syntax
 Conditional Expression Expansion:
 
     Use Operators: ||, &&

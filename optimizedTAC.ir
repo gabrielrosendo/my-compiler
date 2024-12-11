@@ -21,11 +21,17 @@ jal .0
 	$t5 = $t5 < $t1
 	While ($t5) ==> (jump) ==> .0
 jal .1
-	$t5 = true
+	$t5 = 
 	mainy (y) = $t5
 	$t1 = 0
 	mainx (x) = 0
+	$t1 = 2
+	2 --> $t5
+	$t1 = 1
+	$t5 = $t5 > 1
+	$t5 --> $t6
 	$t5 = mainy (y)
+	$t5 = $t6 || $t5
 	While ($t5) ==> (jump) ==> .2
 	Jump ==> .3
 jal .2
@@ -40,8 +46,29 @@ jal .2
 	$t1 = x (x)
 	$t5 = $t5 < $t1
 	mainy (y) = $t5
+	$t1 = 2
+	2 --> $t5
+	$t1 = 1
+	$t5 = $t5 > 1
+	$t5 --> $t6
 	$t5 = mainy (y)
+	$t5 = $t6 || $t5
 	While ($t5) ==> (jump) ==> .2
 jal .3
+	$t0 = 2
+	1 --> $t5
+	$t1 = 1
+	$t5 = $t5 > 1
+	While ($t5) ==> (jump) ==> .4
+	Jump ==> .5
+jal .4
+	$t7 = 'c'
+	Print($t7)
+	$t1 = 2
+	2 --> $t5
+	$t1 = 1
+	$t5 = $t5 > 1
+	While ($t5) ==> (jump) ==> .4
+jal .5
 	Return: void void
 

@@ -11,9 +11,14 @@ void main() {
 	y = true;
 	x = 0;
 
-	while (y) {
+	while (y || 1>2) {
 		print ('b');
 		x = x + 1;
 		y = x < 10;
+	}
+
+	// False Condition
+	while(1>2){
+		print('c');
 	}
 }
