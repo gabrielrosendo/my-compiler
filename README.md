@@ -32,23 +32,23 @@ Metrics were obtained by averaging the times for 6 simple test inputs:
 ## Usage and Syntax
 While Loops: <br>
 
-Format: <br>
-    While ((Conditional Expression Expansion)) { (Code Block) } <br>
-    or: <br>
-    While ((Expression)) { (Code Block) } <br>
-    - The condition must result in a boolean value. <br>
+    Format: <br>
+        While ((Conditional Expression Expansion)) { (Code Block) } <br>
+        or: <br>
+        While ((Expression)) { (Code Block) } <br>
+        - The condition must result in a boolean value. <br>
 
-Uses: <br>
-    - Inside functions after variable declarations: <br>
-        while (x < 10) { Code Block } <br>
-    - Inside if statements: <br>
-        if (x > 5) { while (y < 10) { Code Block } } <br>
-    - Nested inside other while loops: <br>
-        while (x < 10) { while (y > 5) { Code Block } } <br>
+    Uses: <br>
+        - Inside functions after variable declarations: <br>
+            while (x < 10) { Code Block } <br>
+        - Inside if statements: <br>
+            if (x > 5) { while (y < 10) { Code Block } } <br>
+        - Nested inside other while loops: <br>
+            while (x < 10) { while (y > 5) { Code Block } } <br>
 
-** Can Use Logical operators: <br>
-    - ex: while (x && y) { Code Block } <br>
-         or while (x || y) { Code Block } <br>
+    ** Can Use Logical operators: <br>
+        - ex: while (x && y) { Code Block } <br>
+            or while (x || y) { Code Block } <br>
 
 Conditional Expression Expansion: <br>
 
