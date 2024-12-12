@@ -10,12 +10,12 @@ make parser
 
 ## Performance Metrics
 Metrics were obtained by averaging the times for 6 test inputs of varying complexity:
-- **input-array.txt**: Tests array operations and assignments.
-- **input-bools.txt**: Focuses on boolean logic and conditions.
-- **input-float.txt**: Includes float arithmetic and operations.
-- **input-funcs.txt**: Evaluates function calls and nested function usage.
-- **input-ifs.txt**: Emphasizes conditional logic with multiple `if-else` branches.
-- **input-whiles.txt**: Highlights nested and standalone `while` loops.
+- **input-array.txt**: Test for array operations and assignments.
+- **input-bools.txt**: Test for boolean logic and conditions.
+- **input-float.txt**: Test for float operations.
+- **input-funcs.txt**: Test for function calls and nested function usage.
+- **input-ifs.txt**: Test for `if` and `if-else` branches.
+- **input-whiles.txt**: Test for `while` loops.
 
 ### a) Compilation Time
 - Times(seconds): 0.016, 0.045, 0.032, 0.017, 0.021, 0.016
