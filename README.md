@@ -30,150 +30,148 @@ Metrics were obtained by averaging the times for 6 simple test inputs:
 - Average execution time of compiled programs: **0.0162 seconds**
 
 ## Usage and Syntax
-While Loops:
+While Loops: <br>
 
-Format:
-    While ((Conditional Expression Expansion)) { (Code Block) }
-    or:
-    While ((Expression)) { (Code Block) }
-    - The condition must result in a boolean value.
+Format: <br>
+    While ((Conditional Expression Expansion)) { (Code Block) } <br>
+    or: <br>
+    While ((Expression)) { (Code Block) } <br>
+    - The condition must result in a boolean value. <br>
 
-Uses:
-    - Inside functions after variable declarations:
-        while (x < 10) { Code Block }
-    - Inside if statements:
-        if (x > 5) { while (y < 10) { Code Block } }
-    - Nested inside other while loops:
-        while (x < 10) { while (y > 5) { Code Block } }
+Uses: <br>
+    - Inside functions after variable declarations: <br>
+        while (x < 10) { Code Block } <br>
+    - Inside if statements: <br>
+        if (x > 5) { while (y < 10) { Code Block } } <br>
+    - Nested inside other while loops: <br>
+        while (x < 10) { while (y > 5) { Code Block } } <br>
 
-** Can Use Logical operators: 
-    - ex: while (x && y) { Code Block }
-         or while (x || y) { Code Block }
+** Can Use Logical operators: <br>
+    - ex: while (x && y) { Code Block } <br>
+         or while (x || y) { Code Block } <br>
 
-Conditional Expression Expansion:
+Conditional Expression Expansion: <br>
 
-    Use Operators: ||, &&
+    Use Operators: ||, && <br>
     
-    Format:
-        (Conditional Expression) (Conditional Expansion Operator) (Conditional Expression)
-        also: (Conditional Expression Expansion) (Conditional Expansion Operator) (Conditional Expression)
+    Format: <br>
+        (Conditional Expression) (Conditional Expansion Operator) (Conditional Expression) <br>
+        also: (Conditional Expression Expansion) (Conditional Expansion Operator) (Conditional Expression) <br>
 
-    Uses: 
-        Assign to a varible:
-            bool x;
-            x = Conditional Expression Expansion;
+    Uses: <br>
+        Assign to a variable: <br>
+            bool x; <br>
+            x = Conditional Expression Expansion; <br>
 
-        If Statement:
-            if (Conditional Expression Expansion) {} 
-            else if (Conditional Expression Expansion) {}
+        If Statement: <br>
+            if (Conditional Expression Expansion) {} <br> 
+            else if (Conditional Expression Expansion) {} <br>
 
-If Statements: 
+If Statements: <br>
 
-    Starts with if:
-        if (Conditional Statement) { Statements }
+    Starts with if: <br>
+        if (Conditional Statement) { Statements } <br>
 
-    Can be expanded:
-        if (Conditional Statement) {
-        } else if (Conditional Statement) { Statements }
+    Can be expanded: <br>
+        if (Conditional Statement) { <br>
+        } else if (Conditional Statement) { Statements } <br>
 
-    Also:
-        if (Conditional Statement) {
-        } else { Statements }
+    Also: <br>
+        if (Conditional Statement) { <br>
+        } else { Statements } <br>
 
-    So, start with if, then there can be as many else if statements after the initial if. Else statements only come at the end of the if statement.
+    So, start with if, then there can be as many else if statements after the initial if. Else statements only come at the end of the if statement. <br>
 
-    Conditional Statements are expression and conditional expressions that have boolean values
-        - basic vales (true, false)
-        - variable with bool type
-        - fuctions with bool type
-        - Conditional Expression
-        - Conditional Expression Expansions
+    Conditional Statements are expression and conditional expressions that have boolean values <br>
+        - basic values (true, false) <br>
+        - variable with bool type <br>
+        - functions with bool type <br>
+        - Conditional Expression <br>
+        - Conditional Expression Expansions <br>
+
+Compiler rules: <br>
+
+Function decl: <br>
+    type ID(parameters: type ID...) {body + return} <br>
+    - Arrays cannot be returned or be parameters <br>
+
+Parameter Decl: <br>
+    type ID; <br>
+    - Must occur before statements <br>
+
+Array decl: <br>
+    type ID[size]; <br>
+    - Must occur before statements <br>
+
+Statements: <br>
+    Variable assignment: <br>
+        ID = expression; <br>
+        - ID has to be declared as a variable <br>
+        - expression has to be the same type but float and int are interchangeable <br>
     
-
-
-Compiler rules:
-
-Function decl:
-    type ID(parameters: type ID...) {body + return}
-    - Arrays cannote be returned or be parameters
-
-Parameter Decl:
-    type ID;
-    - Must occur before statements
-
-Array decl:
-    type ID[size];
-    - Must occur before statements
-
-Statements:
-    Variable assignment:
-        ID = expression;
-        - ID has to be declared as a variable
-        - epression has to be the same type but float and int are interchanable
+    Array assignment: <br>
+        ID[index] = expression; <br>
+        - ID has to be declared as an array; <br>
+        - expression has to be the same type but float and int are interchangeable <br>
     
-    Array assignment:
-        ID[index] = expression;
-        - ID has to be declared as an array;
-        - epression has to be the same type but float and int are interchanable
+    Print: <br>
+        print(expression); <br>
+
+Expressions: <br>
+    Use operations: +, -, *, / <br>
+
+    Numbers: <br>
+        1, 2, 3 <br>
     
-    Print:
-        print(expression);
+    Floats: <br>
+        1.2, 2.4, 5.3 <br>
 
-Expressions:
-    Use operations: +, -, *, /
-
-    Numbers:
-        1, 2, 3
+    Characters: <br>
+        'a', 'b', 'C' <br>
+        - Doesn't work with operations <br>
     
-    Floats:
-        1.2, 2.4, 5.3
-
-    Characters:
-        'a', 'b', 'C'
-        - Doesn't work with operations
+    Boolean: <br>
+        true, false <br>
+        - Doesn't work with operations <br>
     
-    Boolean:
-        true, false
-        - Doesn't work with operations
-    
-    Function call:
-        functionID(expression, expression...);
+    Function call: <br>
+        functionID(expression, expression...); <br>
 
-    Var reference:
-        ID
-        - ID has to be a delcared variable
+    Var reference: <br>
+        ID <br>
+        - ID has to be a declared variable <br>
 
-    Array reference:
-        ID[index]
-        - ID has to be a delcared array
-        - index has to be 0 <= index < size
+    Array reference: <br>
+        ID[index] <br>
+        - ID has to be a declared array <br>
+        - index has to be 0 <= index < size <br>
 
-Conditional Expressions:
+Conditional Expressions: <br>
 
-    Use operators: <, >, ==, <=, >=, and !=
+    Use operators: <, >, ==, <=, >=, and != <br>
 
-    Format:
-        (Expression) (Conditional operator) (Expression)
+    Format: <br>
+        (Expression) (Conditional operator) (Expression) <br>
 
-    Uses: 
-        Assign to a varible:
-            bool x;
-            x = Conditional Expression;
+    Uses: <br>
+        Assign to a variable: <br>
+            bool x; <br>
+            x = Conditional Expression; <br>
 
-        If Statement:
-            if (Conditional Expression) {} 
-            else if (Conditional Expression) {}
+        If Statement: <br>
+            if (Conditional Expression) {} <br> 
+            else if (Conditional Expression) {} <br>
 
-While Loops:
+While Loops: <br>
 
-    Format:
-        While ((Conditional Expression Expansion)) {(statements)}
-    Or:
-        While ((Expression)) {(statements)}
-    where the expression results in a boolean value
+    Format: <br>
+        While ((Conditional Expression Expansion)) {(statements)} <br>
+    Or: <br>
+        While ((Expression)) {(statements)} <br>
+    where the expression results in a boolean value <br>
 
-    Uses:
-        Use anywhere statements are allowed
-            - Inside functions after variable declaration
-            - Inside if statments
-            - Inside other while loops
+    Uses: <br>
+        Use anywhere statements are allowed <br>
+            - Inside functions after variable declaration <br>
+            - Inside if statements <br>
+            - Inside other while loops <br>
