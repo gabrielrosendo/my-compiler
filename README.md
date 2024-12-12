@@ -89,89 +89,89 @@ If Statements: <br>
         - Conditional Expression <br>
         - Conditional Expression Expansions <br>
 
-Compiler rules: <br>
+### Compiler rules: <br>
 
-Function decl: <br>
-    type ID(parameters: type ID...) {body + return} <br>
-    - Arrays cannot be returned or be parameters <br>
+    Function decl: <br>
+        type ID(parameters: type ID...) {body + return} <br>
+        - Arrays cannot be returned or be parameters <br>
 
-Parameter Decl: <br>
-    type ID; <br>
-    - Must occur before statements <br>
+    Parameter Decl: <br>
+        type ID; <br>
+        - Must occur before statements <br>
 
-Array decl: <br>
-    type ID[size]; <br>
-    - Must occur before statements <br>
+    Array decl: <br>
+        type ID[size]; <br>
+        - Must occur before statements <br>
 
-Statements: <br>
-    Variable assignment: <br>
-        ID = expression; <br>
-        - ID has to be declared as a variable <br>
-        - expression has to be the same type but float and int are interchangeable <br>
-    
-    Array assignment: <br>
-        ID[index] = expression; <br>
-        - ID has to be declared as an array; <br>
-        - expression has to be the same type but float and int are interchangeable <br>
-    
-    Print: <br>
-        print(expression); <br>
+    Statements: <br>
+        Variable assignment: <br>
+            ID = expression; <br>
+            - ID has to be declared as a variable <br>
+            - expression has to be the same type but float and int are interchangeable <br>
+        
+        Array assignment: <br>
+            ID[index] = expression; <br>
+            - ID has to be declared as an array; <br>
+            - expression has to be the same type but float and int are interchangeable <br>
+        
+        Print: <br>
+            print(expression); <br>
 
-Expressions: <br>
-    Use operations: +, -, *, / <br>
+    Expressions: <br>
+        Use operations: +, -, *, / <br>
 
-    Numbers: <br>
-        1, 2, 3 <br>
-    
-    Floats: <br>
-        1.2, 2.4, 5.3 <br>
+        Numbers: <br>
+            1, 2, 3 <br>
+        
+        Floats: <br>
+            1.2, 2.4, 5.3 <br>
 
-    Characters: <br>
-        'a', 'b', 'C' <br>
-        - Doesn't work with operations <br>
-    
-    Boolean: <br>
-        true, false <br>
-        - Doesn't work with operations <br>
-    
-    Function call: <br>
-        functionID(expression, expression...); <br>
+        Characters: <br>
+            'a', 'b', 'C' <br>
+            - Doesn't work with operations <br>
+        
+        Boolean: <br>
+            true, false <br>
+            - Doesn't work with operations <br>
+        
+        Function call: <br>
+            functionID(expression, expression...); <br>
 
-    Var reference: <br>
-        ID <br>
-        - ID has to be a declared variable <br>
+        Var reference: <br>
+            ID <br>
+            - ID has to be a declared variable <br>
 
-    Array reference: <br>
-        ID[index] <br>
-        - ID has to be a declared array <br>
-        - index has to be 0 <= index < size <br>
+        Array reference: <br>
+            ID[index] <br>
+            - ID has to be a declared array <br>
+            - index has to be 0 <= index < size <br>
 
-Conditional Expressions: <br>
+    Conditional Expressions: <br>
 
-    Use operators: <, >, ==, <=, >=, and != <br>
+        Use operators: <, >, ==, <=, >=, and != <br>
 
-    Format: <br>
-        (Expression) (Conditional operator) (Expression) <br>
+        Format: <br>
+            (Expression) (Conditional operator) (Expression) <br>
 
-    Uses: <br>
-        Assign to a variable: <br>
-            bool x; <br>
-            x = Conditional Expression; <br>
+        Uses: <br>
+            Assign to a variable: <br>
+                bool x; <br>
+                x = Conditional Expression; <br>
 
-        If Statement: <br>
-            if (Conditional Expression) {} <br> 
-            else if (Conditional Expression) {} <br>
+            If Statement: <br>
+                if (Conditional Expression) {} <br> 
+                else if (Conditional Expression) {} <br>
 
-While Loops: <br>
+    While Loops: <br>
 
-    Format: <br>
-        While ((Conditional Expression Expansion)) {(statements)} <br>
-    Or: <br>
-        While ((Expression)) {(statements)} <br>
-    where the expression results in a boolean value <br>
+        Format: <br>
+            While ((Conditional Expression Expansion)) {(statements)} <br>
+        Or: <br>
+            While ((Expression)) {(statements)} <br>
+        where the expression results in a boolean value <br>
 
-    Uses: <br>
-        Use anywhere statements are allowed <br>
-            - Inside functions after variable declaration <br>
-            - Inside if statements <br>
-            - Inside other while loops <br>
+        Uses: <br>
+            Use anywhere statements are allowed <br>
+                - Inside functions after variable declaration <br>
+                - Inside if statements <br>
+                - Inside other while loops <br>
