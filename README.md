@@ -1,7 +1,7 @@
 # my-compiler
 For this final version, we have added support for while loops
 
-Videos:
+Videos: <br>
 Grant Burk: https://www.loom.com/share/d66ec9eafb674157bc3bea63b961759e?sid=4ac04077-d0e8-4888-989a-ba08b0a67d46 <br>
 Gabriel Marcelino: https://www.loom.com/share/af0a103ac47f4f889d03a65d9f6833ea
 
