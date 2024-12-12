@@ -8,7 +8,28 @@ Gabriel Marcelino: https://www.loom.com/share/af0a103ac47f4f889d03a65d9f6833ea
 ## Comand to compile code from the input.txt file:
 make parser
 
-## Improvements Made (Part 4)
+## Performance Metrics
+Metrics were obtained by averaging the times for 6 test inputs of varying complexity:
+- **input-array.txt**: Tests array operations and assignments.
+- **input-bools.txt**: Focuses on boolean logic and conditions.
+- **input-float.txt**: Includes float arithmetic and operations.
+- **input-funcs.txt**: Evaluates function calls and nested function usage.
+- **input-ifs.txt**: Emphasizes conditional logic with multiple `if-else` branches.
+- **input-whiles.txt**: Highlights nested and standalone `while` loops.
+
+### a) Compilation Time
+- Times(seconds): 0.016, 0.045, 0.032, 0.017, 0.021, 0.016
+- Average time for code compilation: **0.0245 seconds**
+- Factors affecting compilation time:
+  - Code complexity
+  - Use of conditional expressions and loops
+  - Size of input program
+
+### b) Execution Time of Compiler Code
+- Times(seconds): 0.014, 0.017, 0.016, 0.016, 0.017, 0.017
+- Average execution time of compiled programs: **0.0162 seconds**
+
+## Usage and Syntax
 While Loops:
 
 Format:
@@ -29,9 +50,6 @@ Uses:
     - ex: while (x && y) { Code Block }
          or while (x || y) { Code Block }
 
-
-
-## Usage and Syntax
 Conditional Expression Expansion:
 
     Use Operators: ||, &&
