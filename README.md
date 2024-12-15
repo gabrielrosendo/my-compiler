@@ -2,11 +2,22 @@
 For this final version, we have added support for while loops
 
 Videos: <br>
+For final version (with performance metrics): <br>
+Grant Burk: https://www.loom.com/share/4ba33507d0fc4aa6a4728199b43f6623?sid=18452936-311c-458c-9c81-4da86bdf41cd <br>
+Gabriel Marcelino: https://www.loom.com/share/10120b81b71b47d0a02788e383d96ba6 <br>
+
+For while loops: <br>
 Grant Burk: https://www.loom.com/share/d66ec9eafb674157bc3bea63b961759e?sid=4ac04077-d0e8-4888-989a-ba08b0a67d46 <br>
 Gabriel Marcelino: https://www.loom.com/share/af0a103ac47f4f889d03a65d9f6833ea
 
-## Comand to compile code from the input.txt file:
+## How to run
+1. Run make command (Will run compiler on file input-array.txt) by default
 make parser
+2. Compile the input file
+./parser input-ifs.txt
+3. Run Generated MIPS code
+If you want to execute the generated assembly file, you can use a MIPS simulator like QtSPIM:
+qtspim -file output.s
 
 ## Performance Metrics
 Metrics were obtained by averaging the times for 6 simple test inputs:
